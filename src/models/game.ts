@@ -18,25 +18,19 @@ export interface IGameInfo {
 	description: string;
 }
 
-export interface IGame {
+export interface IGame extends IGameInfo {
 	takeTurn(): IGameData;
 
 	players: Array<Player>;
-	currentUser: Player;
-}
-
-export abstract class GameDataFactory {
-	abstract CreateGameData(): IGameData;
+	currentPlayer: Player;
 }
 
 export interface IGameData {
 	GetGameData(): any;
 }
 
-export abstract class Player {
-	abstract createPlayer(user: User): Player;
-
-	user!: User;
+export interface Player {
+	user: User;
 }
 
 export interface Position {
