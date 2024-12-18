@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { socket } from '../socket';
 import { useRouter } from 'next/navigation';
-import { get } from 'http';
+
+
 export default function Home() {
 	const [isConnected, setIsConnected] = useState(false);
 	const [transport, setTransport] = useState('N/A');

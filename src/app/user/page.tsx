@@ -2,7 +2,6 @@
 
 import JoinRoom from '../ui/joinRoom';
 import User from './user';
-import { socket } from "../socket";
 
 export default function Home() {
 
