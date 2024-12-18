@@ -19,17 +19,3 @@ const config = {
 const connectionString = `Server=${config.server},${config.port};Database=${config.database};User Id=${config.user};Password=${config.password};Encrypt=false`;
 
 export const database = new sql.ConnectionPool(connectionString);
-
-// Connect to the database and handle errors
-database.connect()
-  .then(() => {
-    console.log("Database connection established successfully.");
-  })
-  .catch((err) => {
-    console.error("Error connecting to the database:", err.message);
-  });
-
-// Optionally, listen for other events (e.g., pool errors)
-database.on("error", (err) => {
-  console.error("SQL Connection Pool Error:", err.message);
-});
