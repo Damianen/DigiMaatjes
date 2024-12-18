@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { socket } from '../socket';
 import { useRouter } from 'next/navigation';
 
-
 export default function Home() {
 	const [isConnected, setIsConnected] = useState(false);
 	const [transport, setTransport] = useState('N/A');
@@ -13,8 +12,7 @@ export default function Home() {
 	const [roomMessage, setRoomMessage] = useState<string[]>([]);
 	const router = useRouter();
 	const [roomInput, setRoomInput] = useState('');
-	const [users, setUsers] = useState<any[]>([]);
-	
+	const [users, setUsers] = useState<string[]>([]);
 
 	useEffect(() => {
 		if (socket.connected) {
@@ -27,11 +25,13 @@ export default function Home() {
 		}
 		function onConnect() {
 			setIsConnected(true);
+			console.log(isConnected);
+			console.log(transport);
 			setTransport(socket.io.engine.transport.name);
 			socket.io.engine.on('upgrade', (transport) => {
 				setTransport(transport.name);
 			});
-            getRoomIds(1);
+			getRoomIds(1);
 		}
 
 		function onDisconnect() {
@@ -56,14 +56,13 @@ export default function Home() {
 			getRoomIds(room);
 		});
 
-		socket.on('getRoomUsers', (users: any) => {
-			for (let user of users) {
+		socket.on('getRoomUsers', (users: string[]) => {
+			for (const user of users) {
 				console.log('user', user);
 			}
 			setUsers(users);
 		});
 
-    
 		return () => {
 			socket.off('connect', onConnect);
 			socket.off('disconnect', onDisconnect);

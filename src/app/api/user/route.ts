@@ -1,7 +1,4 @@
-import { headers } from 'next/headers';
-
-export async function GET(request: Request) {
-	const headersList = await headers();
+export async function GET() {
 	const data = {
 		hello: 'test',
 	};
