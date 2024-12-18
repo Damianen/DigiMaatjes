@@ -14,6 +14,7 @@ app.prepare().then(() => {
 
 	const io = new Server(httpServer);
 
+
 	io.on('connection', (socket) => {
 		console.log('a user connected');
 		socket.on('disconnect', () => {
@@ -21,11 +22,14 @@ app.prepare().then(() => {
 		});
 		socket.on('chat message', (msg) => {
 			console.log('message: ' + msg);
-			io.emit('chat message', msg);
+			socket.emit('chat message', `${socket.id} said ${msg}`);
 		});
-		socket.on('joinRoom', (room) => {
+		socket.on('joinRoom', (room, nickname) => {
+			socket.nickname = nickname;
 			socket.join(room);
-			console.log('user joined room #' + room);
+			console.log('user joined room #' + room + ' as ' + nickname);
+			socket.to(room).emit('joinRoom', room);
+			socket.emit('joinRoom', room);
 		});
 		socket.on('leaveRoom', (room) => {
 			socket.leave(room);
@@ -34,8 +38,21 @@ app.prepare().then(() => {
 		socket.on('roomMessage', (room, msg) => {
 			console.log('room message: ' + msg);
 			console.log('room: ' + room);
-			io.to(room).emit('room message', msg);
+			io.to(room).emit('room message',`${socket.nickname} said ${msg}`);
 		});
+		
+		socket.on('getRoomUsers', async (room) => {
+			console.log('getRoomUsers: ' + room);
+			try {
+				const sockets = await io.in(room).fetchSockets();
+				const users = sockets.map((socket) => socket.nickname);
+				console.log(users);
+				socket.emit('getRoomUsers', users);
+			} catch (error) {
+				console.error('Error fetching room users:', error);
+			}
+		});
+
 	});
 
 	httpServer
