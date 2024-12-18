@@ -1,0 +1,129 @@
+export default function Register() {
+	return (
+		<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center justify-center px-4">
+			<div className="text-center mb-2">
+				<h1 className="text-4xl font-bold font-bambino text-white mb-2 mt-4">
+					Registreren
+				</h1>
+			</div>
+
+			<div className="w-full max-w-4xl rounded-lg p-8">
+				<form>
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+						<div className="w-full">
+							<label
+								htmlFor="username"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								Gebruikersnaam
+							</label>
+							<input
+								type="text"
+								id="username"
+								name="username"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								placeholder="Voer je gebruikersnaam in"
+								required
+							/>
+						</div>
+
+						<div className="w-full">
+							<label
+								htmlFor="email"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								E-mail
+							</label>
+							<input
+								type="email"
+								id="email"
+								name="email"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								placeholder="Voer je e-mail in"
+								required
+							/>
+						</div>
+
+						<div className="w-full">
+							<label
+								htmlFor="firstname"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								Voornaam
+							</label>
+							<input
+								type="text"
+								id="firstname"
+								name="firstname"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								placeholder="Voer je voornaam in"
+								required
+							/>
+						</div>
+
+						<div className="w-full">
+							<label
+								htmlFor="lastname"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								Achternaam
+							</label>
+							<input
+								type="text"
+								id="lastname"
+								name="lastname"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								placeholder="Voer je achternaam in"
+								required
+							/>
+						</div>
+					</div>
+
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+						<div className="w-full">
+							<label
+								htmlFor="dob"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								Geboortedatum
+							</label>
+							<input
+								type="date"
+								id="dob"
+								name="dob"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								required
+							/>
+						</div>
+
+						<div className="w-full">
+							<label
+								htmlFor="password"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								Wachtwoord
+							</label>
+							<input
+								type="password"
+								id="password"
+								name="password"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								placeholder="Kies een wachtwoord"
+								required
+							/>
+						</div>
+					</div>
+
+					<div className="text-center">
+						<button
+							type="submit"
+							className="w-full px-12 py-6 text-2xl bg-blue-600 text-white rounded-lg font-semibold font-bambino hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-600"
+						>
+							Registreer
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	);
+}
