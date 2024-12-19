@@ -15,22 +15,23 @@ export default function Home() {
 	const[nickname, setNickname] = useState('');
 	const [users, setUsers] = useState<string[]>([]);
 	const roomId = useParams().id?.toString();
-	const room = roomId ? parseInt(roomId) : 0;
+	const room = roomId ?roomId : "0";
 
 	useEffect(() => {
 		if (socket.connected) {
 			onConnect();
 		}
 		console.log (nickname)
+		
 
-		function getRoomIds(room: number) {
+		function getRoomIds(room: string) {
 			console.log('getRoomUsers', room);
 			socket.emit('getRoomUsers', room);
 		}
 		function onConnect() {
 			setIsConnected(true);
-			console.log(isConnected);
-			console.log(transport);
+			console.log (nickname)
+			console.log(room)
 			setTransport(socket.io.engine.transport.name);
 			socket.io.engine.on('upgrade', (transport) => {
 				setTransport(transport.name);
@@ -62,7 +63,7 @@ export default function Home() {
 			setNickname(nickname);
 		});
 
-		socket.on('joinRoom', (room: number) => {
+		socket.on('joinRoom', (room: string) => {
 			console.log('joinRoom', room);
 			getRoomIds(room);
 		});

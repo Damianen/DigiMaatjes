@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import ludo from '../../../public/img/mensergerjeniet.jpg';
 import checkers from '../../../public/img/dammen.jpg';
@@ -6,15 +8,13 @@ import dominoes from '../../../public/img/dominoes.jpg';
 
 export default function SpelOverzicht() {
 	// const username = 'Digimaatjes';
-
 	return (
 		<>
 			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center">
 				<div className="flex flex-col mt-36">
 					<div className="text-center">
 						<h1 className="text-5xl font-bold font-bambino text-white mb-4">
-							Welkom bij Digimaatjes, Kies een spel
-							en start!
+							Welkom bij Digimaatjes, Kies een spel en start!
 						</h1>
 					</div>
 
