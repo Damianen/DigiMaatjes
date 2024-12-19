@@ -1,4 +1,5 @@
 import {
+	LudoBoardSquare,
 	LudoClientGameData,
 	LudoGameDataFacotry,
 	LudoPawn,
@@ -9,7 +10,6 @@ import { LudoPlayer, LudoPlayerColor } from './ludo.player';
 import { IClientGameData, IServerGameData } from '@/models/data.interface';
 import {
 	newBoard,
-	BoardSquare,
 	BLUE_HOME,
 	YELLOW_HOME,
 	RED_HOME,
@@ -34,7 +34,7 @@ export class LudoGame implements IGame {
 	name!: string;
 	description!: string;
 	dataFactory!: LudoGameDataFacotry;
-	board!: Array<Array<BoardSquare>>;
+	board!: Array<Array<LudoBoardSquare>>;
 
 	takeTurn(data: IServerGameData): IClientGameData {
 		if (!data) {
@@ -48,7 +48,7 @@ export class LudoGame implements IGame {
 			!pawn ||
 			!diceNum ||
 			!position ||
-			pawn != this.board[position.x][position.y].pawn
+			pawn != this.board[position.y][position.x].pawn
 		) {
 			throw new Error('Invalid data');
 		}
@@ -57,54 +57,58 @@ export class LudoGame implements IGame {
 			throw new Error('Not Your turn!');
 		}
 
-		if (this.board[position.x][position.y].startSquare && diceNum != 6) {
+		if (this.board[position.y][position.x].startSquare && diceNum != 6) {
 			throw new Error('Je hebt geen 6 gegooit!');
 		}
 
 		let currentPosition: IPosition = position;
 
 		for (let i = 0; i < diceNum; i++) {
-			let nextPos: IPosition = this.board[currentPosition.x][
-				currentPosition.y
+			let nextPos: IPosition = this.board[currentPosition.y][
+				currentPosition.x
 			].nextPosition as IPosition;
 
 			if (
-				this.board[position.x][position.y].startSquare &&
+				this.board[position.y][position.x].startSquare &&
 				diceNum == 6
 			) {
 				currentPosition = nextPos;
 				break;
 			}
 
-			if (this.board[nextPos.x][nextPos.y].nextPosition == null) {
+			if (this.board[nextPos.y][nextPos.x].nextPosition == null) {
 				break;
 			}
 
 			if (
-				this.board[nextPos.x][nextPos.y].home == pawn.color &&
+				this.board[nextPos.y][nextPos.x].home == pawn.color &&
 				this.board[
-					(this.board[nextPos.x][nextPos.y].nextPosition as IPosition)
+					(this.board[nextPos.y][nextPos.x].nextPosition as IPosition)
 						.x
 				][
-					(this.board[nextPos.x][nextPos.y].nextPosition as IPosition)
+					(this.board[nextPos.y][nextPos.x].nextPosition as IPosition)
 						.y
 				].home != pawn.color
 			) {
 				switch (pawn.color) {
 					case LudoPlayerColor.BLUE:
 						nextPos = { x: 13, y: 7 };
+						break;
 					case LudoPlayerColor.YELLOW:
 						nextPos = { x: 7, y: 1 };
+						break;
 					case LudoPlayerColor.RED:
 						nextPos = { x: 1, y: 7 };
+						break;
 					case LudoPlayerColor.GREEN:
 						nextPos = { x: 7, y: 13 };
+						break;
 				}
 			}
 
 			if (
-				this.board[nextPos.x][nextPos.y].home == pawn.color &&
-				this.board[nextPos.x][nextPos.y].pawn != null
+				this.board[nextPos.y][nextPos.x].home == pawn.color &&
+				this.board[nextPos.y][nextPos.x].pawn != null
 			) {
 				break;
 			}
@@ -112,58 +116,62 @@ export class LudoGame implements IGame {
 			currentPosition = nextPos;
 		}
 
-		this.board[position.x][position.y].pawn = null;
+		this.board[position.y][position.x].pawn = null;
 
-		if (this.board[currentPosition.x][currentPosition.y].pawn != null) {
-			const slainPawn: LudoPawn = this.board[currentPosition.x][
-				currentPosition.y
+		if (this.board[currentPosition.y][currentPosition.x].pawn != null) {
+			const slainPawn: LudoPawn = this.board[currentPosition.y][
+				currentPosition.x
 			].pawn as LudoPawn;
 			switch (slainPawn.color) {
 				case LudoPlayerColor.BLUE:
 					for (let i = 0; i < 4; i++) {
 						if (
-							this.board[BLUE_HOME[i].x][BLUE_HOME[i].y].pawn ==
+							this.board[BLUE_HOME[i].y][BLUE_HOME[i].x].pawn ==
 							null
 						) {
-							this.board[BLUE_HOME[i].x][BLUE_HOME[i].y].pawn =
+							this.board[BLUE_HOME[i].y][BLUE_HOME[i].x].pawn =
 								slainPawn;
 						}
 					}
+					break;
 				case LudoPlayerColor.YELLOW:
 					for (let i = 0; i < 4; i++) {
 						if (
-							this.board[YELLOW_HOME[i].x][YELLOW_HOME[i].y]
+							this.board[YELLOW_HOME[i].y][YELLOW_HOME[i].x]
 								.pawn == null
 						) {
-							this.board[YELLOW_HOME[i].x][
-								YELLOW_HOME[i].y
+							this.board[YELLOW_HOME[i].y][
+								YELLOW_HOME[i].x
 							].pawn = slainPawn;
 						}
 					}
+					break;
 				case LudoPlayerColor.RED:
 					for (let i = 0; i < 4; i++) {
 						if (
-							this.board[RED_HOME[i].x][RED_HOME[i].y].pawn ==
+							this.board[RED_HOME[i].y][RED_HOME[i].x].pawn ==
 							null
 						) {
-							this.board[RED_HOME[i].x][RED_HOME[i].y].pawn =
+							this.board[RED_HOME[i].y][RED_HOME[i].x].pawn =
 								slainPawn;
 						}
 					}
+					break;
 				case LudoPlayerColor.GREEN:
 					for (let i = 0; i < 4; i++) {
 						if (
-							this.board[GREEN_HOME[i].x][GREEN_HOME[i].y].pawn ==
+							this.board[GREEN_HOME[i].y][GREEN_HOME[i].x].pawn ==
 							null
 						) {
-							this.board[GREEN_HOME[i].x][GREEN_HOME[i].y].pawn =
+							this.board[GREEN_HOME[i].y][GREEN_HOME[i].x].pawn =
 								slainPawn;
 						}
 					}
+					break;
 			}
 		}
 
-		this.board[currentPosition.x][currentPosition.y].pawn = pawn;
+		this.board[currentPosition.y][currentPosition.x].pawn = pawn;
 
 		if (diceNum != 6) {
 			if (

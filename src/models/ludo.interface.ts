@@ -5,7 +5,6 @@ import {
 	GameDataFactory,
 } from './data.interface';
 import { IPosition } from './game.interface';
-import { BoardSquare } from '@/games/ludo/board';
 
 export class LudoGameDataFacotry implements GameDataFactory {
 	createServerData(data: any): IServerGameData {
@@ -22,7 +21,7 @@ export class LudoGameDataFacotry implements GameDataFactory {
 }
 
 export class LudoClientGameData implements IClientGameData {
-	constructor(board: BoardSquare[][]) {
+	constructor(board: LudoBoardSquare[][]) {
 		this.board = board;
 	}
 
@@ -30,7 +29,29 @@ export class LudoClientGameData implements IClientGameData {
 		return { board: this.board };
 	}
 
-	board!: BoardSquare[][];
+	board!: LudoBoardSquare[][];
+}
+
+export class LudoBoardSquare {
+	nextPosition!: IPosition | null;
+	acessible!: boolean;
+	pawn!: LudoPawn | null;
+	home!: LudoPlayerColor | null;
+	startSquare!: boolean;
+
+	constructor(
+		acessible: boolean,
+		nextPosition: IPosition | null = null,
+		home: LudoPlayerColor | null = null,
+		startSquare: boolean = false,
+		pawn: LudoPawn | null = null
+	) {
+		this.acessible = acessible;
+		this.nextPosition = nextPosition;
+		this.pawn = pawn;
+		this.home = home;
+		this.startSquare = startSquare;
+	}
 }
 
 export class LudoServerGameData implements IServerGameData {

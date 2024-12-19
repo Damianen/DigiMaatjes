@@ -1,3 +1,9 @@
+import Ludo from './games/ludo';
+
 export default function Home() {
-	return <div>Hello world!</div>;
+	return (
+		<div>
+			<Ludo />
+		</div>
+	);
 }
