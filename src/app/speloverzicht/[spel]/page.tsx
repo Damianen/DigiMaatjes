@@ -5,6 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { socket } from '../../socket';
 import { useState, useEffect } from 'react';
 
+interface Room{
+	roomName: string;
+	numUsers: number;
+}
+
 export default function GameRoom() {
 	const router = useRouter();
 	const spel = useParams().spel?.toString();
@@ -15,7 +20,7 @@ export default function GameRoom() {
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
 	}
-	const [rooms, setRooms] = useState<string[]>([]);
+	const [rooms, setRooms] = useState<Room[]>([]);
 
 	useEffect(() => {
 		findRooms();
@@ -23,7 +28,7 @@ export default function GameRoom() {
 
 	function findRooms() {
 		socket.emit('findRooms', spelnaam);
-		socket.on('rooms', (rooms: string[]) => {
+		socket.on('rooms', (rooms: Room[]) => {
 			console.log(rooms);
 			setRooms(rooms);
 		});
@@ -76,25 +81,20 @@ export default function GameRoom() {
 				</div>
 
 				<div className="grid grid-cols-1 gap-4">
-					<div className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow">
+					{rooms.map((room, index) => (
+						<div key={index} className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow">
 						<div className="text-lg font-semibold">
-							kamer
+							{room.roomName}
 						</div>
-						<div className="text-lg">User 1/4</div>
-						<button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+						<div className="text-lg">Users: {room.numUsers}/4</div>
+						<button onClick={()=>{
+							socket.emit('joinRoom', room.roomName, nickname);
+							router.push(`/room/${room.roomName}`);
+						}} className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
 							Join
 						</button>
 					</div>
-
-					<div className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow">
-						<div className="text-lg font-semibold">
-							
-						</div>
-						<div className="text-lg">User 3/4</div>
-						<button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
-							Join
-						</button>
-					</div>
+					))}
 				</div>
 			</main>
 		</div>
