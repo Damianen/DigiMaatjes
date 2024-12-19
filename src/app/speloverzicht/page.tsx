@@ -5,7 +5,7 @@ import memory from '../../../public/img/memory.jpg';
 import dominoes from '../../../public/img/dominoes.jpg';
 
 export default function SpelOverzicht() {
-	const username = 'Digimaatjes';
+	// const username = 'Digimaatjes';
 
 	return (
 		<>
@@ -13,7 +13,7 @@ export default function SpelOverzicht() {
 				<div className="flex flex-col mt-36">
 					<div className="text-center">
 						<h1 className="text-5xl font-bold font-bambino text-white mb-4">
-							Welkom "{username}" bij Digimaatjes, Kies een spel
+							Welkom bij Digimaatjes, Kies een spel
 							en start!
 						</h1>
 					</div>

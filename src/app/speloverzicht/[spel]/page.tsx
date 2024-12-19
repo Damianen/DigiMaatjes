@@ -7,12 +7,12 @@ export default function GameRoom() {
 	const spel = useParams().spel?.toString();
 	const spelnaam = spel ? spel : 'Mens erger je niet';
 	const spelimg = `/img/${spelnaam}.jpg`;
-	var gameRealName = spelnaam;
+	let gameRealName = spelnaam;
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
 	}
 
-	const username = 'Digimaatje';
+	// const username = 'Digimaatje';
 
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center px-4">
@@ -55,7 +55,7 @@ export default function GameRoom() {
 				<div className="grid grid-cols-1 gap-4">
 					<div className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow">
 						<div className="text-lg font-semibold">
-							{username}'s kamer
+							kamer
 						</div>
 						<div className="text-lg">User 1/4</div>
 						<button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
@@ -65,7 +65,7 @@ export default function GameRoom() {
 
 					<div className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow">
 						<div className="text-lg font-semibold">
-							{username}'s kamer
+							
 						</div>
 						<div className="text-lg">User 3/4</div>
 						<button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
