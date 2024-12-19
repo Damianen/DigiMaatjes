@@ -69,13 +69,10 @@ export async function POST(request: Request) {
 		}
 
 		const checkEmail: sql.Request = database.request();
-
 		checkEmail.input('email', sql.NVarChar, data.email);
-
 		const emailCheck = await checkEmail.query(
 			'SELECT email FROM [User] WHERE email=@email'
 		);
-
 		if (emailCheck.recordset.length > 0) {
 			await database.close();
 			return Response.json(
@@ -84,8 +81,20 @@ export async function POST(request: Request) {
 			);
 		}
 
-		const sqlRequest: sql.Request = database.request();
+		const checkUserName: sql.Request = database.request();
+		checkUserName.input('userName', sql.NVarChar, data.userName);
+		const userNameCheck = await checkUserName.query(
+			'SELECT email FROM [User] WHERE userName=@userName'
+		);
+		if (userNameCheck.recordset.length > 0) {
+			await database.close();
+			return Response.json(
+				{ error: 'Gebruikersnaam is al in gebruik!' },
+				{ status: 409 }
+			);
+		}
 
+		const sqlRequest: sql.Request = database.request();
 		sqlRequest.input('email', sql.NVarChar, data.email);
 		sqlRequest.input('userName', sql.NVarChar, data.userName);
 		sqlRequest.input('firstName', sql.NVarChar, data.firstName);

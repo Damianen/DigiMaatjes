@@ -34,12 +34,12 @@ export async function POST(request: Request) {
 
 		if(results.recordset.length == 0){
 			return Response.json(
-				{ error: "User not found!" },
+				{ error: "Gebruiker niet gevonden!" },
 				{ status: 404 }
 			);
 		}else if(!compareSync(data.password, results.recordset[0].password)){
 			return Response.json(
-				{ error: "Incorrect password!" },
+				{ error: "Wachtwoord is incorrect!" },
 				{ status: 404 }
 			);
 		}
