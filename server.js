@@ -63,17 +63,29 @@ app.prepare().then(() => {
 		socket.on('findRooms',  async (spelnaam) => {
 			var shownrooms = [];
 			var rooms = io.sockets.adapter.rooms;
+			const MAX_USERS = 4;
 			console.log(rooms);
 			rooms.forEach((value, key) => {
-				if (key.includes(spelnaam)) {
+				const numUsers = value.size;
+				if (key.includes(spelnaam) && numUsers < MAX_USERS) {
 					console.log(value, key);
-					shownrooms.push(key);
+					shownrooms.push({roomName: key, numUsers: numUsers});
 				}
 			});
 			console.log('shownrooms', shownrooms);
 			socket.emit('rooms', shownrooms);
 		});
 
+<<<<<<< Updated upstream
+=======
+		socket.on('findUsersInRoom', async (room) => {
+			console.log('findUsersInRoom: ' + room);
+			
+			console.log('numberOfUsers: ' + numberOfUsers);
+			socket.emit('numberOfUsers', numberOfUsers);
+		});
+
+>>>>>>> Stashed changes
 	});
 
 	httpServer

@@ -15,7 +15,13 @@ export default function Home() {
 	const[nickname, setNickname] = useState('');
 	const [users, setUsers] = useState<string[]>([]);
 	const roomId = useParams().id?.toString();
+<<<<<<< Updated upstream
 	const room = roomId ?roomId : "0";
+=======
+	const room = roomId ? roomId : '0';
+	const spel = room.split('-')[0];
+	
+>>>>>>> Stashed changes
 
 	useEffect(() => {
 		if (socket.connected) {
