@@ -74,6 +74,13 @@ app.prepare().then(() => {
 			socket.emit('rooms', shownrooms);
 		});
 
+		socket.on('findUsersInRoom', async (room) => {
+			console.log('findUsersInRoom: ' + room);
+			var numberOfUsers = io.sockets.adapter.rooms.get(room).size;
+			console.log('numberOfUsers: ' + numberOfUsers);
+			socket.emit('numberOfUsers', numberOfUsers);
+		});
+
 	});
 
 	httpServer
