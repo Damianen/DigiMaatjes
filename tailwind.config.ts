@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
 
 export default {
   important: true,
@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+				bambino: ['Bambino New', 'sans-serif'],
+			},
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
