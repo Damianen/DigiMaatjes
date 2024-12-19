@@ -57,7 +57,7 @@ export class LudoGame implements IGame {
 			throw new Error('Not Your turn!');
 		}
 
-		if (this.board[position.x][position.y].home && diceNum != 6) {
+		if (this.board[position.x][position.y].startSquare && diceNum != 6) {
 			throw new Error('Je hebt geen 6 gegooit!');
 		}
 
@@ -68,7 +68,10 @@ export class LudoGame implements IGame {
 				currentPosition.y
 			].nextPosition as IPosition;
 
-			if (this.board[position.x][position.y].home && diceNum == 6) {
+			if (
+				this.board[position.x][position.y].startSquare &&
+				diceNum == 6
+			) {
 				currentPosition = nextPos;
 				break;
 			}
