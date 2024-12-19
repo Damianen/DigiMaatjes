@@ -48,6 +48,7 @@ app.prepare().then(() => {
 				const users = sockets.map((socket) => socket.nickname);
 				console.log(users);
 				socket.emit('getRoomUsers', users);
+				socket.emit('socket nickname', socket.nickname);
 			} catch (error) {
 				console.error('Error fetching room users:', error);
 			}
