@@ -17,6 +17,8 @@ export default function GameRoom() {
 		gameRealName = 'Mens erger je niet';
 	}
 	const [rooms, setRooms] = useState<string[]>([]);
+	const [usersInRoom, setUsersInRoom] = useState<number>(0);
+	const id = rooms.length + 1;
 
 	useEffect(() => {
 		findRooms();
@@ -30,15 +32,18 @@ export default function GameRoom() {
 		});
 	}
 
-	function handleCreateGame(){
-		const id = rooms.length + 1;
+	function handleCreateGame() {
 		socket.emit('createRoom', `${spelnaam}-${id}`, nickname);
 		router.push(`/room/${spelnaam}-${id}`);
 	}
 
-	// const username = 'Digimaatje';
-	const username = 'Digimaatje';
-	const username2 = 'Piet';
+	function findUsersInRoom(room: string) {
+		socket.emit('findUsersInRoom', room);
+		socket.on('numberOfUsers', (users: number) => {
+			setUsersInRoom(users);
+		});
+		return usersInRoom;
+	}
 
 	const [showExplanation, setShowExplanation] = useState(false);
 
@@ -67,8 +72,18 @@ export default function GameRoom() {
 							{gameRealName} is een spel voor 2 tot 4 spelers.
 						</div>
 
+						<button
+							onClick={() => router.push('/speloverzicht')}
+							className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 mr-12"
+						>
+							Terug naar speloverzicht
+						</button>
+
 						<div className="flex items-center gap-x-6 relative">
-							<button className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+							<button
+								onClick={handleCreateGame}
+								className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+							>
 								Creëer zelf spel
 							</button>
 
@@ -84,8 +99,8 @@ export default function GameRoom() {
 									<p>
 										Deze kamer is waar spelers kunnen
 										samenkomen om een spel te spelen. Druk
-										op "Join" om mee te doen aan de kamer
-										van een vriend!
+										op Join om mee te doen aan de kamer van
+										een vriend!
 									</p>
 									<button
 										onClick={toggleExplanation}
@@ -99,29 +114,28 @@ export default function GameRoom() {
 					</div>
 
 					<div className="grid grid-cols-1 gap-6">
-						<div className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow">
-							<div className="flex-1 text-lg font-semibold font-bambino">
-								{username}&apos;s kamer
+						{rooms.map((room) => (
+							<div
+								key={room}
+								className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow"
+							>
+								<div className="flex-1 text-lg font-semibold font-bambino">
+									{room}
+								</div>
+								<div className="text-lg flex-shrink-0 min-w-[80px] text-center mr-20">
+									Users: {findUsersInRoom(room)}/4
+								</div>
+								<button
+									onClick={() => {
+										socket.emit('joinRoom', room, nickname);
+										router.push(`/room/${room}`);
+									}}
+									className="px-8 py-4 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+								>
+									Join
+								</button>
 							</div>
-							<div className="text-lg flex-shrink-0 min-w-[80px] text-center mr-20">
-								Users: 1/4
-							</div>
-							<button className="px-8 py-4 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
-								Join
-							</button>
-						</div>
-
-						<div className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow">
-							<div className="flex-1 text-lg font-semibold font-bambino">
-								{username2}&apos;s kamer
-							</div>
-							<div className="text-lg flex-shrink-0 min-w-[80px] text-center mr-20">
-								Users 3/4
-							</div>
-							<button className="px-8 py-4 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
-								Join
-							</button>
-						</div>
+						))}
 					</div>
 				</main>
 			</div>
