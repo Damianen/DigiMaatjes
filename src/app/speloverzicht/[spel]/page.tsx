@@ -5,6 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { socket } from '../../socket';
 import { useState, useEffect } from 'react';
 
+interface Room{
+	roomName: string;
+	numUsers: number;
+}
+
 export default function GameRoom() {
 	const router = useRouter();
 	const spel = useParams().spel?.toString();
@@ -15,8 +20,8 @@ export default function GameRoom() {
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
 	}
-	const [rooms, setRooms] = useState<string[]>([]);
-	const [usersInRoom, setUsersInRoom] = useState<number>(0);	
+	const [rooms, setRooms] = useState<Room[]>([]);
+	// const [usersInRoom, setUsersInRoom] = useState<number>(0);	
 	const id = rooms.length + 1;
 
 	useEffect(() => {
@@ -25,7 +30,7 @@ export default function GameRoom() {
 
 	function findRooms() {
 		socket.emit('findRooms', spelnaam);
-		socket.on('rooms', (rooms: string[]) => {
+		socket.on('rooms', (rooms: Room[]) => {
 			console.log(rooms);
 			setRooms(rooms);
 		});
@@ -36,13 +41,13 @@ export default function GameRoom() {
 		router.push(`/room/${spelnaam}-${id}`);
 	}
 
-	function findUsersInRoom(room: string) {
-		socket.emit('findUsersInRoom', room);
-		socket.on('numberOfUsers', (users: number) => {
-			setUsersInRoom(users);
-		});
-		return usersInRoom;
-	}
+	// function findUsersInRoom(room: string) {
+	// 	socket.emit('findUsersInRoom', room);
+	// 	socket.on('numberOfUsers', (users: number) => {
+	// 		setUsersInRoom(users);
+	// 	});
+	// 	return usersInRoom;
+	// }
 
 	const [showExplanation, setShowExplanation] = useState(false);
 
@@ -100,24 +105,24 @@ export default function GameRoom() {
 								</div>
 							)}
 						</div>
+						
 					</div>
 				
 					<div className="grid grid-cols-1 gap-6">
-						{rooms.map((room) => (
+						{rooms.map((room, index) => (
 							<div
-								key={room}
+								key={index}
 								className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow"
 							>
 								<div className="flex-1 text-lg font-semibold font-bambino">
-									{room}
+									{room.roomName}
 								</div>
 								<div className="text-lg flex-shrink-0 min-w-[80px] text-center mr-20">
-									Users: {findUsersInRoom(room)}/4
+									Users: {room.numUsers}/4
 								</div>
-								<button
-									onClick={() => {
-										socket.emit('joinRoom', room, nickname);
-										router.push(`/room/${room}`);
+                                <button onClick={()=>{
+							socket.emit('joinRoom', room.roomName, nickname);
+							router.push(`/room/${room.roomName}`);
 									}}
 									className="px-8 py-4 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
 								>

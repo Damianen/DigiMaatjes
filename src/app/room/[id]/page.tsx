@@ -15,8 +15,8 @@ export default function Home() {
 	const [nickname, setNickname] = useState('');
 	const [users, setUsers] = useState<string[]>([]);
 	const roomId = useParams().id?.toString();
-	const room = roomId ? roomId : '0';
-	const spel = room.split('-')[0];
+	const room = roomId ?roomId : "0";
+	const spelnaam = room.split('-')[0];
 
 	useEffect(() => {
 		if (socket.connected) {
@@ -102,7 +102,7 @@ export default function Home() {
 
 	const handleLeaveRoom = () => {
 		socket.emit('leaveRoom', room);
-		router.push(`/speloverzicht/${spel}`);
+		router.push(`/speloverzicht/${spelnaam}`);
 	};
 
 	const handleStartGame = () => {

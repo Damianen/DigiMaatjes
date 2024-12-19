@@ -61,13 +61,15 @@ app.prepare().then(() => {
 		});
 
 		socket.on('findRooms',  async (spelnaam) => {
+			const MAX_USERS = 4;
 			var shownrooms = [];
 			var rooms = io.sockets.adapter.rooms;
 			console.log(rooms);
 			rooms.forEach((value, key) => {
-				if (key.includes(spelnaam)) {
+				const numberOfUsers = value.size;
+				if (key.includes(spelnaam)&& numberOfUsers < MAX_USERS) {
 					console.log(value, key);
-					shownrooms.push(key);
+					shownrooms.push({roomName: key, numUsers: numberOfUsers});
 				}
 			});
 			console.log('shownrooms', shownrooms);
