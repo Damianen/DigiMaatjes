@@ -1,6 +1,7 @@
 'use client';
-
 import { useState } from 'react';
+import { signin } from '@/app/services/auth';
+
 
 export default function Login() {
 	const [showExplanation, setShowExplanation] = useState(false);
@@ -43,7 +44,7 @@ export default function Login() {
 			</div>
 
 			<div className="w-full max-w-4xl rounded-lg p-8">
-				<form>
+				<form action={signin}>
 					<div className="grid grid-cols-1 gap-8 mb-8">
 						<div className="w-full">
 							<label
