@@ -1,15 +1,38 @@
 'use client';
 import Image from 'next/image';
 import accountIcon from '../../../../public/img/accounticon.png';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { socket } from '../../socket';
+import { useState, useEffect } from 'react';
 
 export default function GameRoom() {
+	const router = useRouter();
 	const spel = useParams().spel?.toString();
 	const spelnaam = spel ? spel : 'Mens erger je niet';
 	const spelimg = `/img/${spelnaam}.jpg`;
+	const nickname = 'Digimaatje';
 	let gameRealName = spelnaam;
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
+	}
+	const [rooms, setRooms] = useState<string[]>([]);
+
+	useEffect(() => {
+		findRooms();
+	}, []);
+
+	function findRooms() {
+		socket.emit('findRooms', spelnaam);
+		socket.on('rooms', (rooms: string[]) => {
+			console.log(rooms);
+			setRooms(rooms);
+		});
+	}
+
+	function handleCreateGame(){
+		const id = rooms.length + 1;
+		socket.emit('createRoom', `${spelnaam}-${id}`, nickname);
+		router.push(`/room/${spelnaam}-${id}`);
 	}
 
 	// const username = 'Digimaatje';
@@ -46,7 +69,7 @@ export default function GameRoom() {
 					</div>
 
 					<div>
-						<button className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+						<button onClick={handleCreateGame} className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
 							Creëer zelf spel
 						</button>
 					</div>

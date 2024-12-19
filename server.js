@@ -31,6 +31,12 @@ app.prepare().then(() => {
 			socket.to(room).emit('joinRoom', room);
 			socket.emit('joinRoom', room);
 		});
+		socket.on('createRoom', (room, nickname) => {
+			socket.nickname = nickname;
+			socket.join(room);
+			console.log('user created room ' + room + ' as ' + nickname);
+			socket.emit('createRoom', room);
+		});
 		socket.on('leaveRoom', (room) => {
 			socket.leave(room);
 			console.log('user left room #' + room);
@@ -52,6 +58,20 @@ app.prepare().then(() => {
 			} catch (error) {
 				console.error('Error fetching room users:', error);
 			}
+		});
+
+		socket.on('findRooms',  async (spelnaam) => {
+			var shownrooms = [];
+			var rooms = io.sockets.adapter.rooms;
+			console.log(rooms);
+			rooms.forEach((value, key) => {
+				if (key.includes(spelnaam)) {
+					console.log(value, key);
+					shownrooms.push(key);
+				}
+			});
+			console.log('shownrooms', shownrooms);
+			socket.emit('rooms', shownrooms);
 		});
 
 	});
