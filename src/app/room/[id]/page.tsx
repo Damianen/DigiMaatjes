@@ -21,7 +21,7 @@ export default function Home() {
 		if (socket.connected) {
 			onConnect();
 		}
-		
+		console.log (nickname)
 
 		function getRoomIds(room: number) {
 			console.log('getRoomUsers', room);
