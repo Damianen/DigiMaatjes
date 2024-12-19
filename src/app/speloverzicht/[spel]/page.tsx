@@ -1,6 +1,5 @@
 'use client';
 import Image from 'next/image';
-import accountIcon from '../../../../public/img/accounticon.png';
 import Navbar from '@/app/component/navbar';
 import { useParams, useRouter } from 'next/navigation';
 import { socket } from '../../socket';
@@ -44,9 +43,6 @@ export default function GameRoom() {
 		});
 		return usersInRoom;
 	}
-	// const username = 'Digimaatje';
-	const username = 'Digimaatje';
-	const username2 = 'Piet';
 
 	const [showExplanation, setShowExplanation] = useState(false);
 
@@ -92,7 +88,7 @@ export default function GameRoom() {
 									<p>
 										Deze kamer is waar spelers kunnen
 										samenkomen om een spel te spelen. Druk
-										op "Join" om mee te doen aan de kamer
+										op Join om mee te doen aan de kamer
 										van een vriend!
 									</p>
 									<button

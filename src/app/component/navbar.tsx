@@ -7,7 +7,7 @@ export default function Navbar() {
 	return (
 		<nav className="bg-blue-500 min-w-full p-4 shadow-md">
 			<div className="flex justify-between items-center w-full">
-				<a href="/" className="flex items-center">
+				<a className="flex items-center">
 					<Image
 						src={logo}
 						alt="Digimaatjes logo"

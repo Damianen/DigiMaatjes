@@ -30,6 +30,7 @@ export default function Home() {
 		}
 		function onConnect() {
 			setIsConnected(true);
+			console.log(isConnected,transport)
 			console.log (nickname)
 			console.log(room)
 			setTransport(socket.io.engine.transport.name);
