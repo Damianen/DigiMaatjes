@@ -3,7 +3,6 @@ import ludo from '../../img/ludo.jpg';
 import checkers from '../../img/checkers.jpg';
 import memory from '../../img/memory.jpg';
 import dominoes from '../../img/dominoes.jpg';
-import Navbar from '../component/navbar';
 
 export default function SpelOverzicht() {
 	return (

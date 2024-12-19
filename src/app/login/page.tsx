@@ -1,89 +1,95 @@
-export default function Example() {
+'use client';
+
+import { useState } from 'react';
+
+export default function Login() {
+	const [showExplanation, setShowExplanation] = useState(false);
+
+	const toggleExplanation = () => {
+		setShowExplanation(!showExplanation);
+	};
+
 	return (
-		<>
-			<div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-				<div className="sm:mx-auto sm:w-full sm:max-w-sm">
-					<img
-						alt="Your Company"
-						src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-						className="mx-auto h-10 w-auto"
-					/>
-					<h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-						Sign in to your account
-					</h2>
+		<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center justify-center px-4">
+			<div className="text-center mb-2 relative">
+				<div className="flex items-center justify-center mb-2 mt-4">
+					<h1 className="text-4xl font-bold font-bambino text-white">
+						Inloggen
+					</h1>
+					<button
+						onClick={toggleExplanation}
+						className="ml-4 text-white bg-blue-600 rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+					>
+						?
+					</button>
 				</div>
 
-				<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-					<form action="#" method="POST" className="space-y-6">
-						<div>
-							<label
-								htmlFor="email"
-								className="block text-sm/6 font-medium text-gray-900"
-							>
-								Email address
-							</label>
-							<div className="mt-2">
-								<input
-									id="email"
-									name="email"
-									type="email"
-									required
-									autoComplete="email"
-									className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-								/>
-							</div>
-						</div>
-
-						<div>
-							<div className="flex items-center justify-between">
-								<label
-									htmlFor="password"
-									className="block text-sm/6 font-medium text-gray-900"
-								>
-									Password
-								</label>
-								<div className="text-sm">
-									<a
-										href="#"
-										className="font-semibold text-indigo-600 hover:text-indigo-500"
-									>
-										Forgot password?
-									</a>
-								</div>
-							</div>
-							<div className="mt-2">
-								<input
-									id="password"
-									name="password"
-									type="password"
-									required
-									autoComplete="current-password"
-									className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-								/>
-							</div>
-						</div>
-
-						<div>
-							<button
-								type="submit"
-								className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-							>
-								Sign in
-							</button>
-						</div>
-					</form>
-
-					<p className="mt-10 text-center text-sm/6 text-gray-500">
-						Not a member?{' '}
-						<a
-							href="#"
-							className="font-semibold text-indigo-600 hover:text-indigo-500"
+				{showExplanation && (
+					<div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-white text-blue-700 text-sm rounded-lg shadow-lg p-4 w-64 z-10">
+						<p>
+							We vragen je om een account te maken zodat je kunt
+							chatten met je vrienden en samen een spel kunt
+							spelen. Inloggen is nodig om je voortgang op te
+							slaan en je te koppelen aan je vrienden.
+						</p>
+						<button
+							onClick={toggleExplanation}
+							className="mt-2 text-blue-600 hover:text-blue-800 underline"
 						>
-							Start a 14 day free trial
-						</a>
-					</p>
-				</div>
+							Sluiten
+						</button>
+					</div>
+				)}
 			</div>
-		</>
+
+			<div className="w-full max-w-4xl rounded-lg p-8">
+				<form>
+					<div className="grid grid-cols-1 gap-8 mb-8">
+						<div className="w-full">
+							<label
+								htmlFor="username"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								Gebruikersnaam
+							</label>
+							<input
+								type="text"
+								id="username"
+								name="username"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								placeholder="Voer je gebruikersnaam in"
+								required
+							/>
+						</div>
+
+						<div className="w-full">
+							<label
+								htmlFor="password"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								Wachtwoord
+							</label>
+							<input
+								type="password"
+								id="password"
+								name="password"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								placeholder="Voer je wachtwoord in"
+								required
+							/>
+						</div>
+					</div>
+
+					<div className="text-center mt-12">
+						<button
+							type="submit"
+							className="w-full px-12 py-6 text-2xl bg-blue-600 text-white rounded-lg font-semibold font-bambino hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-600"
+						>
+							Inloggen
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	);
 }
