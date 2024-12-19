@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function Login() {
+export default function Register() {
 	const [showExplanation, setShowExplanation] = useState(false);
 
 	const toggleExplanation = () => {
@@ -14,7 +14,7 @@ export default function Login() {
 			<div className="text-center mb-2 relative">
 				<div className="flex items-center justify-center mb-2 mt-4">
 					<h1 className="text-4xl font-bold font-bambino text-white">
-						Inloggen
+						Registeren
 					</h1>
 					<button
 						onClick={toggleExplanation}
@@ -25,11 +25,11 @@ export default function Login() {
 				</div>
 
 				{showExplanation && (
-					<div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-white text-blue-700 text-sm rounded-lg shadow-lg p-4 w-64 z-10">
+					<div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-white text-blue-700 text-sm rounded-lg shadow-lg p-6 w-80 z-10">
 						<p>
 							We vragen je om een account te maken zodat je kunt
 							chatten met je vrienden en samen een spel kunt
-							spelen. Inloggen is nodig om je voortgang op te
+							spelen. Registreren is nodig om je voortgang op te
 							slaan en je te koppelen aan je vrienden.
 						</p>
 						<button
@@ -44,7 +44,7 @@ export default function Login() {
 
 			<div className="w-full max-w-4xl rounded-lg p-8">
 				<form>
-					<div className="grid grid-cols-1 gap-8 mb-8">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
 						<div className="w-full">
 							<label
 								htmlFor="username"
@@ -64,6 +64,75 @@ export default function Login() {
 
 						<div className="w-full">
 							<label
+								htmlFor="email"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								E-mail
+							</label>
+							<input
+								type="email"
+								id="email"
+								name="email"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								placeholder="Voer je e-mail in"
+								required
+							/>
+						</div>
+
+						<div className="w-full">
+							<label
+								htmlFor="firstname"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								Voornaam
+							</label>
+							<input
+								type="text"
+								id="firstname"
+								name="firstname"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								placeholder="Voer je voornaam in"
+								required
+							/>
+						</div>
+
+						<div className="w-full">
+							<label
+								htmlFor="lastname"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								Achternaam
+							</label>
+							<input
+								type="text"
+								id="lastname"
+								name="lastname"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								placeholder="Voer je achternaam in"
+								required
+							/>
+						</div>
+					</div>
+
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+						<div className="w-full">
+							<label
+								htmlFor="dob"
+								className="block text-xl font-semibold text-white mb-2"
+							>
+								Geboortedatum
+							</label>
+							<input
+								type="date"
+								id="dob"
+								name="dob"
+								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
+								required
+							/>
+						</div>
+
+						<div className="w-full">
+							<label
 								htmlFor="password"
 								className="block text-xl font-semibold text-white mb-2"
 							>
@@ -74,18 +143,18 @@ export default function Login() {
 								id="password"
 								name="password"
 								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
-								placeholder="Voer je wachtwoord in"
+								placeholder="Kies een wachtwoord"
 								required
 							/>
 						</div>
 					</div>
 
-					<div className="text-center mt-12">
+					<div className="text-center">
 						<button
 							type="submit"
 							className="w-full px-12 py-6 text-2xl bg-blue-600 text-white rounded-lg font-semibold font-bambino hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-600"
 						>
-							Inloggen
+							Registreer
 						</button>
 					</div>
 				</form>
