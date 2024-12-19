@@ -31,15 +31,19 @@ export async function POST(request: Request) {
 			);
 		}
 		if (data.birthDate) {
-			const regex = new RegExp('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$');
+			const regex = new RegExp(
+				'^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$'
+			);
 
-			if(!regex.test(data.birthDate)){
+			if (!regex.test(data.birthDate)) {
 				return Response.json(
-					{ error: "field 'birthDate' must be a valid date in format dd/MM/yyyy, dd-MM-yyyy, or dd.MM.yyyy!" },
+					{
+						error: "field 'birthDate' must be a valid date in format dd/MM/yyyy, dd-MM-yyyy, or dd.MM.yyyy!",
+					},
 					{ status: 400 }
 				);
 			}
-		}else{
+		} else {
 			return Response.json(
 				{ error: "field 'birthDate' cannot be empty!" },
 				{ status: 400 }
@@ -54,7 +58,7 @@ export async function POST(request: Request) {
 
 		const salt = genSaltSync(10);
 		const hash = hashSync(data.password, salt);
-		
+
 		const normalizedDateStr = data.birthDate.replace(/[\./]/g, '-');
 		const newDate = new Date(normalizedDateStr);
 		newDate.setHours(newDate.getHours() + 1); //offset timezone GMT+1
@@ -64,22 +68,38 @@ export async function POST(request: Request) {
 			await database.connect();
 		}
 
+		const checkEmail: sql.Request = database.request();
+
+		checkEmail.input('email', sql.NVarChar, data.email);
+
+		const emailCheck = await checkEmail.query(
+			'SELECT email FROM [User] WHERE email=@email'
+		);
+
+		if (emailCheck.recordset.length > 0) {
+			await database.close();
+			return Response.json(
+				{ error: 'Email staat al geregistreerd!' },
+				{ status: 409 }
+			);
+		}
+
 		const sqlRequest: sql.Request = database.request();
 
-		sqlRequest.input("email", sql.NVarChar, data.email);
-		sqlRequest.input("userName", sql.NVarChar, data.userName);
-		sqlRequest.input("firstName", sql.NVarChar, data.firstName);
-		sqlRequest.input("lastName", sql.NVarChar, data.lastName);
-		sqlRequest.input("password", sql.NVarChar, hash);
-		sqlRequest.input("birthDate", sql.Date, formatedDate);
+		sqlRequest.input('email', sql.NVarChar, data.email);
+		sqlRequest.input('userName', sql.NVarChar, data.userName);
+		sqlRequest.input('firstName', sql.NVarChar, data.firstName);
+		sqlRequest.input('lastName', sql.NVarChar, data.lastName);
+		sqlRequest.input('password', sql.NVarChar, hash);
+		sqlRequest.input('birthDate', sql.Date, formatedDate);
 
 		const results = await sqlRequest.query(
 			`INSERT INTO [User]([email],[userName],[firstName],[lastName],[password],[birthDate])
 			VALUES(@email ,@userName,@firstName,@lastName,@password, @birthDate)`
-			);
+		);
 		await database.close();
 
-		return Response.json({ results }, { status: 200 });
+		return Response.json({ succes: true }, { status: 200 });
 	} catch (err: any) {
 		return Response.json(
 			{ error: err.message || 'An unexpected error occurred' },
