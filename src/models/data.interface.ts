@@ -5,12 +5,8 @@ export abstract class GameDataFactory {
 
 export interface IServerGameData {
 	getData(): any;
-
-	data: any;
 }
 
 export interface IClientGameData {
 	getData(): any;
-
-	data: any;
 }

@@ -13,12 +13,8 @@ export class LudoPlayer implements IPlayer {
 	constructor(user: IUser, color: LudoPlayerColor) {
 		this.user = user;
 		this.color = color;
-		for (let i = 0; i < 4; i++) {
-			this.pawns.push(new LudoPawn(color, i));
-		}
 	}
 
 	user!: IUser;
 	color!: LudoPlayerColor;
-	pawns!: Array<LudoPawn>;
 }

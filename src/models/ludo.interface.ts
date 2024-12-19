@@ -5,48 +5,52 @@ import {
 	GameDataFactory,
 } from './data.interface';
 import { IPosition } from './game.interface';
+import { BoardSquare } from '@/games/ludo/board';
 
 export class LudoGameDataFacotry implements GameDataFactory {
 	createServerData(data: any): IServerGameData {
-		return new LudoServerGameData(data.dice, data.playerPositions);
+		return new LudoServerGameData(
+			data.dice,
+			data.playerPositions,
+			data.position
+		);
 	}
 
 	createClientData(data: any): IClientGameData {
-		return new LudoClientGameData(data.dice, data.id, data.player);
+		return new LudoClientGameData(data);
 	}
 }
 
 export class LudoClientGameData implements IClientGameData {
-	constructor(dice: number, id: number, player: LudoPlayer) {
-		this.dice = dice;
-		this.id = id;
-		this.player = player;
+	constructor(board: BoardSquare[][]) {
+		this.board = board;
 	}
 
 	getData() {
-		this.data = { dice: this.dice, id: this.id, player: this.player };
-		return this.data;
+		return { board: this.board };
 	}
 
-	data: any;
-	dice!: number;
-	id!: number;
-	player!: LudoPlayer;
+	board!: BoardSquare[][];
 }
 
 export class LudoServerGameData implements IServerGameData {
-	constructor(dice: number, changedPlayerPosition: LudoPawn) {
+	constructor(dice: number, changedPawn: LudoPawn, position: IPosition) {
 		this.dice = dice;
-		this.changedPlayerPosition = changedPlayerPosition;
+		this.changedPawn = changedPawn;
+		this.position = position;
 	}
 
 	getData() {
-		throw new Error('Method not implemented.');
+		return {
+			dice: this.dice,
+			changedPawn: this.changedPawn,
+			position: this.position,
+		};
 	}
 
-	data: any;
 	dice!: number;
-	changedPlayerPosition!: LudoPawn;
+	changedPawn!: LudoPawn;
+	position!: IPosition;
 }
 
 export class LudoPawn {
@@ -55,7 +59,6 @@ export class LudoPawn {
 		this.id = id;
 	}
 
-	screenPosition!: IPosition;
 	color!: LudoPlayerColor;
 	id!: number;
 }
