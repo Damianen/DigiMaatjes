@@ -9,7 +9,6 @@ export default function Home() {
 	return (
 		<>
 			<div>Hello user!</div>
-			<User></User>
 			<JoinRoom></JoinRoom>
 		</>
 	);
