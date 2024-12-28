@@ -1,4 +1,4 @@
-import { SignupFormSchema, RegisterFormState } from '@/app/lib/definitions';
+import { SignupFormSchema, RegisterFormState, LoginFormState } from '@/app/lib/definitions';
 import 'dotenv/config'
 
 export async function signup(state: RegisterFormState, formData: FormData) {
@@ -42,6 +42,25 @@ export async function signup(state: RegisterFormState, formData: FormData) {
     
 }
 
-export async function signin(formData: FormData) {
-	console.log(formData.get('username'));
+export async function signin(state: LoginFormState, formData: FormData) {
+
+    const login = {
+        password: formData.get('password'),
+        userName: formData.get('username'),
+    }
+    
+    const apiResponse = await fetch('api/user/login', {
+        method: "POST",
+        body: JSON.stringify(login)
+    })
+    const data = await apiResponse.json();
+    if(data.succes){
+        return {
+			message: "User is succesvol ingelogd!"
+		};
+    }else{
+        return {
+			apiError: data.error
+		};
+    }
 }

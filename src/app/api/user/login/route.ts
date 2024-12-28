@@ -6,9 +6,9 @@ export async function POST(request: Request) {
 	try {
 		const data = await request.json();
 
-		if (!data.email) {
+		if (!data.userName) {
 			return Response.json(
-				{ error: "field 'email' cannot be empty!" },
+				{ error: "field 'userName' cannot be empty!" },
 				{ status: 400 }
 			);
 		}
@@ -25,21 +25,22 @@ export async function POST(request: Request) {
 
 		const sqlRequest: sql.Request = database.request();
 
-		sqlRequest.input('email', sql.NVarChar, data.email);
+		sqlRequest.input('userName', sql.NVarChar, data.userName);
 
-		const results = await sqlRequest
-			.query('SELECT email, password FROM [User] WHERE email=@email');
+		const results = await sqlRequest.query(
+			'SELECT userName, password FROM [User] WHERE userName=@userName'
+		);
 
 		await database.close();
 
-		if(results.recordset.length == 0){
+		if (results.recordset.length == 0) {
 			return Response.json(
-				{ error: "Gebruiker niet gevonden!" },
+				{ error: 'Gebruiker niet gevonden!' },
 				{ status: 404 }
 			);
-		}else if(!compareSync(data.password, results.recordset[0].password)){
+		} else if (!compareSync(data.password, results.recordset[0].password)) {
 			return Response.json(
-				{ error: "Wachtwoord is incorrect!" },
+				{ error: 'Wachtwoord is incorrect!' },
 				{ status: 404 }
 			);
 		}
