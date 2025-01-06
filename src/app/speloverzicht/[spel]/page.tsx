@@ -1,14 +1,10 @@
 'use client';
 import Image from 'next/image';
+import accountIcon from '../../../../public/img/accounticon.png';
 import Navbar from '@/app/component/navbar';
 import { useParams, useRouter } from 'next/navigation';
 import { socket } from '../../socket';
 import { useState, useEffect } from 'react';
-
-interface Room{
-	roomName: string;
-	numUsers: number;
-}
 
 export default function GameRoom() {
 	const router = useRouter();
@@ -20,8 +16,8 @@ export default function GameRoom() {
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
 	}
-	const [rooms, setRooms] = useState<Room[]>([]);
-	// const [usersInRoom, setUsersInRoom] = useState<number>(0);	
+	const [rooms, setRooms] = useState<string[]>([]);
+	const [usersInRoom, setUsersInRoom] = useState<number>(0);
 	const id = rooms.length + 1;
 
 	useEffect(() => {
@@ -30,24 +26,27 @@ export default function GameRoom() {
 
 	function findRooms() {
 		socket.emit('findRooms', spelnaam);
-		socket.on('rooms', (rooms: Room[]) => {
+		socket.on('rooms', (rooms: string[]) => {
 			console.log(rooms);
 			setRooms(rooms);
 		});
 	}
 
-	function handleCreateGame(){
+	function handleCreateGame() {
 		socket.emit('createRoom', `${spelnaam}-${id}`, nickname);
 		router.push(`/room/${spelnaam}-${id}`);
 	}
 
-	// function findUsersInRoom(room: string) {
-	// 	socket.emit('findUsersInRoom', room);
-	// 	socket.on('numberOfUsers', (users: number) => {
-	// 		setUsersInRoom(users);
-	// 	});
-	// 	return usersInRoom;
-	// }
+	function findUsersInRoom(room: string) {
+		socket.emit('findUsersInRoom', room);
+		socket.on('numberOfUsers', (users: number) => {
+			setUsersInRoom(users);
+		});
+		return usersInRoom;
+	}
+	// const username = 'Digimaatje';
+	const username = 'Digimaatje';
+	const username2 = 'Piet';
 
 	const [showExplanation, setShowExplanation] = useState(false);
 
@@ -76,8 +75,18 @@ export default function GameRoom() {
 							{gameRealName} is een spel voor 2 tot 4 spelers.
 						</div>
 
+						<button
+							onClick={() => router.push('/speloverzicht')}
+							className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 mr-12"
+						>
+							Terug naar speloverzicht
+						</button>
+
 						<div className="flex items-center gap-x-6 relative">
-							<button onClick = {handleCreateGame} className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+							<button
+								onClick={handleCreateGame}
+								className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+							>
 								Creëer zelf spel
 							</button>
 
@@ -93,8 +102,8 @@ export default function GameRoom() {
 									<p>
 										Deze kamer is waar spelers kunnen
 										samenkomen om een spel te spelen. Druk
-										op Join om mee te doen aan de kamer
-										van een vriend!
+										op Join om mee te doen aan de kamer van
+										een vriend!
 									</p>
 									<button
 										onClick={toggleExplanation}
@@ -105,24 +114,24 @@ export default function GameRoom() {
 								</div>
 							)}
 						</div>
-						
 					</div>
-				
+
 					<div className="grid grid-cols-1 gap-6">
-						{rooms.map((room, index) => (
+						{rooms.map((room) => (
 							<div
-								key={index}
+								key={room}
 								className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow"
 							>
 								<div className="flex-1 text-lg font-semibold font-bambino">
-									{room.roomName}
+									{room}
 								</div>
 								<div className="text-lg flex-shrink-0 min-w-[80px] text-center mr-20">
-									Users: {room.numUsers}/4
+									Users: {findUsersInRoom(room)}/4
 								</div>
-                                <button onClick={()=>{
-							socket.emit('joinRoom', room.roomName, nickname);
-							router.push(`/room/${room.roomName}`);
+								<button
+									onClick={() => {
+										socket.emit('joinRoom', room, nickname);
+										router.push(`/room/${room}`);
 									}}
 									className="px-8 py-4 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
 								>
