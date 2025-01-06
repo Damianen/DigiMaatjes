@@ -14,7 +14,12 @@ export default function SpelOverzicht() {
 				<div className="flex flex-col mt-36">
 					<div className="text-center">
 						<h1 className="text-5xl font-bold font-bambino text-white mb-4">
+<<<<<<< Updated upstream
 							Welkom bij Digimaatjes, Kies een spel en start!
+=======
+							Welkom bij <a href="/">Digimaatjes</a>, Kies een
+							spel en start!
+>>>>>>> Stashed changes
 						</h1>
 					</div>
 
