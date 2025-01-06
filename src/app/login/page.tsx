@@ -2,7 +2,6 @@
 import { useState, useActionState } from 'react';
 import { signin } from '@/app/services/auth';
 
-
 export default function Login() {
 	const [showExplanation, setShowExplanation] = useState(false);
 
@@ -83,12 +82,7 @@ export default function Login() {
 						</div>
 					</div>
 
-					{state?.message && (
-						<p>{state.message}</p>
-					)}
-					{state?.apiError && (
-						<p>{state.apiError}</p>
-					)}
+					{state?.apiError && <p>{state.apiError}</p>}
 
 					<div className="text-center mt-12">
 						<button

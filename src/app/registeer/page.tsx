@@ -80,9 +80,7 @@ export default function Register() {
 								required
 							/>
 						</div>
-						{state?.errors?.email && (
-							<p>{state.errors.email}</p>
-						)}
+						{state?.errors?.email && <p>{state.errors.email}</p>}
 
 						<div className="w-full">
 							<label
@@ -152,25 +150,21 @@ export default function Register() {
 								required
 							/>
 							{state?.errors?.password && (
-							<div>
-								<p>Wachtwoord moet:</p>
-								<ul>
-									{state.errors.password.map((error) => (
-										<li key={error}>- {error}</li>
-									))}
-								</ul>
-							</div>
-						)}
+								<div>
+									<p>Wachtwoord moet:</p>
+									<ul>
+										{state.errors.password.map((error) => (
+											<li key={error}>- {error}</li>
+										))}
+									</ul>
+								</div>
+							)}
 						</div>
 					</div>
 
 					<div>
-						{state?.message && (
-							<p>{state.message}</p>
-						)}
-						{state?.apiError && (
-							<p>{state.apiError}</p>
-						)}
+						{state?.message && <p>{state.message}</p>}
+						{state?.apiError && <p>{state.apiError}</p>}
 					</div>
 
 					<div className="text-center">

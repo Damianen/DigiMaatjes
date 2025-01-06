@@ -2,7 +2,6 @@ import { JWTPayload } from 'jose';
 import { z } from 'zod';
 
 export interface SessionPayload extends JWTPayload {
-	userEmail: string;
 	userName: string;
 	expiresAt: Date;
 }

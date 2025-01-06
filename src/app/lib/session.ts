@@ -1,3 +1,4 @@
+'use server';
 import 'server-only';
 import { SignJWT, jwtVerify } from 'jose';
 import { SessionPayload } from '@/app/lib/definitions';
@@ -25,9 +26,9 @@ export async function decrypt(session: string | undefined = '') {
 	}
 }
 
-export async function createSession(userEmail: string, userName: string) {
+export async function createSession(userName: string) {
 	const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-	const session = await encrypt({ userEmail, userName, expiresAt });
+	const session = await encrypt({ userName, expiresAt });
 	const cookieStore = await cookies();
 
 	cookieStore.set('session', session, {
@@ -37,4 +38,9 @@ export async function createSession(userEmail: string, userName: string) {
 		sameSite: 'lax',
 		path: '/',
 	});
+}
+
+export async function deleteSession() {
+	const cookieStore = await cookies();
+	cookieStore.delete('session');
 }
