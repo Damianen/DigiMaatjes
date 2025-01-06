@@ -17,7 +17,7 @@ export default function GameRoom() {
 		gameRealName = 'Mens erger je niet';
 	}
 	const [rooms, setRooms] = useState<string[]>([]);
-	const [usersInRoom, setUsersInRoom] = useState<number>(0);	
+	const [usersInRoom, setUsersInRoom] = useState<number>(0);
 	const id = rooms.length + 1;
 
 	useEffect(() => {
@@ -32,7 +32,7 @@ export default function GameRoom() {
 		});
 	}
 
-	function handleCreateGame(){
+	function handleCreateGame() {
 		socket.emit('createRoom', `${spelnaam}-${id}`, nickname);
 		router.push(`/room/${spelnaam}-${id}`);
 	}
@@ -75,8 +75,18 @@ export default function GameRoom() {
 							{gameRealName} is een spel voor 2 tot 4 spelers.
 						</div>
 
+						<button
+							onClick={() => router.push('/speloverzicht')}
+							className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 mr-12"
+						>
+							Terug naar speloverzicht
+						</button>
+
 						<div className="flex items-center gap-x-6 relative">
-							<button onClick = {handleCreateGame} className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+							<button
+								onClick={handleCreateGame}
+								className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+							>
 								Creëer zelf spel
 							</button>
 
@@ -92,8 +102,8 @@ export default function GameRoom() {
 									<p>
 										Deze kamer is waar spelers kunnen
 										samenkomen om een spel te spelen. Druk
-										op "Join" om mee te doen aan de kamer
-										van een vriend!
+										op Join om mee te doen aan de kamer van
+										een vriend!
 									</p>
 									<button
 										onClick={toggleExplanation}
@@ -105,7 +115,7 @@ export default function GameRoom() {
 							)}
 						</div>
 					</div>
-				
+
 					<div className="grid grid-cols-1 gap-6">
 						{rooms.map((room) => (
 							<div
