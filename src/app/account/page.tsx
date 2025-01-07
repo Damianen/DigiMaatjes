@@ -34,14 +34,15 @@ export default function AccountDetails() {
 
 	return (
 		<>
+			<Navbar />
 			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center px-4 ">
 				<main className="w-full max-w-8xl grid grid-cols-1 lg:grid-cols-2 gap-8 p-12">
 					<div className="bg-white px-8 py-11 rounded-lg shadow-md h-[725px] ">
 						<h2 className="text-3xl font-semibold mb-3">
 							Mijn gegevens
 						</h2>
-						<div className="flex items-center">
-							<div className="w-64 h-32 flex-shrink-0 b   g-gray-200 rounded-lg overflow-hidden mr-6 mb-2">
+						<div className="flex flex-col sm:flex-row items-center">
+							<div className="w-64 h-32 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden mb-4 sm:mb-0 sm:mr-6">
 								{profilePhoto ? (
 									<Image
 										src={profilePhoto}
@@ -58,11 +59,12 @@ export default function AccountDetails() {
 							</div>
 							<label className="block">
 								<span className="sr-only">Foto uploaden</span>
-								<button className="px-6 py-3 text-lg  bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+								<button className="px-6 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
 									Upload foto
 								</button>
 							</label>
 						</div>
+
 						<form>
 							<div className="mb-6">
 								<label className="block text-lg font-medium text-gray-700 mb-1">
@@ -71,7 +73,7 @@ export default function AccountDetails() {
 								<input
 									type="text"
 									name="firstName"
-									value={formData.firstName}
+									defaultValue={formData.firstName}
 									className="w-full border border-gray-300 rounded-lg p-4 text-lg focus:outline-none focus:ring-4 focus:ring-blue-500"
 								/>
 							</div>
@@ -82,7 +84,7 @@ export default function AccountDetails() {
 								<input
 									type="text"
 									name="lastName"
-									value={formData.lastName}
+									defaultValue={formData.lastName}
 									className="w-full border border-gray-300 rounded-lg p-4 text-lg focus:outline-none focus:ring-4 focus:ring-blue-500"
 								/>
 							</div>
@@ -93,7 +95,7 @@ export default function AccountDetails() {
 								<input
 									type="date"
 									name="birthDate"
-									value={formData.birthDate}
+									defaultValue={formData.birthDate}
 									className="w-full border border-gray-300 rounded-lg p-4 text-lg focus:outline-none focus:ring-4 focus:ring-blue-500"
 								/>
 							</div>
@@ -104,7 +106,7 @@ export default function AccountDetails() {
 								<input
 									type="text"
 									name="username"
-									value={formData.username}
+									defaultValue={formData.username}
 									className="w-full border border-gray-300 rounded-lg p-4 text-lg focus:outline-none focus:ring-4 focus:ring-blue-500"
 								/>
 							</div>
