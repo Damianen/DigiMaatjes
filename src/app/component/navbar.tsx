@@ -46,6 +46,7 @@ export default function Navbar() {
 								<li>
 									<a
 										onClick={logoutUser}
+										style={{cursor: "pointer"}}
 										className="block px-4 py-2 text-black hover:bg-gray-200 rounded-b-lg"
 									>
 										Log Out
