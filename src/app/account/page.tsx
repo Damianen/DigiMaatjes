@@ -1,17 +1,24 @@
 'use client';
 import Image from 'next/image';
 import Navbar from '@/app/component/navbar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getUserName } from '../lib/dal';
+import Loading from '../component/loading';
 
 export default function AccountDetails() {
 	const [formData, setFormData] = useState({
 		firstName: 'Zaid',
 		lastName: 'Karmoudi',
 		birthDate: '1998-04-09',
-		username: 'Zaidkar',
+		username: '',
 	});
 
 	const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+
+	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
+		'pending'
+	);
+	const [error, setError] = useState<Error | null>(null);
 
 	const friends = [
 		{ name: 'Coen', isOnline: true },
@@ -32,16 +39,46 @@ export default function AccountDetails() {
 		);
 	};
 
+	useEffect(() => {
+		async function fetchUsername() {
+			setProfilePhoto('')
+			setStatus('pending');
+			try {
+				const username = await getUserName();
+				if (username) {
+					setFormData((prev) => ({
+						...prev,
+						username: username.toString(),
+					}));
+					setStatus('success');
+				} else {
+					throw new Error('Username not found');
+				}
+			} catch (e) {
+				console.log(e);
+				setStatus('error');
+				setError(e as Error);
+			}
+		}
+		fetchUsername();
+	}, []);
+
+	if (status === 'pending') {
+		return <Loading />;
+	}
+	if (status === 'error') return <h1>Error! {error?.message}</h1>;
+
 	return (
 		<>
+			<Navbar />
 			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center px-4 ">
-				<main className="w-full max-w-8xl grid grid-cols-1 lg:grid-cols-2 gap-8 p-12">
+				<main className="w-full max-w-8xl grid grid-cols-1 lg:grid-cols-2 gap-8 px-12 mt-10">
 					<div className="bg-white px-8 py-11 rounded-lg shadow-md h-[725px] ">
 						<h2 className="text-3xl font-semibold mb-3">
 							Mijn gegevens
 						</h2>
-						<div className="flex items-center">
-							<div className="w-64 h-32 flex-shrink-0 b   g-gray-200 rounded-lg overflow-hidden mr-6 mb-2">
+						<div className="flex flex-col sm:flex-row items-center">
+							<div className="w-64 h-32 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden mb-4 sm:mb-0 sm:mr-6">
 								{profilePhoto ? (
 									<Image
 										src={profilePhoto}
@@ -58,11 +95,12 @@ export default function AccountDetails() {
 							</div>
 							<label className="block">
 								<span className="sr-only">Foto uploaden</span>
-								<button className="px-6 py-3 text-lg  bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+								<button className="px-6 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
 									Upload foto
 								</button>
 							</label>
 						</div>
+
 						<form>
 							<div className="mb-6">
 								<label className="block text-lg font-medium text-gray-700 mb-1">
@@ -71,7 +109,7 @@ export default function AccountDetails() {
 								<input
 									type="text"
 									name="firstName"
-									value={formData.firstName}
+									defaultValue={formData.firstName}
 									className="w-full border border-gray-300 rounded-lg p-4 text-lg focus:outline-none focus:ring-4 focus:ring-blue-500"
 								/>
 							</div>
@@ -82,7 +120,7 @@ export default function AccountDetails() {
 								<input
 									type="text"
 									name="lastName"
-									value={formData.lastName}
+									defaultValue={formData.lastName}
 									className="w-full border border-gray-300 rounded-lg p-4 text-lg focus:outline-none focus:ring-4 focus:ring-blue-500"
 								/>
 							</div>
@@ -93,7 +131,7 @@ export default function AccountDetails() {
 								<input
 									type="date"
 									name="birthDate"
-									value={formData.birthDate}
+									defaultValue={formData.birthDate}
 									className="w-full border border-gray-300 rounded-lg p-4 text-lg focus:outline-none focus:ring-4 focus:ring-blue-500"
 								/>
 							</div>
@@ -105,7 +143,8 @@ export default function AccountDetails() {
 									type="text"
 									name="username"
 									value={formData.username}
-									className="w-full border border-gray-300 rounded-lg p-4 text-lg focus:outline-none focus:ring-4 focus:ring-blue-500"
+									readOnly
+									className="w-full border border-gray-300 rounded-lg p-4 text-lg bg-gray-100 focus:outline-none focus:ring-4 focus:ring-blue-500"
 								/>
 							</div>
 						</form>
