@@ -36,7 +36,7 @@ export default function AccountDetails() {
 		<>
 			<Navbar />
 			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center px-4 ">
-				<main className="w-full max-w-8xl grid grid-cols-1 lg:grid-cols-2 gap-8 p-12">
+				<main className="w-full max-w-8xl grid grid-cols-1 lg:grid-cols-2 gap-8 px-12 mt-10">
 					<div className="bg-white px-8 py-11 rounded-lg shadow-md h-[725px] ">
 						<h2 className="text-3xl font-semibold mb-3">
 							Mijn gegevens
