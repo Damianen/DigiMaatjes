@@ -21,7 +21,7 @@ export default function GameRoom() {
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
 	}
-	const [rooms, setRooms] = useState<string[]>([]);
+	const [rooms, setRooms] = useState<Room[]>([]);
 	const [usersInRoom, setUsersInRoom] = useState<number>(0);
 	const id = rooms.length + 1;
 
