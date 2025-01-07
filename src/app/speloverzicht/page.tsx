@@ -5,13 +5,15 @@ import ludo from '../../../public/img/mensergerjeniet.jpg';
 import checkers from '../../../public/img/dammen.jpg';
 import memory from '../../../public/img/memory.jpg';
 import dominoes from '../../../public/img/dominoes.jpg';
+import Navbar from '../component/navbar';
 
 export default function SpelOverzicht() {
 	// const username = 'Digimaatjes';
 	return (
 		<>
+			<Navbar />
 			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center">
-				<div className="flex flex-col mt-36">
+				<div className="flex flex-col mt-8">
 					<div className="text-center">
 						<h1 className="text-5xl font-bold font-bambino text-white mb-4">
 							Welkom bij <a href="/">Digimaatjes</a>, Kies een
@@ -19,7 +21,7 @@ export default function SpelOverzicht() {
 						</h1>
 					</div>
 
-					<div className="grid grid-cols-2 gap-8">
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 						<a
 							href="speloverzicht/Mensergerjeniet"
 							className="relative group"
