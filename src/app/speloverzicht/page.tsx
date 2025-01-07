@@ -6,10 +6,9 @@ import checkers from '../../../public/img/dammen.jpg';
 import memory from '../../../public/img/memory.jpg';
 import dominoes from '../../../public/img/dominoes.jpg';
 import Navbar from '../component/navbar';
-import { error } from 'console';
 import { useEffect, useState } from 'react';
 import Loading from '../component/loading';
-import { getUserName } from '../lib/dal';
+import Link from 'next/link';
 
 export default function SpelOverzicht() {
 	// const username = 'Digimaatjes';
@@ -47,13 +46,13 @@ export default function SpelOverzicht() {
 				<div className="flex flex-col mt-8">
 					<div className="text-center">
 						<h1 className="text-5xl font-bold font-bambino text-white mb-4">
-							Welkom bij <a href="/">Digimaatjes</a>, Kies een
+							Welkom bij <Link href="/">Digimaatjes</Link>, Kies een
 							spel en start!
 						</h1>
 					</div>
 
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-						<a
+						<Link
 							href="speloverzicht/Mensergerjeniet"
 							className="relative group"
 						>
@@ -67,9 +66,9 @@ export default function SpelOverzicht() {
 							<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white font-bambino text-2xl font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
 								Mens erger je niet
 							</div>
-						</a>
+						</Link>
 
-						<a
+						<Link
 							href="speloverzicht/Dammen"
 							className="relative group"
 						>
@@ -83,9 +82,9 @@ export default function SpelOverzicht() {
 							<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white font-bambino text-2xl font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
 								Binnenkort beschikbaar
 							</div>
-						</a>
+						</Link>
 
-						<a
+						<Link
 							href="speloverzicht/Memory"
 							className="relative group"
 						>
@@ -99,9 +98,9 @@ export default function SpelOverzicht() {
 							<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white font-bambino text-2xl font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
 								Binnenkort beschikbaar
 							</div>
-						</a>
+						</Link>
 
-						<a
+						<Link
 							href="speloverzicht/Dominoes"
 							className="relative group"
 						>
@@ -115,7 +114,7 @@ export default function SpelOverzicht() {
 							<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white font-bambino text-2xl font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
 								Binnenkort beschikbaar
 							</div>
-						</a>
+						</Link>
 					</div>
 				</div>
 			</div>

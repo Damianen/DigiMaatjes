@@ -1,8 +1,8 @@
-import { headers } from 'next/headers';
+// import { headers } from 'next/headers';
 import { database } from '../dao/db-config';
 
-export async function GET(request: Request) {
-	const headersList = await headers();
+export async function GET() {
+	// const headersList = await headers();
 	if (!database.connected) {
 		await database.connect();
 	}

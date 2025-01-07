@@ -46,10 +46,14 @@ export async function POST(request: Request) {
 		}
 
 		return Response.json({ succes: true }, { status: 200 });
-	} catch (err: any) {
-		return Response.json(
-			{ error: err.message || 'An unexpected error occurred' },
-			{ status: 400 }
-		);
-	}
+	} catch (err: unknown) {
+        let errorMessage = 'An unexpected error occurred';
+        if (err instanceof Error) {
+            errorMessage = err.message;
+        }
+        return Response.json(
+            { error: errorMessage },
+            { status: 400 }
+        );
+    }
 }

@@ -23,7 +23,7 @@ export default function GameRoom() {
 	}
 	const [nickname, setNickname] = useState<string>('');
 	const [rooms, setRooms] = useState<Room[]>([]);
-	const [usersInRoom, setUsersInRoom] = useState<number>(0);
+	// const [usersInRoom, setUsersInRoom] = useState<number>(0);
 	const id = rooms.length + 1;
 
 	useEffect(() => {
@@ -62,16 +62,16 @@ export default function GameRoom() {
 		router.push(`/room/${spelnaam}-${id}`);
 	}
 
-	function findUsersInRoom(room: string) {
-		socket.emit('findUsersInRoom', room);
-		socket.on('numberOfUsers', (users: number) => {
-			setUsersInRoom(users);
-		});
-		return usersInRoom;
-	}
+	// function findUsersInRoom(room: string) {
+	// 	socket.emit('findUsersInRoom', room);
+	// 	socket.on('numberOfUsers', (users: number) => {
+	// 		setUsersInRoom(users);
+	// 	});
+	// 	return usersInRoom;
+	// }
 	// const username = 'Digimaatje';
-	const username = 'Digimaatje';
-	const username2 = 'Piet';
+	// const username = 'Digimaatje';
+	// const username2 = 'Piet';
 
 	const [showExplanation, setShowExplanation] = useState(false);
 

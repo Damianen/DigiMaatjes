@@ -42,9 +42,11 @@ export default function Home() {
 	useEffect(() => {
 		if (socket.connected) {
 			onConnect();
+			console.log(isConnected, transport)
 		}
 
 		function onConnect() {
+			
 			setIsConnected(true);
 			setTransport(socket.io.engine.transport.name);
 

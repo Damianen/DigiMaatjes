@@ -41,6 +41,7 @@ export default function AccountDetails() {
 
 	useEffect(() => {
 		async function fetchUsername() {
+			setProfilePhoto('')
 			setStatus('pending');
 			try {
 				const username = await getUserName();
