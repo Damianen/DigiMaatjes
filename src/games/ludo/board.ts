@@ -16,14 +16,14 @@ export const YELLOW_HOME: IPosition[] = [
 	{ x: 12, y: 3 },
 ];
 
-export const BLUE_HOME: IPosition[] = [
+export const RED_HOME: IPosition[] = [
 	{ x: 2, y: 11 },
 	{ x: 3, y: 11 },
 	{ x: 2, y: 12 },
 	{ x: 3, y: 12 },
 ];
 
-export const RED_HOME: IPosition[] = [
+export const BLUE_HOME: IPosition[] = [
 	{ x: 11, y: 11 },
 	{ x: 12, y: 11 },
 	{ x: 11, y: 12 },
@@ -94,7 +94,7 @@ export const newBoard: LudoBoardSquare[][] = [
 			{ x: 8, y: 1 },
 			LudoPlayerColor.YELLOW,
 			true,
-			new LudoPawn(LudoPlayerColor.RED, 0)
+			new LudoPawn(LudoPlayerColor.YELLOW, 0)
 		),
 		new LudoBoardSquare(
 			true,

@@ -5,7 +5,7 @@ import { GameFactory } from '../game.factory';
 import { IServerGameData } from '@/models/data.interface';
 
 export class LudoGameFactory extends GameFactory {
-	protected createGame(users: Array<IUser>): IGame {
+	createGame(users: Array<IUser>): IGame {
 		return new LudoGame(users);
 	}
 }

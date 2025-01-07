@@ -8,11 +8,7 @@ import { IPosition } from './game.interface';
 
 export class LudoGameDataFacotry implements GameDataFactory {
 	createServerData(data: any): IServerGameData {
-		return new LudoServerGameData(
-			data.dice,
-			data.playerPositions,
-			data.position
-		);
+		return new LudoServerGameData(data.dice, data.pawn, data.position);
 	}
 
 	createClientData(data: any): IClientGameData {

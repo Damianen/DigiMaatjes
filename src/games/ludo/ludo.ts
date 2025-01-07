@@ -27,6 +27,7 @@ export class LudoGame implements IGame {
 		});
 		this.currentPlayer = this.players[0];
 		this.board = newBoard;
+		this.dataFactory = new LudoGameDataFacotry();
 	}
 
 	players!: Array<LudoPlayer>;
@@ -58,7 +59,22 @@ export class LudoGame implements IGame {
 		}
 
 		if (this.board[position.y][position.x].startSquare && diceNum != 6) {
-			throw new Error('Je hebt geen 6 gegooit!');
+			//throw new Error('Je hebt geen 6 gegooit!');
+
+			if (diceNum != 6) {
+				if (
+					this.players.indexOf(this.currentPlayer) ==
+					this.players.length - 1
+				) {
+					this.currentPlayer = this.players[0];
+				} else {
+					this.currentPlayer =
+						this.players[
+							this.players.indexOf(this.currentPlayer) + 1
+						];
+				}
+			}
+			return this.dataFactory.createClientData(this.board);
 		}
 
 		let currentPosition: IPosition = position;
@@ -81,14 +97,9 @@ export class LudoGame implements IGame {
 			}
 
 			if (
-				this.board[nextPos.y][nextPos.x].home == pawn.color &&
-				this.board[
-					(this.board[nextPos.y][nextPos.x].nextPosition as IPosition)
-						.x
-				][
-					(this.board[nextPos.y][nextPos.x].nextPosition as IPosition)
-						.y
-				].home != pawn.color
+				this.board[currentPosition.y][currentPosition.x].home ==
+					pawn.color &&
+				this.board[nextPos.y][nextPos.x].home != pawn.color
 			) {
 				switch (pawn.color) {
 					case LudoPlayerColor.BLUE:
@@ -97,10 +108,10 @@ export class LudoGame implements IGame {
 					case LudoPlayerColor.YELLOW:
 						nextPos = { x: 7, y: 1 };
 						break;
-					case LudoPlayerColor.RED:
+					case LudoPlayerColor.GREEN:
 						nextPos = { x: 1, y: 7 };
 						break;
-					case LudoPlayerColor.GREEN:
+					case LudoPlayerColor.RED:
 						nextPos = { x: 7, y: 13 };
 						break;
 				}
@@ -131,6 +142,7 @@ export class LudoGame implements IGame {
 						) {
 							this.board[BLUE_HOME[i].y][BLUE_HOME[i].x].pawn =
 								slainPawn;
+							break;
 						}
 					}
 					break;
@@ -143,6 +155,7 @@ export class LudoGame implements IGame {
 							this.board[YELLOW_HOME[i].y][
 								YELLOW_HOME[i].x
 							].pawn = slainPawn;
+							break;
 						}
 					}
 					break;
@@ -154,6 +167,7 @@ export class LudoGame implements IGame {
 						) {
 							this.board[RED_HOME[i].y][RED_HOME[i].x].pawn =
 								slainPawn;
+							break;
 						}
 					}
 					break;
@@ -165,6 +179,7 @@ export class LudoGame implements IGame {
 						) {
 							this.board[GREEN_HOME[i].y][GREEN_HOME[i].x].pawn =
 								slainPawn;
+							break;
 						}
 					}
 					break;
