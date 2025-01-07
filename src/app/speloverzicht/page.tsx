@@ -6,9 +6,40 @@ import checkers from '../../../public/img/dammen.jpg';
 import memory from '../../../public/img/memory.jpg';
 import dominoes from '../../../public/img/dominoes.jpg';
 import Navbar from '../component/navbar';
+import { error } from 'console';
+import { useEffect, useState } from 'react';
+import Loading from '../component/loading';
+import { getUserName } from '../lib/dal';
 
 export default function SpelOverzicht() {
 	// const username = 'Digimaatjes';
+
+	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
+		'pending'
+	);
+	const [error, setError] = useState<Error | null>(null);
+
+	useEffect(() => {
+		async function fetchUsername() {
+			setStatus('pending');
+			try {
+				setTimeout(() => {
+					setStatus('success');
+				}, 10);
+			} catch (e) {
+				console.log(e);
+				setStatus('error');
+				setError(e as Error);
+			}
+		}
+		fetchUsername();
+	}, []);
+
+	if (status === 'pending') {
+		return <Loading />;
+	}
+	if (status === 'error') return <h1>Error! {error?.message}</h1>;
+
 	return (
 		<>
 			<Navbar />
