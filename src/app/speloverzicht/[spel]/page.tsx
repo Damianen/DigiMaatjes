@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import accountIcon from '../../../../public/img/accounticon.png';
+import { getUserName } from '@/app/lib/dal';
 import Navbar from '@/app/component/navbar';
 import { useParams, useRouter } from 'next/navigation';
 import { socket } from '../../socket';
@@ -16,29 +16,49 @@ export default function GameRoom() {
 	const spel = useParams().spel?.toString();
 	const spelnaam = spel ? spel : 'Mens erger je niet';
 	const spelimg = `/img/${spelnaam}.jpg`;
-	const nickname = 'Digimaatje';
+	
 	let gameRealName = spelnaam;
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
 	}
+	const [nickname, setNickname] = useState<string>('');
 	const [rooms, setRooms] = useState<Room[]>([]);
 	const [usersInRoom, setUsersInRoom] = useState<number>(0);
 	const id = rooms.length + 1;
 
 	useEffect(() => {
+		getUser();
 		findRooms();
+		socket.on('updateRooms', (rooms: Room[]) => {
+			console.log(rooms);
+			setRooms(rooms);
+		});
+
+		return () => {
+			socket.off('updateRooms');
+		}
 	}, []);
 
 	function findRooms() {
 		socket.emit('findRooms', spelnaam);
-		socket.on('rooms', (rooms: Room[]) => {
+		socket.on('updateRooms', (rooms: Room[]) => {
 			console.log(rooms);
 			setRooms(rooms);
 		});
+	}	
+
+	async function getUser(){
+		const user = await getUserName();
+		console.log(user);
+		if (user) {
+			setNickname( user as string);
+		}
+		console.log("nickname "+ nickname);
 	}
 
 	function handleCreateGame() {
-		socket.emit('createRoom', `${spelnaam}-${id}`, nickname);
+		console.log('create game with username: ', nickname);	
+		socket.emit('createRoom', `${spelnaam}-${id}`, nickname, spelnaam);
 		router.push(`/room/${spelnaam}-${id}`);
 	}
 
@@ -135,7 +155,7 @@ export default function GameRoom() {
 									Users: {room.numUsers}/4
 								</div>
                                 <button onClick={()=>{
-							socket.emit('joinRoom', room.roomName, nickname);
+							socket.emit('joinRoom', room.roomName, nickname, spelnaam);
 							router.push(`/room/${room.roomName}`);
 									}}
 									className="px-8 py-4 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
