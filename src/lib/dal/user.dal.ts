@@ -7,7 +7,7 @@ import { verifySession } from './dal';
 
 const baseUrl = process.env.BASE_URL;
 
-export const getUser = cache(async (): Promise<User | undefined> => {
+export const getCurrentUser = cache(async (): Promise<User | undefined> => {
     const session = await verifySession();
     if (!session) return undefined;
 
