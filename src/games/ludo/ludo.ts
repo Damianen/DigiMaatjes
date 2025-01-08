@@ -3,6 +3,7 @@ import {
 	LudoClientGameData,
 	LudoGameDataFacotry,
 	LudoPawn,
+	LudoServerGameData,
 } from '@/models/ludo.interface';
 import { IPlayer, IGame, IPosition } from '../../models/game.interface';
 import { IUser } from '../../models/user.interface';
@@ -37,20 +38,27 @@ export class LudoGame implements IGame {
 	dataFactory!: LudoGameDataFacotry;
 	board!: Array<Array<LudoBoardSquare>>;
 
-	takeTurn(data: IServerGameData): IClientGameData {
+	takeTurn(data: LudoServerGameData): IClientGameData {
 		if (!data) {
 			throw new Error('Invalid data');
 		}
 
-		const pawn: LudoPawn = data.getData().changedPawn;
-		const position: IPosition = data.getData().position;
-		const diceNum: number = data.getData().dice;
+		const pawn: LudoPawn = data.changedPawn;
+		const position: IPosition = data.position;
+		const diceNum: number = data.dice;
 		if (
 			!pawn ||
 			!diceNum ||
 			!position ||
-			pawn != this.board[position.y][position.x].pawn
+			pawn.id != this.board[position.y][position.x].pawn!.id ||
+			pawn.color != this.board[position.y][position.x].pawn!.color
 		) {
+			console.log(
+				pawn != this.board[position.y][position.x].pawn,
+				'  ',
+				this.board[position.y][position.x].pawn,
+				pawn
+			);
 			throw new Error('Invalid data');
 		}
 

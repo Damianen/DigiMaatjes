@@ -57,7 +57,7 @@ export class LudoServerGameData implements IServerGameData {
 		this.position = position;
 	}
 
-	getData() {
+	getData(): { dice: number; changedPawn: LudoPawn; position: IPosition } {
 		return {
 			dice: this.dice,
 			changedPawn: this.changedPawn,
