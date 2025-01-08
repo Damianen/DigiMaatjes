@@ -5,6 +5,9 @@ import { cookies } from 'next/headers'
 import { decrypt } from '@/app/lib/session'
 import { redirect } from 'next/navigation'
 import { cache } from 'react'
+import { User } from '@/app/lib/definitions';
+
+const baseUrl = process.env.BASE_URL;
  
 export const verifySession = cache(async () => {
   const cookie = (await cookies()).get('session')?.value
@@ -17,22 +20,28 @@ export const verifySession = cache(async () => {
   return { isAuth: true, userName: session.userName }
 })
 
-export const getUser = cache(async () => {
+export const getUser = cache(async (): Promise<User | undefined> => {
     const session = await verifySession()
-    if (!session) return null
+    if (!session) return undefined;
    
     try {
-    const apiResponse = await fetch('api/user', {
+    const apiResponse = await fetch(baseUrl + '/api/user/' + session.userName, {
         method: 'GET',
     });
    
-    const data = await apiResponse.json();
-   
-    return data;
+    const user = await apiResponse.json();
+    if(user){
+        console.log(user)
+        return user;
+    }else{
+        console.log("User not found!")
+        return undefined;
+    }
 
     } catch (error) {
       console.log('Failed to fetch user')
-      return null
+      console.log(error)
+      return undefined;
     }
 })
 

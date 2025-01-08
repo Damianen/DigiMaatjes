@@ -37,3 +37,16 @@ export type LoginFormState =
 			apiError?: string;
 	  }
 	| undefined;
+
+export interface UserCredentials {
+	userName: string;
+	password: string;
+}
+
+export interface User extends UserCredentials {
+	email: string;
+	firstName: string;
+	lastName: string;
+	birthDate: Date;
+	profilePicture?: string;
+}

@@ -1,3 +1,5 @@
+'use server';
+import 'server-only' 
 import {
 	SignupFormSchema,
 	RegisterFormState,
@@ -6,6 +8,8 @@ import {
 import 'dotenv/config';
 import { createSession, deleteSession } from '@/app/lib/session';
 import { redirect } from 'next/navigation';
+
+const baseUrl = process.env.BASE_URL;
 
 export async function signup(state: RegisterFormState, formData: FormData) {
 	// Validate form fields
@@ -36,7 +40,7 @@ export async function signup(state: RegisterFormState, formData: FormData) {
 		birthDate: formatedDate,
 	};
 
-	const apiResponse = await fetch('api/user/register', {
+	const apiResponse = await fetch(baseUrl + '/api/user/register', {
 		method: 'POST',
 		body: JSON.stringify(user),
 	});
@@ -58,7 +62,7 @@ export async function signin(state: LoginFormState, formData: FormData) {
 		userName: formData.get('username'),
 	};
 
-	const apiResponse = await fetch('api/user/login', {
+	const apiResponse = await fetch(baseUrl + '/api/user/login', {
 		method: 'POST',
 		body: JSON.stringify(login),
 	});

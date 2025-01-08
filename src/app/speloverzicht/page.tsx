@@ -6,9 +6,30 @@ import checkers from '../../../public/img/dammen.jpg';
 import memory from '../../../public/img/memory.jpg';
 import dominoes from '../../../public/img/dominoes.jpg';
 import Navbar from '../component/navbar';
+import { getUser } from '../lib/dal';
+import { useEffect, useState } from 'react';
+import { User } from '../lib/definitions';
 
 export default function SpelOverzicht() {
 	// const username = 'Digimaatjes';
+
+	const [user, setUser] = useState<User | undefined>(undefined);
+
+	useEffect(() => {
+		(async () => {
+			try {
+				const user = await getUser();
+				if (user) {
+					setUser(user);
+					console.log(user);
+				}
+				console.log(user);
+			} catch (err) {
+				console.log('Error occured when fetching User');
+			}
+		})();
+	}, []);
+
 	return (
 		<>
 			<Navbar />
