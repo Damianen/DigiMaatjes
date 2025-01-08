@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { getUserName } from '@/app/lib/dal';
+import { getUserName } from '@/lib/dal/user.dal';
 import Navbar from '@/app/component/navbar';
 import { useParams, useRouter } from 'next/navigation';
 import { socket } from '../../socket';
@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import Loading from '@/app/component/loading';
 import Joyride, { Placement } from 'react-joyride';
 
-interface Room {
+interface Room{
 	roomName: string;
 	numUsers: number;
 }
@@ -18,7 +18,7 @@ export default function GameRoom() {
 	const spel = useParams().spel?.toString();
 	const spelnaam = spel ? spel : 'Mens erger je niet';
 	const spelimg = `/img/${spelnaam}.jpg`;
-
+	
 	let gameRealName = spelnaam;
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
@@ -55,20 +55,19 @@ export default function GameRoom() {
 			console.log(rooms);
 			setRooms(rooms);
 		});
-	}
+	}	
 
-	async function getUser() {
+	async function getUser(){
 		const user = await getUserName();
 		console.log(user);
 		if (user) {
-			setNickname(user as string);
+			setNickname( user as string);
 		}
-		console.log('nickname ' + nickname);
+		console.log("nickname "+ nickname);
 	}
 
 	function handleCreateGame() {
-		setStatus('pending');
-		console.log('create game with username: ', nickname);
+		console.log('create game with username: ', nickname);	
 		socket.emit('createRoom', `${spelnaam}-${id}`, nickname, spelnaam);
 
 		setTimeout(() => {
@@ -181,6 +180,7 @@ export default function GameRoom() {
 								?
 							</button>
 						</div>
+						
 					</div>
 
 					<div className="grid grid-cols-1 gap-6">

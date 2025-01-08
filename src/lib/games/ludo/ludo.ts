@@ -3,11 +3,11 @@ import {
 	LudoClientGameData,
 	LudoGameDataFacotry,
 	LudoPawn,
-} from '@/models/ludo.interface';
+} from '@/lib/models/ludo.interface';
 import { IPlayer, IGame, IPosition } from '../../models/game.interface';
 import { IUser } from '../../models/user.interface';
 import { LudoPlayer, LudoPlayerColor } from './ludo.player';
-import { IClientGameData, IServerGameData } from '@/models/data.interface';
+import { IClientGameData, IServerGameData } from '@/lib/models/data.interface';
 import {
 	newBoard,
 	BLUE_HOME,

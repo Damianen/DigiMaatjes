@@ -1,4 +1,4 @@
-import { LudoPlayer, LudoPlayerColor } from '@/games/ludo/ludo.player';
+import { LudoPlayer, LudoPlayerColor } from '@/lib/games/ludo/ludo.player';
 import {
 	IServerGameData,
 	IClientGameData,
