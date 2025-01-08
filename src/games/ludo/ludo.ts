@@ -18,14 +18,8 @@ import {
 } from './board';
 
 export class LudoGame implements IGame {
-	constructor(users: Array<IUser>) {
-		this.players = [];
-		let i = 0;
-		users.forEach((user) => {
-			let player: LudoPlayer = new LudoPlayer(user, i);
-			this.players.push(player);
-			i++;
-		});
+	constructor(players: Array<IPlayer>) {
+		this.players = players as LudoPlayer[];
 		this.currentPlayer = this.players[0];
 		this.board = newBoard;
 		this.dataFactory = new LudoGameDataFacotry();
@@ -46,6 +40,7 @@ export class LudoGame implements IGame {
 		const pawn: LudoPawn = data.changedPawn;
 		const position: IPosition = data.position;
 		const diceNum: number = data.dice;
+
 		if (
 			!pawn ||
 			!diceNum ||
@@ -53,12 +48,6 @@ export class LudoGame implements IGame {
 			pawn.id != this.board[position.y][position.x].pawn!.id ||
 			pawn.color != this.board[position.y][position.x].pawn!.color
 		) {
-			console.log(
-				pawn != this.board[position.y][position.x].pawn,
-				'  ',
-				this.board[position.y][position.x].pawn,
-				pawn
-			);
 			throw new Error('Invalid data');
 		}
 
@@ -82,7 +71,10 @@ export class LudoGame implements IGame {
 						];
 				}
 			}
-			return this.dataFactory.createClientData(this.board);
+			return this.dataFactory.createClientData({
+				board: this.board,
+				player: this.currentPlayer,
+			});
 		}
 
 		let currentPosition: IPosition = position;
@@ -208,6 +200,9 @@ export class LudoGame implements IGame {
 			}
 		}
 
-		return this.dataFactory.createClientData(this.board);
+		return this.dataFactory.createClientData({
+			board: this.board,
+			player: this.currentPlayer,
+		});
 	}
 }

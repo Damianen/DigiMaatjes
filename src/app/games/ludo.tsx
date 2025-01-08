@@ -3,7 +3,7 @@
 import { newBoard } from '@/games/ludo/board';
 import { LudoGame } from '@/games/ludo/ludo';
 import { LudoGameFactory } from '@/games/ludo/ludo.factory';
-import { LudoPlayerColor } from '@/games/ludo/ludo.player';
+import { LudoPlayer, LudoPlayerColor } from '@/games/ludo/ludo.player';
 import { IPosition } from '@/models/game.interface';
 import {
 	LudoBoardSquare,
@@ -23,10 +23,14 @@ export default function Ludo({ height = 691, width = 691 }) {
 	const room = roomId ? roomId : '0';
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const frameRef = useRef<number>(0);
-	const [board, setBoard] = useState<LudoBoardSquare[][]>(newBoard);
-	const [turnState, setTurnState] = useState<number>(1);
+	const [board, setBoard] = useState<LudoBoardSquare[][]>([]);
+	const [turnState, setTurnState] = useState<number>(0);
 	const [dice, setDice] = useState<number>(0);
-
+	const [color, setColor] = useState<LudoPlayerColor>(LudoPlayerColor.NULL);
+	const [currentColor, setCurrentColor] = useState<LudoPlayerColor>(
+		LudoPlayerColor.NULL
+	);
+	const [gameStarted, setGameStarted] = useState<boolean>(false);
 	const squareSize: number = height / 15;
 
 	const rollDice = () => {
@@ -64,7 +68,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 				room
 			);
 
-			setTurnState(1);
+			setTurnState(0);
 		}
 	};
 
@@ -75,10 +79,39 @@ export default function Ludo({ height = 691, width = 691 }) {
 		socket.on('dice', (dice: number) => {
 			setDice(dice);
 		});
-		socket.on('board', (board: LudoClientGameData) => {
-			console.log('board set ', board);
-			setBoard(board.getData().board);
+		socket.on('board', (data: LudoClientGameData) => {
+			setCurrentColor(data.player.color);
+			if (data.player.color === color) {
+				console.log(
+					'data player color: ',
+					data.player.color,
+					'your color: ',
+					color
+				);
+				setTurnState(1);
+			}
+
+			setBoard(data.board);
 		});
+		socket.on(
+			'startGame',
+			(players: LudoPlayer[], currentPlayer: LudoPlayer) => {
+				setGameStarted(true);
+				players.forEach((player) => {
+					if (player.user == socket.id) {
+						console.log(player.color);
+						setColor(player.color);
+					}
+				});
+
+				if (currentPlayer.user === socket.id) {
+					setTurnState(1);
+				}
+
+				setCurrentColor(currentPlayer.color);
+				setBoard(newBoard);
+			}
+		);
 	});
 
 	useEffect(() => {
@@ -134,10 +167,18 @@ export default function Ludo({ height = 691, width = 691 }) {
 	}, [board]);
 
 	return (
-		<>
-			<canvas ref={canvasRef} onClick={choosePawn} />
-			<p> last dice roll: {dice}</p>
-			<button onClick={rollDice}>Roll dice</button>
-		</>
+		gameStarted && (
+			<>
+				<canvas ref={canvasRef} onClick={choosePawn} />
+				<p> last dice roll: {dice}</p>
+				<button onClick={rollDice}>Roll dice</button>
+				<p> jouw kleur is: {color}</p>
+				{turnState == 1 || turnState == 2 ? (
+					<p>Het is nu jou beurt</p>
+				) : (
+					<p>Het is de beurt van {currentColor}</p>
+				)}
+			</>
+		)
 	);
 }

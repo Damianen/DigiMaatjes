@@ -3,6 +3,9 @@ import next from 'next';
 import { Server, Socket } from 'socket.io';
 import { LudoGameFactory } from './src/games/ludo/ludo.factory';
 import { User } from './src/models/user.interface';
+import { LudoGame } from '@/games/ludo/ludo';
+import { LudoPlayer, LudoPlayerColor } from '@/games/ludo/ludo.player';
+import { LudoClientGameData } from '@/models/ludo.interface';
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = 'localhost';
@@ -14,11 +17,7 @@ const handler = app.getRequestHandler();
 app.prepare().then(() => {
 	const httpServer = createServer(handler);
 
-	const ludo = new LudoGameFactory().createGame([
-		new User(),
-		new User(),
-		new User(),
-	]);
+	let ludo = null;
 
 	const io = new Server(httpServer);
 	const MAX_USERS = 4;
@@ -120,6 +119,25 @@ app.prepare().then(() => {
 		});
 		//Sockets for Ludo
 
+		socket.on('startGame', async (room) => {
+			const sockets = await io.in(room).fetchSockets();
+			const users = sockets.map((socket) => socket.id);
+			const players: LudoPlayer[] = [];
+			let i = 0;
+			users.forEach((user) => {
+				if (i == 0) {
+					players.push(new LudoPlayer(user, LudoPlayerColor.BLUE));
+				} else {
+					players.push(new LudoPlayer(user, LudoPlayerColor.RED));
+				}
+				i++;
+			});
+			console.log(players[0]);
+			console.log(players[1]);
+			ludo = new LudoGameFactory().createGame(players);
+			io.to(room).emit('startGame', players, ludo.currentPlayer);
+		});
+
 		socket.on('dice', (dice, roomname) => {
 			console.log(dice + 'to room ' + roomname);
 			io.to(roomname).emit('dice', dice);
@@ -128,8 +146,8 @@ app.prepare().then(() => {
 		socket.on('takeTurn', (data, room) => {
 			console.log(data);
 			try {
-				const board = ludo.takeTurn(data);
-				console.log('board ' + board.getData());
+				const board: LudoClientGameData = ludo!.takeTurn(data);
+				console.log('board ' + board);
 				io.to(room).emit('board', board);
 			} catch (err: any) {
 				console.log(err.message);

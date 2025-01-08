@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { socket } from '../../socket';
 import { useRouter, useParams } from 'next/navigation';
 import { getUserName } from '@/app/lib/dal';
-import Ludo from '../../games/ludo'
+import Ludo from '../../games/ludo';
 
 export default function Home() {
 	const [isConnected, setIsConnected] = useState(false);
@@ -15,6 +15,7 @@ export default function Home() {
 	const [nickname, setNickname] = useState('');
 	const [isInitialJoinDone, setIsInitialJoinDone] = useState(false);
 	const [users, setUsers] = useState<string[]>([]);
+	const [isStarted, setIsStarted] = useState<boolean>(false);
 	const roomId = useParams().id?.toString();
 	const room = roomId ? roomId : '0';
 	const spelnaam = room.split('-')[0];
@@ -43,11 +44,10 @@ export default function Home() {
 	useEffect(() => {
 		if (socket.connected) {
 			onConnect();
-			console.log(isConnected, transport)
+			console.log(isConnected, transport);
 		}
 
 		function onConnect() {
-			
 			setIsConnected(true);
 			setTransport(socket.io.engine.transport.name);
 
@@ -82,6 +82,7 @@ export default function Home() {
 			socket.off('room message');
 			socket.off('getRoomUsers');
 			socket.off('joinRoom');
+			socket.off('startGame');
 		};
 	}, [room]);
 
@@ -111,17 +112,21 @@ export default function Home() {
 	};
 
 	const handleStartGame = () => {
-		
+		socket.emit('startGame', room);
 	};
 
 	return (
 		<div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
 			<div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6">
-				<h1 className="text-2xl font-bold mb-4">Welcome to room: {room}</h1>
+				<h1 className="text-2xl font-bold mb-4">
+					Welcome to room: {room}
+				</h1>
 
 				{/* Users List */}
 				<div className="mb-4">
-					<h2 className="text-xl font-semibold mb-2">People in the Room:</h2>
+					<h2 className="text-xl font-semibold mb-2">
+						People in the Room:
+					</h2>
 					<ul className="list-disc list-inside">
 						{users.map((user, index) => (
 							<li key={index} className="text-gray-700">
@@ -174,7 +179,7 @@ export default function Home() {
 					</button>
 				</div>
 			</div>
-			<Ludo/>
+			<Ludo />
 		</div>
 	);
 }
