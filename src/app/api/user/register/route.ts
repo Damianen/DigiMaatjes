@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 		}
 		if (data.birthDate) {
 			const regex = new RegExp(
-				"^(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])-(19|20)\\d{2}$"
+				'^(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])-(19|20)\\d{2}$'
 			);
 
 			if (!regex.test(data.birthDate)) {
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
 		const salt = genSaltSync(10);
 		const hash = hashSync(data.password, salt);
-				
+
 		const normalizedDateStr = data.birthDate.replace(/[\./]/g, '-');
 		const newDate = new Date(normalizedDateStr);
 		newDate.setHours(newDate.getHours() + 1); //offset timezone GMT+1
@@ -100,23 +100,20 @@ export async function POST(request: Request) {
 		sqlRequest.input('firstName', sql.NVarChar, data.firstName);
 		sqlRequest.input('lastName', sql.NVarChar, data.lastName);
 		sqlRequest.input('password', sql.NVarChar, hash);
-		sqlRequest.input('birthDate', sql.Date, formatedDate);
+		sqlRequest.input('birthdate', sql.Date, formatedDate);
 
 		await sqlRequest.query(
-			`INSERT INTO [User]([email],[userName],[firstName],[lastName],[password],[birthDate])
-			VALUES(@email ,@userName,@firstName,@lastName,@password, @birthDate)`
+			`INSERT INTO [User]([email],[userName],[firstName],[lastName],[password],[birthdate])
+			VALUES(@email ,@userName,@firstName,@lastName,@password, @birthdate)`
 		);
 		await database.close();
 
 		return Response.json({ succes: true }, { status: 200 });
 	} catch (err: unknown) {
-        let errorMessage = 'An unexpected error occurred';
-        if (err instanceof Error) {
-            errorMessage = err.message;
-        }
-        return Response.json(
-            { error: errorMessage },
-            { status: 400 }
-        );
-    }
+		let errorMessage = 'An unexpected error occurred';
+		if (err instanceof Error) {
+			errorMessage = err.message;
+		}
+		return Response.json({ error: errorMessage }, { status: 400 });
+	}
 }

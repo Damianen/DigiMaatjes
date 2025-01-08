@@ -1,5 +1,5 @@
-import { IPosition } from '@/models/game.interface';
-import { LudoBoardSquare, LudoPawn } from '@/models/ludo.interface';
+import { IPosition } from '@/lib/models/game.interface';
+import { LudoBoardSquare, LudoPawn } from '@/lib/models/ludo.interface';
 import { LudoPlayerColor } from './ludo.player';
 
 export const GREEN_HOME: IPosition[] = [

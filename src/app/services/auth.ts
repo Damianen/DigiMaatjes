@@ -1,12 +1,12 @@
 'use server';
-import 'server-only' 
+import 'server-only';
 import {
 	SignupFormSchema,
 	RegisterFormState,
 	LoginFormState,
-} from '@/app/lib/definitions';
+} from '@/lib/models/authForm.definitions';
 import 'dotenv/config';
-import { createSession, deleteSession } from '@/app/lib/session';
+import { createSession, deleteSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 
 const baseUrl = process.env.BASE_URL;

@@ -10,29 +10,8 @@ import { useEffect, useState } from 'react';
 import Loading from '../component/loading';
 import Link from 'next/link';
 
-import { getUser } from '../lib/dal';
-import { User } from '../lib/definitions';
-
 export default function SpelOverzicht() {
 	// const username = 'Digimaatjes';
-
-	const [user, setUser] = useState<User | undefined>(undefined);
-
-	useEffect(() => {
-		(async () => {
-			try {
-				const user = await getUser();
-				if (user) {
-					setUser(user);
-					console.log(user);
-				}
-				console.log(user);
-			} catch (err) {
-				console.log('Error occured when fetching User');
-			}
-		})();
-	}, []);
-
 
 	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
 		'pending'
@@ -67,8 +46,8 @@ export default function SpelOverzicht() {
 				<div className="flex flex-col mt-8">
 					<div className="text-center">
 						<h1 className="text-5xl font-bold font-bambino text-white mb-4">
-							Welkom bij <Link href="/">Digimaatjes</Link>, Kies een
-							spel en start!
+							Welkom bij <Link href="/">Digimaatjes</Link>, Kies
+							een spel en start!
 						</h1>
 					</div>
 

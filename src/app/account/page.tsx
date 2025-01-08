@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Navbar from '@/app/component/navbar';
 import { useState, useEffect } from 'react';
-import { getUserName } from '../lib/dal';
+import { getUserName } from '../../lib/dal';
 import Loading from '../component/loading';
 
 export default function AccountDetails() {
@@ -41,7 +41,7 @@ export default function AccountDetails() {
 
 	useEffect(() => {
 		async function fetchUsername() {
-			setProfilePhoto('')
+			setProfilePhoto('');
 			setStatus('pending');
 			try {
 				const username = await getUserName();

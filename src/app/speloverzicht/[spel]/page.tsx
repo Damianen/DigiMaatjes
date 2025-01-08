@@ -1,12 +1,12 @@
 'use client';
 import Image from 'next/image';
-import { getUserName } from '@/app/lib/dal';
+import { getUserName } from '@/lib/dal';
 import Navbar from '@/app/component/navbar';
 import { useParams, useRouter } from 'next/navigation';
 import { socket } from '../../socket';
 import { useState, useEffect } from 'react';
 
-interface Room{
+interface Room {
 	roomName: string;
 	numUsers: number;
 }
@@ -16,7 +16,7 @@ export default function GameRoom() {
 	const spel = useParams().spel?.toString();
 	const spelnaam = spel ? spel : 'Mens erger je niet';
 	const spelimg = `/img/${spelnaam}.jpg`;
-	
+
 	let gameRealName = spelnaam;
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
@@ -36,7 +36,7 @@ export default function GameRoom() {
 
 		return () => {
 			socket.off('updateRooms');
-		}
+		};
 	}, []);
 
 	function findRooms() {
@@ -45,19 +45,19 @@ export default function GameRoom() {
 			console.log(rooms);
 			setRooms(rooms);
 		});
-	}	
+	}
 
-	async function getUser(){
+	async function getUser() {
 		const user = await getUserName();
 		console.log(user);
 		if (user) {
-			setNickname( user as string);
+			setNickname(user as string);
 		}
-		console.log("nickname "+ nickname);
+		console.log('nickname ' + nickname);
 	}
 
 	function handleCreateGame() {
-		console.log('create game with username: ', nickname);	
+		console.log('create game with username: ', nickname);
 		socket.emit('createRoom', `${spelnaam}-${id}`, nickname, spelnaam);
 		router.push(`/room/${spelnaam}-${id}`);
 	}
@@ -139,7 +139,6 @@ export default function GameRoom() {
 								</div>
 							)}
 						</div>
-						
 					</div>
 
 					<div className="grid grid-cols-1 gap-6">
@@ -154,9 +153,15 @@ export default function GameRoom() {
 								<div className="text-lg flex-shrink-0 min-w-[80px] text-center mr-20">
 									Users: {room.numUsers}/4
 								</div>
-                                <button onClick={()=>{
-							socket.emit('joinRoom', room.roomName, nickname, spelnaam);
-							router.push(`/room/${room.roomName}`);
+								<button
+									onClick={() => {
+										socket.emit(
+											'joinRoom',
+											room.roomName,
+											nickname,
+											spelnaam
+										);
+										router.push(`/room/${room.roomName}`);
 									}}
 									className="px-8 py-4 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
 								>
