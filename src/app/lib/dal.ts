@@ -30,27 +30,10 @@ export const getUser = cache(async () => {
 
 		return data;
 	} catch (error) {
-		console.log('Failed to fetch user');
+		console.log('Failed to fetch user', error);
 		return null;
 	}
 });
-    const session = await verifySession()
-    if (!session) return null
-   
-    try {
-    const apiResponse = await fetch('api/user', {
-        method: 'GET',
-    });
-   
-    const data = await apiResponse.json();
-   
-    return data;
-
-    } catch (error) {
-      console.log('Failed to fetch user', error)
-      return null
-    }
-})
 
 export const getUserName = cache(async () => {
 	const session = await verifySession();
