@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import accountIcon from '../../../public/img/accounticon.png';
+import { logout } from '../services/auth';
 
 export default function Navbar() {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
 	const toggleDropdown = () => {
 		setIsDropdownOpen((prevState) => !prevState);
+	};
+
+	const logoutUser = () => {
+		logout();
 	};
 
 	return (
@@ -40,7 +45,8 @@ export default function Navbar() {
 								</li>
 								<li>
 									<a
-										href="/logout"
+										onClick={logoutUser}
+										style={{cursor: "pointer"}}
 										className="block px-4 py-2 text-black hover:bg-gray-200 rounded-b-lg"
 									>
 										Log Out
