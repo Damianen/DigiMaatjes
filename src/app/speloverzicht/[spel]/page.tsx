@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { socket } from '../../socket';
 import { useState, useEffect } from 'react';
 import Loading from '@/app/component/loading';
+import Joyride, { Placement } from 'react-joyride';
 
 interface Room {
 	roomName: string;
@@ -22,9 +23,17 @@ export default function GameRoom() {
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
 	}
+
+	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
+		'pending'
+	);
+	const [error, setError] = useState<Error | null>(null);
+
+	const [isTourActive, setIsTourActive] = useState(false);
+
 	const [nickname, setNickname] = useState<string>('');
 	const [rooms, setRooms] = useState<Room[]>([]);
-	// const [usersInRoom, setUsersInRoom] = useState<number>(0);
+
 	const id = rooms.length + 1;
 
 	useEffect(() => {
@@ -67,33 +76,10 @@ export default function GameRoom() {
 		}, 250);
 	}
 
-	// function findUsersInRoom(room: string) {
-	// 	socket.emit('findUsersInRoom', room);
-	// 	socket.on('numberOfUsers', (users: number) => {
-	// 		setUsersInRoom(users);
-	// 	});
-	// 	return usersInRoom;
-	// }
-	// const username = 'Digimaatje';
-	// const username = 'Digimaatje';
-	// const username2 = 'Piet';
-
-	const [showExplanation, setShowExplanation] = useState(false);
-
-	const toggleExplanation = () => {
-		setShowExplanation(!showExplanation);
-	};
-
-	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
-		'pending'
-	);
-	const [error, setError] = useState<Error | null>(null);
-
 	useEffect(() => {
 		async function initialize() {
 			try {
 				setStatus('pending');
-
 				await new Promise((resolve) => setTimeout(resolve, 250));
 				setStatus('success');
 			} catch (e) {
@@ -109,11 +95,54 @@ export default function GameRoom() {
 	}
 	if (status === 'error') return <h1>Error! {error?.message}</h1>;
 
+	const steps = [
+		{
+			target: '.main-field',
+			content:
+				'Op dit pagina kun je een spel kamer creëren of een kamer van een vriend toe treden.',
+			placement: 'top' as Placement,
+			disableBeacon: true,
+		},
+		{
+			target: '.create-game-button',
+			content: 'Klik hier om je eigen spelkamer te creëren!',
+			placement: 'bottom' as Placement,
+			shouldScroll: false,
+			disableBeacon: true,
+		},
+		{
+			target: '.lobby-name',
+			content:
+				'Hier zie je de naam van de kamer. de kamer heeft de naam van de gebruiker die de kamer beheerd',
+			placement: 'bottom' as Placement,
+			disableBeacon: true,
+		},
+
+		{
+			target: '.max-user',
+			content:
+				'Hier zie je hoeveel spelers al in de kamer zijn, daarnaast zie je ook het maximum aantal spelers van een kamer.',
+			placement: 'bottom' as Placement,
+			disableBeacon: true,
+		},
+		{
+			target: '.join-room-button',
+			content: 'Klik hier om een kamer van een vriend toe te treden!',
+			placement: 'bottom' as Placement,
+			disableBeacon: true,
+		},
+	];
+
+	const toggleExplanation = () => {
+		setIsTourActive(false);
+		setIsTourActive(true);
+	};
+
 	return (
 		<>
 			<Navbar />
 			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center px-4">
-				<main className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-8 mt-10">
+				<main className="main-field w-full max-w-6xl bg-white rounded-lg shadow-lg p-8 mt-10">
 					<div className="flex items-center justify-between mb-6">
 						<div className="w-24 h-24 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden">
 							<Image
@@ -140,9 +169,9 @@ export default function GameRoom() {
 						<div className="flex items-center gap-x-6 relative">
 							<button
 								onClick={handleCreateGame}
-								className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+								className="create-game-button px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
 							>
-								Creëer zelf spel
+								Creëer spel kamer
 							</button>
 
 							<button
@@ -151,23 +180,6 @@ export default function GameRoom() {
 							>
 								?
 							</button>
-
-							{showExplanation && (
-								<div className="absolute top-12 left-1/2 transform -translate-x-1/2 bg-white text-blue-700 text-sm rounded-lg shadow-lg p-4 w-64 z-10">
-									<p>
-										Deze kamer is waar spelers kunnen
-										samenkomen om een spel te spelen. Druk
-										op Join om mee te doen aan de kamer van
-										een vriend!
-									</p>
-									<button
-										onClick={toggleExplanation}
-										className="mt-2 text-blue-600 hover:text-blue-800 underline"
-									>
-										Sluiten
-									</button>
-								</div>
-							)}
 						</div>
 					</div>
 
@@ -178,9 +190,11 @@ export default function GameRoom() {
 								className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow"
 							>
 								<div className="flex-1 text-lg font-semibold font-bambino">
-									{room.roomName}
+									<span className="lobby-name">
+										{room.roomName}
+									</span>
 								</div>
-								<div className="text-lg flex-shrink-0 min-w-[80px] text-center mr-20">
+								<div className="max-user text-lg flex-shrink-0 min-w-[80px] text-center mr-20">
 									Users: {room.numUsers}/4
 								</div>
 								<button
@@ -198,15 +212,42 @@ export default function GameRoom() {
 											);
 										}, 200);
 									}}
-									className="px-8 py-4 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+									className="join-room-button px-8 py-4 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
 								>
-									Join
+									Toetreden
 								</button>
 							</div>
 						))}
 					</div>
 				</main>
 			</div>
+			{isTourActive && (
+				<Joyride
+					styles={{
+						options: {
+							primaryColor: '#2664EB',
+						},
+					}}
+					locale={{
+						back: 'Terug',
+						close: 'Afsluiten',
+						last: 'Afsluiten',
+						next: 'Volgende',
+						skip: 'Overslaan',
+					}}
+					steps={steps}
+					continuous={true}
+					scrollToFirstStep={false}
+					showSkipButton={true}
+					run={true}
+					callback={(data) => {
+						const { status } = data;
+						if (status === 'finished' || status === 'skipped') {
+							setIsTourActive(false);
+						}
+					}}
+				/>
+			)}
 		</>
 	);
 }
