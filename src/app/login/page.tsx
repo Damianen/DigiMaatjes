@@ -1,15 +1,41 @@
 'use client';
-import { useState, useActionState } from 'react';
+import { useState, useActionState, useEffect } from 'react';
 import { signin } from '@/app/services/auth';
+import Loading from '../component/loading';
 
 export default function Login() {
 	const [showExplanation, setShowExplanation] = useState(false);
 
 	const [state, action, pending] = useActionState(signin, undefined);
-
+	console.log(pending);
 	const toggleExplanation = () => {
 		setShowExplanation(!showExplanation);
 	};
+
+	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
+		'pending'
+	);
+	const [error, setError] = useState<Error | null>(null);
+
+	useEffect(() => {
+		async function initialize() {
+			try {
+				setStatus('pending');
+
+				await new Promise((resolve) => setTimeout(resolve, 250));
+				setStatus('success');
+			} catch (e) {
+				setError(e as Error);
+				setStatus('error');
+			}
+		}
+		initialize();
+	}, []);
+
+	if (status === 'pending') {
+		return <Loading />;
+	}
+	if (status === 'error') return <h1>Error! {error?.message}</h1>;
 
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center justify-center px-4">

@@ -1,12 +1,13 @@
 'use client';
 import Image from 'next/image';
-import accountIcon from '../../../../public/img/accounticon.png';
+import { getUserName } from '@/app/lib/dal';
 import Navbar from '@/app/component/navbar';
 import { useParams, useRouter } from 'next/navigation';
 import { socket } from '../../socket';
 import { useState, useEffect } from 'react';
+import Loading from '@/app/component/loading';
 
-interface Room{
+interface Room {
 	roomName: string;
 	numUsers: number;
 }
@@ -16,48 +17,97 @@ export default function GameRoom() {
 	const spel = useParams().spel?.toString();
 	const spelnaam = spel ? spel : 'Mens erger je niet';
 	const spelimg = `/img/${spelnaam}.jpg`;
-	const nickname = 'Digimaatje';
+
 	let gameRealName = spelnaam;
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
 	}
+	const [nickname, setNickname] = useState<string>('');
 	const [rooms, setRooms] = useState<Room[]>([]);
-	const [usersInRoom, setUsersInRoom] = useState<number>(0);
+	// const [usersInRoom, setUsersInRoom] = useState<number>(0);
 	const id = rooms.length + 1;
 
 	useEffect(() => {
+		getUser();
 		findRooms();
+		socket.on('updateRooms', (rooms: Room[]) => {
+			console.log(rooms);
+			setRooms(rooms);
+		});
+
+		return () => {
+			socket.off('updateRooms');
+		};
 	}, []);
 
 	function findRooms() {
 		socket.emit('findRooms', spelnaam);
-		socket.on('rooms', (rooms: Room[]) => {
+		socket.on('updateRooms', (rooms: Room[]) => {
 			console.log(rooms);
 			setRooms(rooms);
 		});
 	}
 
-	function handleCreateGame() {
-		socket.emit('createRoom', `${spelnaam}-${id}`, nickname);
-		router.push(`/room/${spelnaam}-${id}`);
+	async function getUser() {
+		const user = await getUserName();
+		console.log(user);
+		if (user) {
+			setNickname(user as string);
+		}
+		console.log('nickname ' + nickname);
 	}
 
-	function findUsersInRoom(room: string) {
-		socket.emit('findUsersInRoom', room);
-		socket.on('numberOfUsers', (users: number) => {
-			setUsersInRoom(users);
-		});
-		return usersInRoom;
+	function handleCreateGame() {
+		setStatus('pending');
+		console.log('create game with username: ', nickname);
+		socket.emit('createRoom', `${spelnaam}-${id}`, nickname, spelnaam);
+
+		setTimeout(() => {
+			router.push(`/room/${spelnaam}-${id}`);
+		}, 250);
 	}
+
+	// function findUsersInRoom(room: string) {
+	// 	socket.emit('findUsersInRoom', room);
+	// 	socket.on('numberOfUsers', (users: number) => {
+	// 		setUsersInRoom(users);
+	// 	});
+	// 	return usersInRoom;
+	// }
 	// const username = 'Digimaatje';
-	const username = 'Digimaatje';
-	const username2 = 'Piet';
+	// const username = 'Digimaatje';
+	// const username2 = 'Piet';
 
 	const [showExplanation, setShowExplanation] = useState(false);
 
 	const toggleExplanation = () => {
 		setShowExplanation(!showExplanation);
 	};
+
+	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
+		'pending'
+	);
+	const [error, setError] = useState<Error | null>(null);
+
+	useEffect(() => {
+		async function initialize() {
+			try {
+				setStatus('pending');
+
+				await new Promise((resolve) => setTimeout(resolve, 250));
+				setStatus('success');
+			} catch (e) {
+				setError(e as Error);
+				setStatus('error');
+			}
+		}
+		initialize();
+	}, []);
+
+	if (status === 'pending') {
+		return <Loading />;
+	}
+	if (status === 'error') return <h1>Error! {error?.message}</h1>;
 
 	return (
 		<>
@@ -119,7 +169,6 @@ export default function GameRoom() {
 								</div>
 							)}
 						</div>
-						
 					</div>
 
 					<div className="grid grid-cols-1 gap-6">
@@ -134,9 +183,20 @@ export default function GameRoom() {
 								<div className="text-lg flex-shrink-0 min-w-[80px] text-center mr-20">
 									Users: {room.numUsers}/4
 								</div>
-                                <button onClick={()=>{
-							socket.emit('joinRoom', room.roomName, nickname);
-							router.push(`/room/${room.roomName}`);
+								<button
+									onClick={() => {
+										setStatus('pending');
+										socket.emit(
+											'joinRoom',
+											room.roomName,
+											nickname,
+											spelnaam
+										);
+										setTimeout(() => {
+											router.push(
+												`/room/${room.roomName}`
+											);
+										}, 200);
 									}}
 									className="px-8 py-4 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
 								>

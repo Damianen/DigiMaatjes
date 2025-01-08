@@ -47,10 +47,7 @@ export default function Navbar() {
 									</a>
 								</li>
 								<li>
-									<a
-										href="/logout"
-										className="block px-4 py-2 text-black hover:bg-gray-200 rounded-b-lg"
-									>
+									<a className="block px-4 py-2 text-black hover:bg-gray-200 rounded-b-lg">
 										Log uit
 									</a>
 								</li>
