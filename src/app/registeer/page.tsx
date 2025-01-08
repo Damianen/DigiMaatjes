@@ -6,7 +6,7 @@ export default function Register() {
 	const [showExplanation, setShowExplanation] = useState(false);
 
 	const [state, action, pending] = useActionState(signup, undefined);
-
+	console.log(pending)
 	const toggleExplanation = () => {
 		setShowExplanation(!showExplanation);
 	};

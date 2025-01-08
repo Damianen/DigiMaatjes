@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import accountIcon from '../../../public/img/accounticon.png';
+import logo from '../../../public/img/placeholderlogo.jpg';
+import Link from 'next/link';
 import { logout } from '../services/auth';
 
 export default function Navbar() {
@@ -15,9 +17,16 @@ export default function Navbar() {
 	};
 
 	return (
-		<nav className="bg-blue-500 w-full p-4 shadow-md">
+		<nav className="bg-blue-500 w-full px-4 shadow-md">
 			<div className="flex justify-between items-center w-full">
-				<div className="flex-grow"> </div>
+				<Link href="/" className="flex items-center">
+					<Image
+						src={logo}
+						alt="Digimaatjes logo"
+						width={100}
+						height={50}
+					/>
+				</Link>
 
 				<div className="relative ml-auto">
 					<button
@@ -40,7 +49,7 @@ export default function Navbar() {
 										href="/account"
 										className="block px-4 py-2 text-black hover:bg-gray-200 rounded-t-lg"
 									>
-										Profile
+										Profiel
 									</a>
 								</li>
 								<li>
@@ -49,7 +58,7 @@ export default function Navbar() {
 										style={{cursor: "pointer"}}
 										className="block px-4 py-2 text-black hover:bg-gray-200 rounded-b-lg"
 									>
-										Log Out
+										Log uit
 									</a>
 								</li>
 							</ul>

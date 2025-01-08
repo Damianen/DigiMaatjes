@@ -1,17 +1,24 @@
 'use client';
 import Image from 'next/image';
 import Navbar from '@/app/component/navbar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getUserName } from '../lib/dal';
+import Loading from '../component/loading';
 
 export default function AccountDetails() {
 	const [formData, setFormData] = useState({
 		firstName: 'Zaid',
 		lastName: 'Karmoudi',
 		birthDate: '1998-04-09',
-		username: 'Zaidkar',
+		username: '',
 	});
 
 	const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+
+	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
+		'pending'
+	);
+	const [error, setError] = useState<Error | null>(null);
 
 	const friends = [
 		{ name: 'Coen', isOnline: true },
@@ -31,6 +38,35 @@ export default function AccountDetails() {
 			prevCount === friends.length ? 4 : friends.length
 		);
 	};
+
+	useEffect(() => {
+		async function fetchUsername() {
+			setProfilePhoto('')
+			setStatus('pending');
+			try {
+				const username = await getUserName();
+				if (username) {
+					setFormData((prev) => ({
+						...prev,
+						username: username.toString(),
+					}));
+					setStatus('success');
+				} else {
+					throw new Error('Username not found');
+				}
+			} catch (e) {
+				console.log(e);
+				setStatus('error');
+				setError(e as Error);
+			}
+		}
+		fetchUsername();
+	}, []);
+
+	if (status === 'pending') {
+		return <Loading />;
+	}
+	if (status === 'error') return <h1>Error! {error?.message}</h1>;
 
 	return (
 		<>
@@ -106,8 +142,9 @@ export default function AccountDetails() {
 								<input
 									type="text"
 									name="username"
-									defaultValue={formData.username}
-									className="w-full border border-gray-300 rounded-lg p-4 text-lg focus:outline-none focus:ring-4 focus:ring-blue-500"
+									value={formData.username}
+									readOnly
+									className="w-full border border-gray-300 rounded-lg p-4 text-lg bg-gray-100 focus:outline-none focus:ring-4 focus:ring-blue-500"
 								/>
 							</div>
 						</form>

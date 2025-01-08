@@ -9,7 +9,7 @@ export default function JoinRoom() {
 	const router = useRouter();
 	const joinRoom = () => {
 		if (nicknameInput.trim()) {
-			let room = `mens-erger-je-niet-${roomInput}`;
+			const room = `mens-erger-je-niet-${roomInput}`;
 			socket.emit('joinRoom', room, nicknameInput); // Emit joinRoom with the room number and nickname
 			router.push(`room/${room}`); // Redirect to the websocket page
 		}
