@@ -19,19 +19,18 @@ export default function SpelOverzicht() {
 	const [error, setError] = useState<Error | null>(null);
 
 	useEffect(() => {
-		async function fetchUsername() {
-			setStatus('pending');
+		async function initialize() {
 			try {
-				setTimeout(() => {
-					setStatus('success');
-				}, 10);
+				setStatus('pending');
+
+				await new Promise((resolve) => setTimeout(resolve, 250));
+				setStatus('success');
 			} catch (e) {
-				console.log(e);
-				setStatus('error');
 				setError(e as Error);
+				setStatus('error');
 			}
 		}
-		fetchUsername();
+		initialize();
 	}, []);
 
 	if (status === 'pending') {
@@ -46,8 +45,8 @@ export default function SpelOverzicht() {
 				<div className="flex flex-col mt-8">
 					<div className="text-center">
 						<h1 className="text-5xl font-bold font-bambino text-white mb-4">
-							Welkom bij <Link href="/">Digimaatjes</Link>, Kies een
-							spel en start!
+							Welkom bij <Link href="/">Digimaatjes</Link>, Kies
+							een spel en start!
 						</h1>
 					</div>
 

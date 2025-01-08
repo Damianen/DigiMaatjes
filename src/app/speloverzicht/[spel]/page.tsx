@@ -5,8 +5,9 @@ import Navbar from '@/app/component/navbar';
 import { useParams, useRouter } from 'next/navigation';
 import { socket } from '../../socket';
 import { useState, useEffect } from 'react';
+import Loading from '@/app/component/loading';
 
-interface Room{
+interface Room {
 	roomName: string;
 	numUsers: number;
 }
@@ -16,7 +17,7 @@ export default function GameRoom() {
 	const spel = useParams().spel?.toString();
 	const spelnaam = spel ? spel : 'Mens erger je niet';
 	const spelimg = `/img/${spelnaam}.jpg`;
-	
+
 	let gameRealName = spelnaam;
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
@@ -36,7 +37,7 @@ export default function GameRoom() {
 
 		return () => {
 			socket.off('updateRooms');
-		}
+		};
 	}, []);
 
 	function findRooms() {
@@ -45,21 +46,25 @@ export default function GameRoom() {
 			console.log(rooms);
 			setRooms(rooms);
 		});
-	}	
+	}
 
-	async function getUser(){
+	async function getUser() {
 		const user = await getUserName();
 		console.log(user);
 		if (user) {
-			setNickname( user as string);
+			setNickname(user as string);
 		}
-		console.log("nickname "+ nickname);
+		console.log('nickname ' + nickname);
 	}
 
 	function handleCreateGame() {
-		console.log('create game with username: ', nickname);	
+		setStatus('pending');
+		console.log('create game with username: ', nickname);
 		socket.emit('createRoom', `${spelnaam}-${id}`, nickname, spelnaam);
-		router.push(`/room/${spelnaam}-${id}`);
+
+		setTimeout(() => {
+			router.push(`/room/${spelnaam}-${id}`);
+		}, 250);
 	}
 
 	// function findUsersInRoom(room: string) {
@@ -78,6 +83,31 @@ export default function GameRoom() {
 	const toggleExplanation = () => {
 		setShowExplanation(!showExplanation);
 	};
+
+	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
+		'pending'
+	);
+	const [error, setError] = useState<Error | null>(null);
+
+	useEffect(() => {
+		async function initialize() {
+			try {
+				setStatus('pending');
+
+				await new Promise((resolve) => setTimeout(resolve, 250));
+				setStatus('success');
+			} catch (e) {
+				setError(e as Error);
+				setStatus('error');
+			}
+		}
+		initialize();
+	}, []);
+
+	if (status === 'pending') {
+		return <Loading />;
+	}
+	if (status === 'error') return <h1>Error! {error?.message}</h1>;
 
 	return (
 		<>
@@ -139,7 +169,6 @@ export default function GameRoom() {
 								</div>
 							)}
 						</div>
-						
 					</div>
 
 					<div className="grid grid-cols-1 gap-6">
@@ -154,9 +183,20 @@ export default function GameRoom() {
 								<div className="text-lg flex-shrink-0 min-w-[80px] text-center mr-20">
 									Users: {room.numUsers}/4
 								</div>
-                                <button onClick={()=>{
-							socket.emit('joinRoom', room.roomName, nickname, spelnaam);
-							router.push(`/room/${room.roomName}`);
+								<button
+									onClick={() => {
+										setStatus('pending');
+										socket.emit(
+											'joinRoom',
+											room.roomName,
+											nickname,
+											spelnaam
+										);
+										setTimeout(() => {
+											router.push(
+												`/room/${room.roomName}`
+											);
+										}, 200);
 									}}
 									className="px-8 py-4 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
 								>
