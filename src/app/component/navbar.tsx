@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import accountIcon from '../../../public/img/accounticon.png';
 import logo from '../../../public/img/placeholderlogo.jpg';
+import { logout } from '../services/auth';
 
 export default function Navbar() {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -47,7 +48,10 @@ export default function Navbar() {
 									</a>
 								</li>
 								<li>
-									<a className="block px-4 py-2 text-black hover:bg-gray-200 rounded-b-lg">
+									<a
+										onClick={logout}
+										className="block px-4 py-2 text-black hover:bg-gray-200 rounded-b-lg"
+									>
 										Log uit
 									</a>
 								</li>

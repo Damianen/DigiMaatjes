@@ -32,9 +32,14 @@ export default function Login() {
 		initialize();
 	}, []);
 
+	if (pending) {
+		return <Loading />;
+	}
+
 	if (status === 'pending') {
 		return <Loading />;
 	}
+
 	if (status === 'error') return <h1>Error! {error?.message}</h1>;
 
 	return (
