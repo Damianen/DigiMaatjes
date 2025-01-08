@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { socket } from '../../socket';
 import { useRouter, useParams } from 'next/navigation';
-import { getUserName } from '@/lib/dal';
+import { getUserName } from '@/lib/dal/user.dal';
 
 export default function Home() {
 	const [isConnected, setIsConnected] = useState(false);

@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { getUserName } from '@/lib/dal';
+import { getUserName } from '@/lib/dal/user.dal';
 import Navbar from '@/app/component/navbar';
 import { useParams, useRouter } from 'next/navigation';
 import { socket } from '../../socket';

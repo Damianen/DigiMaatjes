@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Navbar from '@/app/component/navbar';
 import { useState, useEffect } from 'react';
-import { getUserName } from '../../lib/dal';
+import { getUserName } from '@/lib/dal/user.dal';
 import Loading from '../component/loading';
 
 export default function AccountDetails() {
