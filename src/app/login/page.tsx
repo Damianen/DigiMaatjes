@@ -7,7 +7,6 @@ export default function Login() {
 	const [showExplanation, setShowExplanation] = useState(false);
 
 	const [state, action, pending] = useActionState(signin, undefined);
-	console.log(pending);
 	const toggleExplanation = () => {
 		setShowExplanation(!showExplanation);
 	};

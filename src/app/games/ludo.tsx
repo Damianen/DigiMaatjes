@@ -1,9 +1,9 @@
 'use client';
 
-import { newBoard } from '@/games/ludo/board';
-import { LudoGame } from '@/games/ludo/ludo';
-import { LudoGameFactory } from '@/games/ludo/ludo.factory';
-import { LudoPlayerColor } from '@/games/ludo/ludo.player';
+import { newBoard } from '@/lib/games/ludo/board';
+import { LudoGame } from '@/lib/games/ludo/ludo';
+import { LudoGameFactory } from '@/lib/games/ludo/ludo.factory';
+import { LudoPlayerColor } from '@/lib/games/ludo/ludo.player';
 import { IPosition } from '@/models/game.interface';
 import { LudoBoardSquare, LudoGameDataFacotry } from '@/models/ludo.interface';
 import { User } from '@/models/user.interface';
