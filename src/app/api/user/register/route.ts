@@ -102,17 +102,21 @@ export async function POST(request: Request) {
 		sqlRequest.input('password', sql.NVarChar, hash);
 		sqlRequest.input('birthDate', sql.Date, formatedDate);
 
-		const results = await sqlRequest.query(
+		await sqlRequest.query(
 			`INSERT INTO [User]([email],[userName],[firstName],[lastName],[password],[birthDate])
 			VALUES(@email ,@userName,@firstName,@lastName,@password, @birthDate)`
 		);
 		await database.close();
 
 		return Response.json({ succes: true }, { status: 200 });
-	} catch (err: any) {
-		return Response.json(
-			{ error: err.message || 'An unexpected error occurred' },
-			{ status: 400 }
-		);
-	}
+	} catch (err: unknown) {
+        let errorMessage = 'An unexpected error occurred';
+        if (err instanceof Error) {
+            errorMessage = err.message;
+        }
+        return Response.json(
+            { error: errorMessage },
+            { status: 400 }
+        );
+    }
 }

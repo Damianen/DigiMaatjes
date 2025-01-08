@@ -13,8 +13,9 @@ app.prepare().then(() => {
 	const httpServer = createServer(handler);
 
 	const io = new Server(httpServer);
-
-
+	const MAX_USERS = 4;
+	const shownrooms = new Map();
+	var rooms = io.sockets.adapter.rooms;
 	io.on('connection', (socket) => {
 		console.log('a user connected');
 		socket.on('disconnect', () => {
@@ -22,37 +23,66 @@ app.prepare().then(() => {
 		});
 		socket.on('chat message', (msg) => {
 			console.log('message: ' + msg);
-			socket.emit('chat message', `${socket.id} said ${msg}`);
+			socket.emit('chat message', `${socket.id}: ${msg}`);
 		});
-		socket.on('joinRoom', (room, nickname) => {
+		socket.on('joinRoom', (room, nickname, spelnaam) => {
 			socket.nickname = nickname;
 			socket.join(room);
 			console.log('user joined room #' + room + ' as ' + nickname);
 			socket.to(room).emit('joinRoom', room);
 			socket.emit('joinRoom', room);
+			const numberOfUsers = io.sockets.adapter.rooms.get(room).size;
+            shownrooms.set(room, { roomName: room, numUsers: numberOfUsers });
+            console.log('shownrooms', Array.from(shownrooms.values()));
+            io.emit('updateRooms', Array.from(shownrooms.values()));
+
 		});
-		socket.on('createRoom', (room, nickname) => {
+		socket.on('createRoom', (room, nickname, spelnaam) => {
 			socket.nickname = nickname;
 			socket.join(room);
 			console.log('user created room ' + room + ' as ' + nickname);
-			socket.emit('createRoom', room);
+			const numberOfUsers = io.sockets.adapter.rooms.get(room).size;
+            shownrooms.set(room, { roomName: room, numUsers: numberOfUsers });
+            console.log('shownrooms', Array.from(shownrooms.values()));
+            io.emit('updateRooms', Array.from(shownrooms.values()));
+
 		});
-		socket.on('leaveRoom', (room) => {
+		socket.on('leaveRoom', async (room, spelnaam) => {
 			socket.leave(room);
 			console.log('user left room #' + room);
-		});	
+
+			// Fetch the updated list of users in the room
+			try {
+				const sockets = await io.in(room).fetchSockets();
+				const users = sockets.map((socket) => socket.nickname);
+				console.log(users);
+				io.to(room).emit('getRoomUsers', users);
+			} catch (error) {
+				console.error('Error fetching room users:', error);
+			}
+			const numberOfUsers = io.sockets.adapter.rooms.get(room)?.size || 0;
+            if (numberOfUsers === 0) {
+                shownrooms.delete(room);
+            } else {
+                shownrooms.set(room, { roomName: room, numUsers: numberOfUsers });
+            }
+            console.log('shownrooms', Array.from(shownrooms.values()));
+            io.emit('updateRooms', Array.from(shownrooms.values()));
+
+		});
 		socket.on('roomMessage', (room, msg) => {
 			console.log('room message: ' + msg);
 			console.log('room: ' + room);
-			io.to(room).emit('room message',`${socket.nickname} said ${msg}`);
+			io.to(room).emit('room message', `${socket.nickname}: ${msg}`);
 		});
-		
+
 		socket.on('getRoomUsers', async (room) => {
 			console.log('getRoomUsers: ' + room);
 			try {
 				const sockets = await io.in(room).fetchSockets();
 				const users = sockets.map((socket) => socket.nickname);
 				console.log(users);
+				console.log('getRoomUsers is called');
 				socket.emit('getRoomUsers', users);
 				socket.emit('socket nickname', socket.nickname);
 			} catch (error) {
@@ -60,20 +90,18 @@ app.prepare().then(() => {
 			}
 		});
 
-		socket.on('findRooms',  async (spelnaam) => {
-			const MAX_USERS = 4;
+		socket.on('findRooms', async (spelnaam) => {
 			var shownrooms = [];
-			var rooms = io.sockets.adapter.rooms;
 			console.log(rooms);
 			rooms.forEach((value, key) => {
 				const numberOfUsers = value.size;
-				if (key.includes(spelnaam)&& numberOfUsers < MAX_USERS) {
+				if (key.includes(spelnaam) && numberOfUsers < MAX_USERS) {
 					console.log(value, key);
-					shownrooms.push({roomName: key, numUsers: numberOfUsers});
+					shownrooms.push({ roomName: key, numUsers: numberOfUsers });
 				}
 			});
 			console.log('shownrooms', shownrooms);
-			socket.emit('rooms', shownrooms);
+			socket.emit('updateRooms', shownrooms);
 		});
 
 		socket.on('findUsersInRoom', async (room) => {
@@ -82,7 +110,6 @@ app.prepare().then(() => {
 			console.log('numberOfUsers: ' + numberOfUsers);
 			socket.emit('numberOfUsers', numberOfUsers);
 		});
-
 	});
 
 	httpServer
