@@ -11,9 +11,23 @@ export const getCurrentUser = cache(async (): Promise<User | undefined> => {
     const session = await verifySession();
     if (!session) return undefined;
 
+    return getUser(String(session.userName));
+});
+
+export const getUserName = cache(async () => {
+    const session = await verifySession();
+    if (!session) return null;
+
+    return session.userName;
+});
+
+export const getUser = async (userName: string): Promise<User | undefined> => {
+    const session = await verifySession();
+    if (!session) return undefined;
+
     try {
         const apiResponse = await fetch(
-            baseUrl + '/api/user/' + session.userName,
+            baseUrl + '/api/user/' + userName,
             {
                 method: 'GET',
             }
@@ -32,11 +46,4 @@ export const getCurrentUser = cache(async (): Promise<User | undefined> => {
         console.log(error);
         return undefined;
     }
-});
-
-export const getUserName = cache(async () => {
-    const session = await verifySession();
-    if (!session) return null;
-
-    return session.userName;
-});
+};
