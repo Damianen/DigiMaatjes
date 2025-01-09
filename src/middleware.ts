@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { decrypt } from '@/lib/session';
 import { cookies } from 'next/headers';
-import { verifySessionApi } from '@/lib/dal/dal';
+import { verifySession } from '@/lib/dal/dal';
 
 export default async function middleware(req: NextRequest) {
 	if (req.nextUrl.pathname.startsWith('/api')) {
 		const token = req.headers.get('Authorization')?.split(' ')[1];
 
-		const session = await verifySessionApi(String(token));
+		const session = await verifySession(String(token));
 
 		if (!session) {
 			return new Response(null, { status: 401 });
@@ -25,7 +25,7 @@ export default async function middleware(req: NextRequest) {
 	} else {
 		// 1. Specify protected and public routes
 		const protectedRoutes = ['/speloverzicht'];
-		const publicRoutes = ['/login', '/registeer', '/'];
+		const publicRoutes = ['/login', '/registreer', '/'];
 
 		// 2. Check if the current route is protected or public
 		const path = req.nextUrl.pathname;
