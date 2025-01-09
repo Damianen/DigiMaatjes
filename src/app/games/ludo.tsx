@@ -34,15 +34,14 @@ export default function Ludo({ height = 691, width = 691 }) {
 	const rollDice = () => {
 		console.log('rol ', turnState);
 		if (turnState == 1) {
+			setTurnState(2);
 			setIsRolling(true);
 			setTimeout(() => {
-			const number = Math.floor(Math.random() * (6 - 1 + 1) + 1);
-			setDice(number);
-			setIsRolling(false);
-			socket.emit('dice', number, room);
-			setTurnState(2);
-		}
-		, 500);
+				const number = Math.floor(Math.random() * (6 - 1 + 1) + 1);
+				setDice(number);
+				setIsRolling(false);
+				socket.emit('dice', number, room);
+			}, 500);
 		}
 	};
 
@@ -171,15 +170,22 @@ export default function Ludo({ height = 691, width = 691 }) {
 
 	const getDieFace = (value: number) => {
 		switch (value) {
-		  case 1: return 'fa-dice-one';
-		  case 2: return 'fa-dice-two';
-		  case 3: return 'fa-dice-three';
-		  case 4: return 'fa-dice-four';
-		  case 5: return 'fa-dice-five';
-		  case 6: return 'fa-dice-six';
-		  default: return '';
+			case 1:
+				return 'fa-dice-one';
+			case 2:
+				return 'fa-dice-two';
+			case 3:
+				return 'fa-dice-three';
+			case 4:
+				return 'fa-dice-four';
+			case 5:
+				return 'fa-dice-five';
+			case 6:
+				return 'fa-dice-six';
+			default:
+				return '';
 		}
-	  };
+	};
 
 	return (
 		gameStarted && (
