@@ -23,6 +23,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 	const [turnState, setTurnState] = useState<number>(0);
 	const [dice, setDice] = useState<number>(0);
 	const [color, setColor] = useState<LudoPlayerColor>(LudoPlayerColor.NULL);
+	const [won, setWon] = useState<LudoPlayerColor | null>(null);
 	const [currentColor, setCurrentColor] = useState<LudoPlayerColor>(
 		LudoPlayerColor.NULL
 	);
@@ -76,6 +77,10 @@ export default function Ludo({ height = 691, width = 691 }) {
 			setDice(dice);
 		});
 		socket.on('board', (data: LudoClientGameData) => {
+			if (data.won != null) {
+				setWon(data.won);
+				setTurnState(0);
+			}
 			setCurrentColor(data.player.color);
 			if (data.player.color === color) {
 				console.log(
@@ -174,6 +179,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 				) : (
 					<p>Het is de beurt van {currentColor}</p>
 				)}
+				{won != null && <p> {won} has won the game! </p>}
 			</>
 		)
 	);

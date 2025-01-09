@@ -17,9 +17,14 @@ export class LudoGameDataFacotry implements GameDataFactory {
 }
 
 export class LudoClientGameData implements IClientGameData {
-	constructor(board: LudoBoardSquare[][], player: LudoPlayer) {
+	constructor(
+		board: LudoBoardSquare[][],
+		player: LudoPlayer,
+		won: LudoPlayerColor | null = null
+	) {
 		this.board = board;
 		this.player = player;
+		this.won = won;
 	}
 
 	getData() {
@@ -28,6 +33,7 @@ export class LudoClientGameData implements IClientGameData {
 
 	board!: LudoBoardSquare[][];
 	player!: LudoPlayer;
+	won!: LudoPlayerColor | null;
 }
 
 export class LudoBoardSquare {

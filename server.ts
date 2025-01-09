@@ -125,8 +125,12 @@ app.prepare().then(() => {
 			users.forEach((user) => {
 				if (i == 0) {
 					players.push(new LudoPlayer(user, LudoPlayerColor.BLUE));
-				} else {
+				} else if (i == 1) {
 					players.push(new LudoPlayer(user, LudoPlayerColor.RED));
+				} else if (i == 2) {
+					players.push(new LudoPlayer(user, LudoPlayerColor.GREEN));
+				} else {
+					players.push(new LudoPlayer(user, LudoPlayerColor.YELLOW));
 				}
 				i++;
 			});

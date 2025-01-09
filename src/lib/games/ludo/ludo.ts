@@ -196,7 +196,11 @@ export class LudoGame implements IGame {
 				break;
 			}
 			if (i == 3) {
-				// win condition
+				return this.dataFactory.createClientData({
+					board: this.board,
+					player: this.currentPlayer,
+					color: LudoPlayerColor.GREEN,
+				});
 			}
 		}
 
@@ -205,7 +209,11 @@ export class LudoGame implements IGame {
 				break;
 			}
 			if (i == 3) {
-				// win condition
+				return this.dataFactory.createClientData({
+					board: this.board,
+					player: this.currentPlayer,
+					color: LudoPlayerColor.YELLOW,
+				});
 			}
 		}
 
@@ -214,7 +222,11 @@ export class LudoGame implements IGame {
 				break;
 			}
 			if (i == 3) {
-				// win condition
+				return this.dataFactory.createClientData({
+					board: this.board,
+					player: this.currentPlayer,
+					color: LudoPlayerColor.RED,
+				});
 			}
 		}
 
@@ -223,7 +235,11 @@ export class LudoGame implements IGame {
 				break;
 			}
 			if (i == 3) {
-				// win condition
+				return this.dataFactory.createClientData({
+					board: this.board,
+					player: this.currentPlayer,
+					color: LudoPlayerColor.BLUE,
+				});
 			}
 		}
 
