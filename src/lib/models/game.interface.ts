@@ -14,7 +14,7 @@ export interface IGame extends IGameInfo {
 }
 
 export interface IPlayer {
-	user: IUser;
+	user: string;
 }
 
 export interface IPosition {

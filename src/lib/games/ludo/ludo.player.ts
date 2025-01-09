@@ -3,18 +3,19 @@ import { IPlayer } from '../../models/game.interface';
 import { IUser } from '../../models/user.interface';
 
 export enum LudoPlayerColor {
-	BLUE = 0,
-	RED = 1,
-	YELLOW = 2,
-	GREEN = 3,
+	BLUE = 'Blauw',
+	RED = 'Rood',
+	YELLOW = 'Geel',
+	GREEN = 'Groen',
+	NULL = 'null',
 }
 
 export class LudoPlayer implements IPlayer {
-	constructor(user: IUser, color: LudoPlayerColor) {
+	constructor(user: string, color: LudoPlayerColor) {
 		this.user = user;
 		this.color = color;
 	}
 
-	user!: IUser;
+	user!: string;
 	color!: LudoPlayerColor;
 }

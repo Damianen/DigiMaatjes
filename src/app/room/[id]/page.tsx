@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { socket } from '../../socket';
 import { useRouter, useParams } from 'next/navigation';
-import { getUserName } from '@/lib/dal/user.dal';
+import { getUserName } from '@/app/lib/dal';
+import Ludo from '../../games/ludo';
 
 export default function Home() {
 	const [isConnected, setIsConnected] = useState(false);
@@ -14,6 +15,7 @@ export default function Home() {
 	const [nickname, setNickname] = useState('');
 	const [isInitialJoinDone, setIsInitialJoinDone] = useState(false);
 	const [users, setUsers] = useState<string[]>([]);
+	const [isStarted, setIsStarted] = useState<boolean>(false);
 	const roomId = useParams().id?.toString();
 	const room = roomId ? roomId : '0';
 	const spelnaam = room.split('-')[0];
@@ -80,6 +82,7 @@ export default function Home() {
 			socket.off('room message');
 			socket.off('getRoomUsers');
 			socket.off('joinRoom');
+			socket.off('startGame');
 		};
 	}, [room]);
 
@@ -109,7 +112,7 @@ export default function Home() {
 	};
 
 	const handleStartGame = () => {
-		console.log('start game');
+		socket.emit('startGame', room);
 	};
 
 	return (
@@ -176,6 +179,7 @@ export default function Home() {
 					</button>
 				</div>
 			</div>
+			<Ludo />
 		</div>
 	);
 }

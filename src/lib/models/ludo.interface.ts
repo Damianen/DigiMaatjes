@@ -4,28 +4,31 @@ import {
 	IClientGameData,
 	GameDataFactory,
 } from './data.interface';
-import { IPosition } from './game.interface';
+import { IPlayer, IPosition } from './game.interface';
+import { User } from './user.interface';
 
 export class LudoGameDataFacotry implements GameDataFactory {
-	createServerData(data: any): IServerGameData {
+	createServerData(data: any): LudoServerGameData {
 		return new LudoServerGameData(data.dice, data.pawn, data.position);
 	}
 
-	createClientData(data: any): IClientGameData {
-		return new LudoClientGameData(data);
+	createClientData(data: any): LudoClientGameData {
+		return new LudoClientGameData(data.board, data.player);
 	}
 }
 
 export class LudoClientGameData implements IClientGameData {
-	constructor(board: LudoBoardSquare[][]) {
+	constructor(board: LudoBoardSquare[][], player: LudoPlayer) {
 		this.board = board;
+		this.player = player;
 	}
 
 	getData() {
-		return { board: this.board };
+		return { board: this.board, player: this.player };
 	}
 
 	board!: LudoBoardSquare[][];
+	player!: LudoPlayer;
 }
 
 export class LudoBoardSquare {
@@ -57,7 +60,7 @@ export class LudoServerGameData implements IServerGameData {
 		this.position = position;
 	}
 
-	getData() {
+	getData(): { dice: number; changedPawn: LudoPawn; position: IPosition } {
 		return {
 			dice: this.dice,
 			changedPawn: this.changedPawn,

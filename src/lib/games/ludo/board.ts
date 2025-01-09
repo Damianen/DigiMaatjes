@@ -2,32 +2,57 @@ import { IPosition } from '@/lib/models/game.interface';
 import { LudoBoardSquare, LudoPawn } from '@/lib/models/ludo.interface';
 import { LudoPlayerColor } from './ludo.player';
 
-export const GREEN_HOME: IPosition[] = [
+export const GREEN_START: IPosition[] = [
 	{ x: 2, y: 2 },
 	{ x: 3, y: 2 },
 	{ x: 2, y: 3 },
 	{ x: 3, y: 3 },
 ];
 
-export const YELLOW_HOME: IPosition[] = [
+export const YELLOW_START: IPosition[] = [
 	{ x: 11, y: 2 },
 	{ x: 12, y: 2 },
 	{ x: 11, y: 3 },
 	{ x: 12, y: 3 },
 ];
 
-export const RED_HOME: IPosition[] = [
+export const RED_START: IPosition[] = [
 	{ x: 2, y: 11 },
 	{ x: 3, y: 11 },
 	{ x: 2, y: 12 },
 	{ x: 3, y: 12 },
 ];
 
-export const BLUE_HOME: IPosition[] = [
+export const BLUE_START: IPosition[] = [
 	{ x: 11, y: 11 },
 	{ x: 12, y: 11 },
 	{ x: 11, y: 12 },
 	{ x: 12, y: 12 },
+];
+
+export const GREEN_HOME: IPosition[] = [
+	{ x: 1, y: 7 },
+	{ x: 2, y: 7 },
+	{ x: 3, y: 7 },
+	{ x: 4, y: 7 },
+];
+export const YELLOW_HOME: IPosition[] = [
+	{ x: 7, y: 1 },
+	{ x: 7, y: 2 },
+	{ x: 7, y: 3 },
+	{ x: 7, y: 4 },
+];
+export const RED_HOME: IPosition[] = [
+	{ x: 7, y: 10 },
+	{ x: 7, y: 11 },
+	{ x: 7, y: 12 },
+	{ x: 7, y: 13 },
+];
+export const BLUE_HOME: IPosition[] = [
+	{ x: 10, y: 7 },
+	{ x: 11, y: 7 },
+	{ x: 12, y: 7 },
+	{ x: 13, y: 7 },
 ];
 
 export const newBoard: LudoBoardSquare[][] = [

@@ -1,33 +1,44 @@
 'use client';
 
-import { newBoard } from '@/lib/games/ludo/board';
-import { LudoGame } from '@/lib/games/ludo/ludo';
-import { LudoGameFactory } from '@/lib/games/ludo/ludo.factory';
-import { LudoPlayerColor } from '@/lib/games/ludo/ludo.player';
+import { newBoard } from '@/games/ludo/board';
+import { LudoGame } from '@/games/ludo/ludo';
+import { LudoGameFactory } from '@/games/ludo/ludo.factory';
+import { LudoPlayer, LudoPlayerColor } from '@/games/ludo/ludo.player';
 import { IPosition } from '@/models/game.interface';
-import { LudoBoardSquare, LudoGameDataFacotry } from '@/models/ludo.interface';
+import {
+	LudoBoardSquare,
+	LudoClientGameData,
+	LudoGameDataFacotry,
+	LudoPawn,
+} from '@/models/ludo.interface';
 import { User } from '@/models/user.interface';
 import { useEffect, useRef, useState } from 'react';
+import { socket } from '../socket';
+import { routeModule } from 'next/dist/build/templates/pages';
+import { useParams } from 'next/navigation';
+import ludoboard from '../../../public/img/ludoboard.jpg';
 
 export default function Ludo({ height = 691, width = 691 }) {
+	const roomId = useParams().id?.toString();
+	const room = roomId ? roomId : '0';
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const frameRef = useRef<number>(0);
-	const [users, setUsers] = useState<User[]>([
-		new User(),
-		new User(),
-		new User(),
-	]);
-	const [game, setGame] = useState<LudoGame>(
-		new LudoGameFactory().createGame(users) as LudoGame
-	);
-	const [turnState, setTurnState] = useState<number>(1);
+	const [board, setBoard] = useState<LudoBoardSquare[][]>([]);
+	const [turnState, setTurnState] = useState<number>(0);
 	const [dice, setDice] = useState<number>(0);
-
+	const [color, setColor] = useState<LudoPlayerColor>(LudoPlayerColor.NULL);
+	const [currentColor, setCurrentColor] = useState<LudoPlayerColor>(
+		LudoPlayerColor.NULL
+	);
+	const [gameStarted, setGameStarted] = useState<boolean>(false);
 	const squareSize: number = height / 15;
 
 	const rollDice = () => {
+		console.log('rol ', turnState);
 		if (turnState == 1) {
-			setDice(Math.floor(Math.random() * (6 - 1 + 1) + 1));
+			const number = Math.floor(Math.random() * (6 - 1 + 1) + 1);
+			setDice(number);
+			socket.emit('dice', number, room);
 			setTurnState(2);
 		}
 	};
@@ -41,38 +52,77 @@ export default function Ludo({ height = 691, width = 691 }) {
 		let x = Math.floor((event.clientX - rect.left) / squareSize);
 		let y = Math.floor((event.clientY - rect.top) / squareSize);
 
-		if (game.board[y][x].pawn) {
+		if (board[y][x].pawn != null && board[y][x].pawn.color == color) {
 			const pos: IPosition = {
 				x: x,
 				y: y,
 			};
 
-			game.takeTurn(
+			socket.emit(
+				'takeTurn',
 				new LudoGameDataFacotry().createServerData({
-					dice: dice,
-					pawn: game.board[y][x].pawn,
-					position: pos,
-				})
+					dice: dice as number,
+					pawn: board[y][x].pawn as LudoPawn,
+					position: pos as IPosition,
+				}),
+				room
 			);
 
-			setTurnState(1);
+			setTurnState(0);
 		}
 	};
+
+	const img = new Image();
+	img.src = ludoboard.src;
+
+	useEffect(() => {
+		socket.on('dice', (dice: number) => {
+			setDice(dice);
+		});
+		socket.on('board', (data: LudoClientGameData) => {
+			setCurrentColor(data.player.color);
+			if (data.player.color === color) {
+				console.log(
+					'data player color: ',
+					data.player.color,
+					'your color: ',
+					color
+				);
+				setTurnState(1);
+			}
+
+			setBoard(data.board);
+		});
+		socket.on(
+			'startGame',
+			(players: LudoPlayer[], currentPlayer: LudoPlayer) => {
+				setGameStarted(true);
+				players.forEach((player) => {
+					if (player.user == socket.id) {
+						console.log(player.color);
+						setColor(player.color);
+					}
+				});
+
+				if (currentPlayer.user === socket.id) {
+					setTurnState(1);
+				}
+
+				setCurrentColor(currentPlayer.color);
+				setBoard(newBoard);
+			}
+		);
+	});
 
 	useEffect(() => {
 		function draw(context: CanvasRenderingContext2D) {
 			if (context) {
-				const img = new Image();
-				img.src = 'ludo/ludoboard.jpg';
+				context.drawImage(img, 0, 0);
 
-				img.addEventListener('load', () => {
-					context.drawImage(img, 0, 0);
-				});
-
-				for (let x = 0; x < game.board.length; x++) {
-					for (let y = 0; y < game.board[x].length; y++) {
-						if (game.board[y][x].pawn != null) {
-							switch (game.board[y][x].pawn?.color) {
+				for (let x = 0; x < board.length; x++) {
+					for (let y = 0; y < board[x].length; y++) {
+						if (board[y][x].pawn != null) {
+							switch (board[y][x].pawn?.color) {
 								case LudoPlayerColor.BLUE:
 									context.fillStyle = 'blue';
 									break;
@@ -114,13 +164,21 @@ export default function Ludo({ height = 691, width = 691 }) {
 			}
 		}
 		return () => cancelAnimationFrame(frameRef.current);
-	}, [height, width, game.board]);
+	}, [board]);
 
 	return (
-		<>
-			<canvas ref={canvasRef} onClick={choosePawn} />
-			<p> last dice roll: {dice}</p>
-			<button onClick={rollDice}>Roll dice</button>
-		</>
+		gameStarted && (
+			<>
+				<canvas ref={canvasRef} onClick={choosePawn} />
+				<p> last dice roll: {dice}</p>
+				<button onClick={rollDice}>Roll dice</button>
+				<p> jouw kleur is: {color}</p>
+				{turnState == 1 || turnState == 2 ? (
+					<p>Het is nu jou beurt</p>
+				) : (
+					<p>Het is de beurt van {currentColor}</p>
+				)}
+			</>
+		)
 	);
 }
