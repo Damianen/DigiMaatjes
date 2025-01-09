@@ -1,10 +1,10 @@
 'use client';
 
+import { getUserName } from '@/lib/dal/user.dal';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { socket } from '../../socket';
-import { useRouter, useParams } from 'next/navigation';
-import { getUserName } from '@/app/lib/dal';
 import Ludo from '../../games/ludo';
+import { socket } from '../../socket';
 
 export default function Home() {
 	const [isConnected, setIsConnected] = useState(false);
@@ -15,7 +15,6 @@ export default function Home() {
 	const [nickname, setNickname] = useState('');
 	const [isInitialJoinDone, setIsInitialJoinDone] = useState(false);
 	const [users, setUsers] = useState<string[]>([]);
-	const [isStarted, setIsStarted] = useState<boolean>(false);
 	const roomId = useParams().id?.toString();
 	const room = roomId ? roomId : '0';
 	const spelnaam = room.split('-')[0];

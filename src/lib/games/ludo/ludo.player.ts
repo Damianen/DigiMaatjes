@@ -1,6 +1,4 @@
-import { LudoPawn } from '@/lib/models/ludo.interface';
 import { IPlayer } from '../../models/game.interface';
-import { IUser } from '../../models/user.interface';
 
 export enum LudoPlayerColor {
 	BLUE = 'Blauw',

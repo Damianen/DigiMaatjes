@@ -1,5 +1,4 @@
 import { IClientGameData, IServerGameData } from './data.interface';
-import { IUser } from './user.interface';
 
 export interface IGameInfo {
 	name: string;

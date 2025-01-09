@@ -1,11 +1,10 @@
 import { LudoPlayer, LudoPlayerColor } from '@/lib/games/ludo/ludo.player';
 import {
-	IServerGameData,
-	IClientGameData,
 	GameDataFactory,
+	IClientGameData,
+	IServerGameData,
 } from './data.interface';
-import { IPlayer, IPosition } from './game.interface';
-import { User } from './user.interface';
+import { IPosition } from './game.interface';
 
 export class LudoGameDataFacotry implements GameDataFactory {
 	createServerData(data: any): LudoServerGameData {

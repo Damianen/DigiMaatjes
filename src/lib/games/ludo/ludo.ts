@@ -1,25 +1,23 @@
+import { IClientGameData } from '@/lib/models/data.interface';
 import {
 	LudoBoardSquare,
-	LudoClientGameData,
 	LudoGameDataFacotry,
 	LudoPawn,
 	LudoServerGameData,
-} from '@/models/ludo.interface';
-import { IPlayer, IGame, IPosition } from '../../models/game.interface';
-import { IUser } from '../../models/user.interface';
-import { LudoPlayer, LudoPlayerColor } from './ludo.player';
-import { IClientGameData, IServerGameData } from '@/lib/models/data.interface';
+} from '@/lib/models/ludo.interface';
+import { IGame, IPlayer, IPosition } from '../../models/game.interface';
 import {
-	newBoard,
-	BLUE_START,
-	YELLOW_START,
-	RED_START,
-	GREEN_START,
-	GREEN_HOME,
-	YELLOW_HOME,
-	RED_HOME,
 	BLUE_HOME,
+	BLUE_START,
+	GREEN_HOME,
+	GREEN_START,
+	newBoard,
+	RED_HOME,
+	RED_START,
+	YELLOW_HOME,
+	YELLOW_START,
 } from './board';
+import { LudoPlayer, LudoPlayerColor } from './ludo.player';
 
 export class LudoGame implements IGame {
 	constructor(players: Array<IPlayer>) {

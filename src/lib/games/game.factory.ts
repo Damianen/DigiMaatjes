@@ -1,6 +1,5 @@
-import { IGame } from '@/lib/models/game.interface';
-import { IUser } from '@/lib/models/user.interface';
+import { IGame, IPlayer } from '@/lib/models/game.interface';
 
 export abstract class GameFactory {
-	abstract createGame(users: Array<IUser>): IGame;
+	abstract createGame(users: Array<IPlayer>): IGame;
 }

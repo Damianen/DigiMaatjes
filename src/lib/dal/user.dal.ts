@@ -33,7 +33,7 @@ export const getUser = async (userName: string): Promise<User | undefined> => {
             }
         );
 
-        let user: User = await apiResponse.json();
+        const user: User = await apiResponse.json();
         if (user) {
             user.birthdate = new Date(user.birthdate);
             return user;

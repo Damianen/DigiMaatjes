@@ -1,11 +1,9 @@
-import { createServer } from 'node:http';
+import { LudoGameFactory } from '@/lib/games/ludo/ludo.factory';
+import { LudoPlayer, LudoPlayerColor } from '@/lib/games/ludo/ludo.player';
+import { LudoClientGameData } from '@/lib/models/ludo.interface';
 import next from 'next';
+import { createServer } from 'node:http';
 import { Server, Socket } from 'socket.io';
-import { LudoGameFactory } from './src/games/ludo/ludo.factory';
-import { User } from './src/models/user.interface';
-import { LudoGame } from '@/games/ludo/ludo';
-import { LudoPlayer, LudoPlayerColor } from '@/games/ludo/ludo.player';
-import { LudoClientGameData } from '@/models/ludo.interface';
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = 'localhost';

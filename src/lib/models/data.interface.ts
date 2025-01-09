@@ -1,6 +1,6 @@
 export abstract class GameDataFactory {
-	abstract createServerData(data: any): IServerGameData;
-	abstract createClientData(data: any): IClientGameData;
+	abstract createServerData(data: object): IServerGameData;
+	abstract createClientData(data: object): IClientGameData;
 }
 
 export interface IServerGameData {

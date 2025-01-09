@@ -1,11 +1,11 @@
 'use client';
-import Image from 'next/image';
-import { getUserName } from '@/lib/dal/user.dal';
-import Navbar from '@/app/component/navbar';
-import { useParams, useRouter } from 'next/navigation';
-import { socket } from '../../socket';
-import { useState, useEffect } from 'react';
 import Loading from '@/app/component/loading';
+import Navbar from '@/app/component/navbar';
+import { getUserName } from '@/lib/dal/user.dal';
+import Image from 'next/image';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { socket } from '../../socket';
 
 interface Room{
 	roomName: string;

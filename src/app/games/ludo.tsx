@@ -1,22 +1,18 @@
 'use client';
 
-import { newBoard } from '@/games/ludo/board';
-import { LudoGame } from '@/games/ludo/ludo';
-import { LudoGameFactory } from '@/games/ludo/ludo.factory';
-import { LudoPlayer, LudoPlayerColor } from '@/games/ludo/ludo.player';
-import { IPosition } from '@/models/game.interface';
+import { newBoard } from '@/lib/games/ludo/board';
+import { LudoPlayer, LudoPlayerColor } from '@/lib/games/ludo/ludo.player';
+import { IPosition } from '@/lib/models/game.interface';
 import {
 	LudoBoardSquare,
 	LudoClientGameData,
 	LudoGameDataFacotry,
 	LudoPawn,
-} from '@/models/ludo.interface';
-import { User } from '@/models/user.interface';
-import { useEffect, useRef, useState } from 'react';
-import { socket } from '../socket';
-import { routeModule } from 'next/dist/build/templates/pages';
+} from '@/lib/models/ludo.interface';
 import { useParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import ludoboard from '../../../public/img/ludoboard.jpg';
+import { socket } from '../socket';
 
 export default function Ludo({ height = 691, width = 691 }) {
 	const roomId = useParams().id?.toString();
@@ -48,9 +44,9 @@ export default function Ludo({ height = 691, width = 691 }) {
 			return;
 		}
 
-		let rect = canvasRef.current!.getBoundingClientRect();
-		let x = Math.floor((event.clientX - rect.left) / squareSize);
-		let y = Math.floor((event.clientY - rect.top) / squareSize);
+		const rect = canvasRef.current!.getBoundingClientRect();
+		const x = Math.floor((event.clientX - rect.left) / squareSize);
+		const y = Math.floor((event.clientY - rect.top) / squareSize);
 
 		if (board[y][x].pawn != null && board[y][x].pawn.color == color) {
 			const pos: IPosition = {
