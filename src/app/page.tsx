@@ -1,3 +1,4 @@
+
 export default function Home() {
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center justify-center">

@@ -1,19 +1,14 @@
-import { useState } from 'react';
 import Image from 'next/image';
 import accountIcon from '../../../public/img/accounticon.png';
 import logo from '../../../public/img/placeholderlogo.jpg';
 import Link from 'next/link';
-import { logout } from '../services/auth';
+import { useState } from 'react';
 
-export default function Navbar() {
+export default function LoadingNavbar() {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
 	const toggleDropdown = () => {
 		setIsDropdownOpen((prevState) => !prevState);
-	};
-
-	const logoutUser = () => {
-		logout();
 	};
 
 	return (
@@ -46,7 +41,7 @@ export default function Navbar() {
 							<ul>
 								<li>
 									<a
-										href="/account"
+										style={{ cursor: 'not-allowed' }}
 										className="block px-4 py-2 text-black hover:bg-gray-200 rounded-t-lg"
 									>
 										Profiel
@@ -54,8 +49,7 @@ export default function Navbar() {
 								</li>
 								<li>
 									<a
-										onClick={logoutUser}
-										style={{ cursor: 'pointer' }}
+										style={{ cursor: 'not-allowed' }}
 										className="block px-4 py-2 text-black hover:bg-gray-200 rounded-b-lg"
 									>
 										Log uit
