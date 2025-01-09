@@ -11,10 +11,14 @@ import { LudoPlayer, LudoPlayerColor } from './ludo.player';
 import { IClientGameData, IServerGameData } from '@/models/data.interface';
 import {
 	newBoard,
-	BLUE_HOME,
+	BLUE_START,
+	YELLOW_START,
+	RED_START,
+	GREEN_START,
+	GREEN_HOME,
 	YELLOW_HOME,
 	RED_HOME,
-	GREEN_HOME,
+	BLUE_HOME,
 } from './board';
 
 export class LudoGame implements IGame {
@@ -137,10 +141,10 @@ export class LudoGame implements IGame {
 				case LudoPlayerColor.BLUE:
 					for (let i = 0; i < 4; i++) {
 						if (
-							this.board[BLUE_HOME[i].y][BLUE_HOME[i].x].pawn ==
+							this.board[BLUE_START[i].y][BLUE_START[i].x].pawn ==
 							null
 						) {
-							this.board[BLUE_HOME[i].y][BLUE_HOME[i].x].pawn =
+							this.board[BLUE_START[i].y][BLUE_START[i].x].pawn =
 								slainPawn;
 							break;
 						}
@@ -149,11 +153,11 @@ export class LudoGame implements IGame {
 				case LudoPlayerColor.YELLOW:
 					for (let i = 0; i < 4; i++) {
 						if (
-							this.board[YELLOW_HOME[i].y][YELLOW_HOME[i].x]
+							this.board[YELLOW_START[i].y][YELLOW_START[i].x]
 								.pawn == null
 						) {
-							this.board[YELLOW_HOME[i].y][
-								YELLOW_HOME[i].x
+							this.board[YELLOW_START[i].y][
+								YELLOW_START[i].x
 							].pawn = slainPawn;
 							break;
 						}
@@ -162,10 +166,10 @@ export class LudoGame implements IGame {
 				case LudoPlayerColor.RED:
 					for (let i = 0; i < 4; i++) {
 						if (
-							this.board[RED_HOME[i].y][RED_HOME[i].x].pawn ==
+							this.board[RED_START[i].y][RED_START[i].x].pawn ==
 							null
 						) {
-							this.board[RED_HOME[i].y][RED_HOME[i].x].pawn =
+							this.board[RED_START[i].y][RED_START[i].x].pawn =
 								slainPawn;
 							break;
 						}
@@ -174,11 +178,12 @@ export class LudoGame implements IGame {
 				case LudoPlayerColor.GREEN:
 					for (let i = 0; i < 4; i++) {
 						if (
-							this.board[GREEN_HOME[i].y][GREEN_HOME[i].x].pawn ==
-							null
+							this.board[GREEN_START[i].y][GREEN_START[i].x]
+								.pawn == null
 						) {
-							this.board[GREEN_HOME[i].y][GREEN_HOME[i].x].pawn =
-								slainPawn;
+							this.board[GREEN_START[i].y][
+								GREEN_START[i].x
+							].pawn = slainPawn;
 							break;
 						}
 					}
@@ -187,6 +192,42 @@ export class LudoGame implements IGame {
 		}
 
 		this.board[currentPosition.y][currentPosition.x].pawn = pawn;
+
+		for (let i = 0; i < GREEN_HOME.length; i++) {
+			if (this.board[GREEN_HOME[i].y][GREEN_HOME[i].x].pawn == null) {
+				break;
+			}
+			if (i == 3) {
+				// win condition
+			}
+		}
+
+		for (let i = 0; i < YELLOW_HOME.length; i++) {
+			if (this.board[YELLOW_HOME[i].y][YELLOW_HOME[i].x].pawn == null) {
+				break;
+			}
+			if (i == 3) {
+				// win condition
+			}
+		}
+
+		for (let i = 0; i < RED_HOME.length; i++) {
+			if (this.board[RED_HOME[i].y][RED_HOME[i].x].pawn == null) {
+				break;
+			}
+			if (i == 3) {
+				// win condition
+			}
+		}
+
+		for (let i = 0; i < BLUE_HOME.length; i++) {
+			if (this.board[BLUE_HOME[i].y][BLUE_HOME[i].x].pawn == null) {
+				break;
+			}
+			if (i == 3) {
+				// win condition
+			}
+		}
 
 		if (diceNum != 6) {
 			if (

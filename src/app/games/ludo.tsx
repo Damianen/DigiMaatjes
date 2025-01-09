@@ -52,7 +52,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 		let x = Math.floor((event.clientX - rect.left) / squareSize);
 		let y = Math.floor((event.clientY - rect.top) / squareSize);
 
-		if (board[y][x].pawn) {
+		if (board[y][x].pawn != null && board[y][x].pawn.color == color) {
 			const pos: IPosition = {
 				x: x,
 				y: y,
