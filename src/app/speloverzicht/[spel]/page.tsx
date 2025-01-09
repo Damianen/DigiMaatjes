@@ -8,11 +8,11 @@ import Joyride, { Placement } from 'react-joyride';
 import { useState, useEffect } from 'react';
 import Loading from '@/app/component/loading';
 
-interface Room {
-	roomName: string;
-	numUsers: number;
+interface Room{
+    roomName: string;
+    numUsers: number;
 }
-
+ 
 export default function GameRoom() {
 	const router = useRouter();
 	const spel = useParams().spel?.toString();

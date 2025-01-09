@@ -1,13 +1,14 @@
+import next from 'next';
+import { createServer } from 'node:http';
 import { LudoGameFactory } from '@/lib/games/ludo/ludo.factory';
 import { LudoPlayer, LudoPlayerColor } from '@/lib/games/ludo/ludo.player';
 import { LudoClientGameData } from '@/lib/models/ludo.interface';
-import next from 'next';
-import { createServer } from 'node:http';
 import { Server, Socket } from 'socket.io';
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = 'localhost';
-const port: number = parseInt(process.env.PORT || '3000');
+console.log(process.env.PORT);
+const port: any = process.env.PORT || '3000';
 // when using middleware `hostname` and `port` must be provided below
 const app = next({ dev, port });
 const handler = app.getRequestHandler();
@@ -16,7 +17,6 @@ app.prepare().then(() => {
 	const httpServer = createServer(handler);
 
 	let ludo = null;
-
 	const io = new Server(httpServer);
 	const MAX_USERS = 4;
 	const shownrooms = new Map();
