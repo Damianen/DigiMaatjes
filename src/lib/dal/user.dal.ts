@@ -3,7 +3,7 @@ import 'server-only';
 
 import { cache } from 'react';
 import { User } from '@/lib/models/user.interface';
-import { verifySession } from './dal';
+import { verifySession, getToken } from './dal';
 
 const baseUrl = process.env.BASE_URL;
 
@@ -24,12 +24,15 @@ export const getUserName = cache(async () => {
 export const getUser = async (userName: string): Promise<User | undefined> => {
     const session = await verifySession();
     if (!session) return undefined;
-
+    
+    const token = await getToken();
+    
     try {
         const apiResponse = await fetch(
             baseUrl + '/api/user/' + userName,
             {
                 method: 'GET',
+                headers: {Authorization: String("Bearer " + token)}
             }
         );
 

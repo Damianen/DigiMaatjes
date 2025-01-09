@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { database } from '../../dao/db-config';
 import * as sql from 'mssql';
 
-export async function GET(request: Request, { params }: { params: { username: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { username: string } }) {
   const { username } = await params;
 
     if (!database.connected) {
