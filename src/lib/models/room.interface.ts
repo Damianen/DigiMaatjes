@@ -1,9 +1,9 @@
 import { IChatLog } from './chat.interface';
-import { IGame } from './game.interface';
-import { IUser } from './user.interface';
+import { IGame, IPlayer } from './game.interface';
 
 export interface IRoom {
 	roomChat: IChatLog;
 	game: IGame;
-	users: Array<IUser>;
+	owner: IPlayer
+	users: Array<IPlayer>;
 }

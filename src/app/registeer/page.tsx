@@ -1,21 +1,50 @@
 'use client';
 import { signup } from '@/app/services/auth';
 import { useState, useActionState } from 'react';
+import { Joyride, Placement } from 'react-joyride';
 
 export default function Register() {
 	const [showExplanation, setShowExplanation] = useState(false);
 
 	const [state, action, pending] = useActionState(signup, undefined);
-	console.log(pending)
+	console.log(pending);
+
+	const [isTourActive, setIsTourActive] = useState(false);
+
 	const toggleExplanation = () => {
-		setShowExplanation(!showExplanation);
+		setIsTourActive(false);
+		setIsTourActive(true);
 	};
+
+	const steps = [
+		{
+			target: '.register-field',
+			content:
+				'Op dit account kun je registeren om een account te maken. Hiermee kun je chatten met je vrienden en samen een spel spelen. Een account is nodig om je voortgang op te slaan en je te koppelen aan je vrienden.',
+			placement: 'right' as Placement,
+			disableBeacon: true,
+		},
+		{
+			target: '.username-field',
+			content:
+				'Hier kun je je gebruikersnaam invullen. Een gebruikersnaam is nodig om je te identificeren. Deze naam is zichtbaar voor je vrienden en tegenstanders. Een gebruikersnaam hoeft niet je echte naam te zijn.',
+			placement: 'right' as Placement,
+			disableBeacon: true,
+		},
+		{
+			target: '.password-field',
+			content:
+				'Hier kun je een wachtwoord invullen. Een wachtwoord is nodig om je account te beveiligen. Kies een wachtwoord dat je makkelijk kunt onthouden, maar moeilijk te raden is voor anderen.' +
+				'Gebruik minimaal 8 tekens, een hoofdletter, een kleine letter, een cijfer en een speciaal teken.',
+			placement: 'left' as Placement,
+		},
+	];
 
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center justify-center px-4">
 			<div className="text-center mb-2 relative">
-				<div className="flex items-center justify-center mb-2 mt-4">
-					<h1 className="text-4xl font-bold font-bambino text-white">
+				<div className=" flex items-center justify-center mb-2 mt-4">
+					<h1 className="text-4xl font-bold font-bambino text-white register-field">
 						Registeren
 					</h1>
 					<button
@@ -47,7 +76,7 @@ export default function Register() {
 			<div className="w-full max-w-4xl rounded-lg p-8">
 				<form action={action}>
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
-						<div className="w-full">
+						<div className="w-full username-field">
 							<label
 								htmlFor="username"
 								className="block text-xl font-semibold text-white mb-2"
@@ -134,10 +163,10 @@ export default function Register() {
 							/>
 						</div>
 
-						<div className="w-full">
+						<div className="w-full password-field">
 							<label
 								htmlFor="password"
-								className="block text-xl font-semibold text-white mb-2"
+								className="block text-xl font-semibold text-white mb-2 "
 							>
 								Wachtwoord
 							</label>
@@ -177,6 +206,33 @@ export default function Register() {
 					</div>
 				</form>
 			</div>
+			{isTourActive && (
+				<Joyride
+					styles={{
+						options: {
+							primaryColor: '#2664EB',
+						},
+					}}
+					locale={{
+						back: 'Terug',
+						close: 'Afsluiten',
+						last: 'Afsluiten',
+						next: 'Volgende',
+						skip: 'Overslaan',
+					}}
+					steps={steps}
+					continuous={true}
+					scrollToFirstStep={false}
+					showSkipButton={true}
+					run={true}
+					callback={(data) => {
+						const { status } = data;
+						if (status === 'finished' || status === 'skipped') {
+							setIsTourActive(false);
+						}
+					}}
+				/>
+			)}
 		</div>
 	);
 }
