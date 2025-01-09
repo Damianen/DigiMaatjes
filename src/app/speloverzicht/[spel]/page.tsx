@@ -1,14 +1,14 @@
 'use client';
-import Image from 'next/image';
-import { getUserName } from '@/lib/dal/user.dal';
-import Navbar from '@/app/component/navbar';
-import { useParams, useRouter } from 'next/navigation';
-import { socket } from '../../socket';
-import { useState, useEffect } from 'react';
 import Loading from '@/app/component/loading';
+import Navbar from '@/app/component/navbar';
+import { getUserName } from '@/lib/dal/user.dal';
+import Image from 'next/image';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Joyride, { Placement } from 'react-joyride';
+import { socket } from '../../socket';
 
-interface Room{
+interface Room {
 	roomName: string;
 	numUsers: number;
 }
@@ -18,7 +18,7 @@ export default function GameRoom() {
 	const spel = useParams().spel?.toString();
 	const spelnaam = spel ? spel : 'Mens erger je niet';
 	const spelimg = `/img/${spelnaam}.jpg`;
-	
+
 	let gameRealName = spelnaam;
 	if (spelnaam == 'Mensergerjeniet') {
 		gameRealName = 'Mens erger je niet';
@@ -55,19 +55,20 @@ export default function GameRoom() {
 			console.log(rooms);
 			setRooms(rooms);
 		});
-	}	
+	}
 
-	async function getUser(){
+	async function getUser() {
 		const user = await getUserName();
 		console.log(user);
 		if (user) {
-			setNickname( user as string);
+			setNickname(user as string);
 		}
-		console.log("nickname "+ nickname);
+		console.log('nickname ' + nickname);
 	}
 
 	function handleCreateGame() {
-		console.log('create game with username: ', nickname);	
+		setStatus('pending');
+		console.log('create game with username: ', nickname);
 		socket.emit('createRoom', `${spelnaam}-${id}`, nickname, spelnaam);
 
 		setTimeout(() => {
@@ -143,7 +144,7 @@ export default function GameRoom() {
 			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center px-4">
 				<main className="main-field w-full max-w-6xl bg-white rounded-lg shadow-lg p-8 mt-10">
 					<div className="flex items-center justify-between mb-6">
-						<div className="w-24 h-24 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden">
+						<div className="w-24 h-24 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden sm:w-16 sm:h-16">
 							<Image
 								src={spelimg}
 								alt="Spel afbeelding"
@@ -154,33 +155,32 @@ export default function GameRoom() {
 							/>
 						</div>
 
-						<div className="flex-1 mx-4 text-lg font-semibold">
+						<div className="flex-1 mx-4 text-lg font-semibold sm:text-base">
 							{gameRealName} is een spel voor 2 tot 4 spelers.
 						</div>
 
 						<button
 							onClick={() => router.push('/speloverzicht')}
-							className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 mr-12"
+							className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 mr-12 sm:px-4 sm:py-2 sm:text-base sm:mr-4"
 						>
-							Terug naar speloverzicht
+							Naar speloverzicht
 						</button>
 
-						<div className="flex items-center gap-x-6 relative">
+						<div className="flex items-center gap-x-6 relative sm:gap-x-2">
 							<button
 								onClick={handleCreateGame}
-								className="create-game-button px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+								className="create-game-button px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 sm:px-4 sm:py-2 sm:text-base"
 							>
 								Creëer spel kamer
 							</button>
 
 							<button
 								onClick={toggleExplanation}
-								className="text-white bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center text-sm font-bold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+								className="text-white bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center text-sm font-bold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 sm:w-8 sm:h-8 sm:text-xs"
 							>
 								?
 							</button>
 						</div>
-						
 					</div>
 
 					<div className="grid grid-cols-1 gap-6">
