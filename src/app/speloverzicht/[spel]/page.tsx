@@ -60,7 +60,6 @@ export default function GameRoom() {
 	function handleCreateGame() {
 		console.log('create game with username: ', nickname);	
 		socket.emit('createRoom', `${spelnaam}-${id}`, nickname, spelnaam);
-
 		setTimeout(() => {
 			router.push(`/room/${spelnaam}-${id}`);
 		}, 250);
