@@ -80,7 +80,12 @@ export default function Ludo({ height = 691, width = 691 }) {
 
 	useEffect(() => {
 		socket.on('dice', (dice: number) => {
+			setIsRolling(true);
+			setTimeout(() => {
 			setDice(dice);
+			setIsRolling(false);
+		}
+		, 500);
 		});
 		socket.on('board', (data: LudoClientGameData) => {
 			if (data.won != null) {
