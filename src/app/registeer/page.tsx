@@ -61,7 +61,8 @@ export default function Register() {
 							We vragen je om een account te maken zodat je kunt
 							chatten met je vrienden en samen een spel kunt
 							spelen. Registreren is nodig om je voortgang op te
-							slaan en je te koppelen aan je vrienden.
+							slaan en je te koppelen aan je vrienden en een chat
+							met hun te starten.
 						</p>
 						<button
 							onClick={toggleExplanation}
