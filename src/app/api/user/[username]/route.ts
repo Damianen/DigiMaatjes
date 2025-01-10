@@ -1,22 +1,17 @@
-import { NextResponse } from 'next/server';
-import { database } from '../../dao/db-config';
+import { NextRequest, NextResponse } from 'next/server';
+import { database } from '@/lib/dal/dao/db-config';
 import * as sql from 'mssql';
+import { getUser } from '@/lib/dal/user.dal';
 
-export async function GET(request: Request, context: { params: Promise<{ username: string }> }) {
-  const params = await context.params;
-  const { username } = params;
+export async function GET(
+	req: NextRequest,
+	{ params }: { params: { username: string } }
+) {
+	const { username } = await params;
 
-  if (!database.connected) {
-    await database.connect();
-  }
+	const token = req.headers.get('Authorization')?.split(' ')[1];
 
-  const sqlRequest: sql.Request = database.request();
-  
-  sqlRequest.input('userName', sql.NVarChar, username);
+	const response = await getUser(username, token);
 
-  const results = await sqlRequest.query("select * from [User] WHERE userName = @userName");
-  const response = results.recordset[0] ? results.recordset[0] : undefined;
-  await database.close();
-  
-  return NextResponse.json(response, {status: 200});
+	return NextResponse.json(response, { status: 200 });
 }

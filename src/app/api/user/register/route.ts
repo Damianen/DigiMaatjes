@@ -1,6 +1,5 @@
-import { database } from '../../dao/db-config';
-import { genSaltSync, hashSync } from 'bcrypt-ts';
-import * as sql from 'mssql';
+import { register } from '@/lib/dal/auth.dal';
+import { User } from '@/lib/models/user.interface';
 
 export async function POST(request: Request) {
 	try {
@@ -56,59 +55,25 @@ export async function POST(request: Request) {
 			);
 		}
 
-		const salt = genSaltSync(10);
-		const hash = hashSync(data.password, salt);
-
 		const normalizedDateStr = data.birthDate.replace(/[\./]/g, '-');
-		const newDate = new Date(normalizedDateStr);
-		newDate.setHours(newDate.getHours() + 1); //offset timezone GMT+1
-		const formatedDate = newDate.toISOString();
+		const formatedDate = new Date(normalizedDateStr);
 
-		if (!database.connected) {
-			await database.connect();
+		const user: User = {
+			email: data.email,
+			firstName: data.firstName,
+			lastName: data.lastName,
+			userName: data.userName,
+			password: data.password,
+			birthdate: formatedDate,
+		};
+
+		const result = await register(user);
+
+		if (result.succes) {
+			return Response.json({ succes: true }, { status: 200 });
+		} else {
+			return Response.json({ error: result.error }, { status: 400 });
 		}
-
-		const checkEmail: sql.Request = database.request();
-		checkEmail.input('email', sql.NVarChar, data.email);
-		const emailCheck = await checkEmail.query(
-			'SELECT email FROM [User] WHERE email=@email'
-		);
-		if (emailCheck.recordset.length > 0) {
-			await database.close();
-			return Response.json(
-				{ error: 'Email staat al geregistreerd!' },
-				{ status: 409 }
-			);
-		}
-
-		const checkUserName: sql.Request = database.request();
-		checkUserName.input('userName', sql.NVarChar, data.userName);
-		const userNameCheck = await checkUserName.query(
-			'SELECT email FROM [User] WHERE userName=@userName'
-		);
-		if (userNameCheck.recordset.length > 0) {
-			await database.close();
-			return Response.json(
-				{ error: 'Gebruikersnaam is al in gebruik!' },
-				{ status: 409 }
-			);
-		}
-
-		const sqlRequest: sql.Request = database.request();
-		sqlRequest.input('email', sql.NVarChar, data.email);
-		sqlRequest.input('userName', sql.NVarChar, data.userName);
-		sqlRequest.input('firstName', sql.NVarChar, data.firstName);
-		sqlRequest.input('lastName', sql.NVarChar, data.lastName);
-		sqlRequest.input('password', sql.NVarChar, hash);
-		sqlRequest.input('birthdate', sql.Date, formatedDate);
-
-		await sqlRequest.query(
-			`INSERT INTO [User]([email],[userName],[firstName],[lastName],[password],[birthdate])
-			VALUES(@email ,@userName,@firstName,@lastName,@password, @birthdate)`
-		);
-		await database.close();
-
-		return Response.json({ succes: true }, { status: 200 });
 	} catch (err: unknown) {
 		let errorMessage = 'An unexpected error occurred';
 		if (err instanceof Error) {

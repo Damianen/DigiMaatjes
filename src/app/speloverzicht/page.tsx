@@ -9,9 +9,28 @@ import Navbar from '../component/navbar';
 import { useEffect, useState } from 'react';
 import Loading from '../component/loading';
 import Link from 'next/link';
+import { IUser } from '@/lib/models/user.interface';
+import { getCurrentUser, getUser } from '@/lib/dal/user.dal';
 
 export default function SpelOverzicht() {
 	// const username = 'Digimaatjes';
+
+	const [user, setUser] = useState<IUser | undefined>(undefined);
+
+	useEffect(() => {
+		(async () => {
+			try {
+				const user = await getCurrentUser();
+				if (user) {
+					setUser(user);
+					console.log(user);
+				}
+				
+			} catch (err) {
+				console.log('Error occured when fetching User');
+			}
+		})();
+	}, []);
 
 	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
 		'pending'
