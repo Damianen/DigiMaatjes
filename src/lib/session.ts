@@ -1,7 +1,7 @@
 'use server';
 import 'server-only';
 import { SignJWT, jwtVerify } from 'jose';
-import { SessionPayload } from '@/lib/models/session.interface';
+import { SessionPayload } from './models/session.interface';
 import { cookies } from 'next/headers';
 
 const secretKey = process.env.SESSION_SECRET;
@@ -38,6 +38,8 @@ export async function createSession(userName: string) {
 		sameSite: 'lax',
 		path: '/',
 	});
+	console.log(session);
+	return session;
 }
 
 export async function deleteSession() {

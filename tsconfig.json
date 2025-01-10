@@ -27,9 +27,9 @@
 		"**/*.ts",
 		"**/*.tsx",
 		".next/types/**/*.ts",
-		"src/app/api/dao/db-config.ts",
+		"src/lib/dal/dao/db-config.ts",
 		"src/app/socket.js",
-		"server.ts"
+		"server.js"
 	],
 	"exclude": ["node_modules"]
 }
