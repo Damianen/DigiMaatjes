@@ -34,3 +34,5 @@ export interface IFriendRequest {
 	sender: IUser;
 	receiver: IUser;
 }
+
+export type UpdateUser = Partial<IUser> 
