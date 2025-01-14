@@ -13,6 +13,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import ludoboard from '../../../public/img/ludoboard.jpg';
 import { socket } from '../socket';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 export default function Ludo({ height = 691, width = 691 }) {
 	const roomId = useParams().id?.toString();
@@ -29,14 +30,19 @@ export default function Ludo({ height = 691, width = 691 }) {
 	);
 	const [gameStarted, setGameStarted] = useState<boolean>(false);
 	const squareSize: number = height / 15;
+	const [isRolling, setIsRolling] = useState(false);
 
 	const rollDice = () => {
 		console.log('rol ', turnState);
 		if (turnState == 1) {
-			const number = Math.floor(Math.random() * (6 - 1 + 1) + 1);
-			setDice(number);
-			socket.emit('dice', number, room);
 			setTurnState(2);
+			setIsRolling(true);
+			setTimeout(() => {
+				const number = 6;
+				// const number = Math.floor(Math.random() * (6 - 1 + 1) + 1);
+				setDice(number);
+				socket.emit('dice', number, room);
+			}, 500);
 		}
 	};
 
@@ -74,7 +80,11 @@ export default function Ludo({ height = 691, width = 691 }) {
 
 	useEffect(() => {
 		socket.on('dice', (dice: number) => {
-			setDice(dice);
+			setIsRolling(true);
+			setTimeout(() => {
+				setDice(dice);
+				setIsRolling(false);
+			}, 500);
 		});
 		socket.on('board', (data: LudoClientGameData) => {
 			if (data.won != null) {
@@ -167,19 +177,49 @@ export default function Ludo({ height = 691, width = 691 }) {
 		return () => cancelAnimationFrame(frameRef.current);
 	}, [board]);
 
+	const getDieFace = (value: number) => {
+		switch (value) {
+			case 1:
+				return 'fa-dice-one';
+			case 2:
+				return 'fa-dice-two';
+			case 3:
+				return 'fa-dice-three';
+			case 4:
+				return 'fa-dice-four';
+			case 5:
+				return 'fa-dice-five';
+			case 6:
+				return 'fa-dice-six';
+			default:
+				return '';
+		}
+	};
+
 	return (
 		gameStarted && (
 			<>
 				<canvas ref={canvasRef} onClick={choosePawn} />
-				<p> last dice roll: {dice}</p>
-				<button onClick={rollDice}>Roll dice</button>
+				<div className="dice flex mb-4">
+					<div
+						className={`die w-12 h-12 rounded-lg border border-gray-300 m-2 flex justify-center items-center text-3xl shadow-lg ${
+							isRolling ? 'animate-roll' : ''
+						}`}
+					>
+						<i
+							className={`fas ${getDieFace(dice)}`}
+							style={{ fontSize: '3.5rem' }}
+						></i>
+					</div>
+				</div>
+				<button onClick={rollDice}>Gooi dobbelsteen</button>
 				<p> jouw kleur is: {color}</p>
 				{turnState == 1 || turnState == 2 ? (
 					<p>Het is nu jou beurt</p>
 				) : (
 					<p>Het is de beurt van {currentColor}</p>
 				)}
-				{won != null && <p> {won} has won the game! </p>}
+				{won != null && <p> {won} heeft het spel gewonnen!!! </p>}
 			</>
 		)
 	);

@@ -8,6 +8,8 @@ import {
 import 'dotenv/config';
 import { createSession, deleteSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
+import { login, register } from '@/lib/dal/auth.dal';
+import { User } from '@/lib/models/user.interface';
 
 const baseUrl = process.env.BASE_URL;
 
@@ -31,48 +33,44 @@ export async function signup(state: RegisterFormState, formData: FormData) {
 		String(formData.get('dob'))?.split('-')[2] +
 		'-' +
 		String(formData.get('dob'))?.split('-')[0];
-	const user = {
-		email: formData.get('email'),
-		password: formData.get('password'),
-		userName: formData.get('username'),
-		firstName: formData.get('firstname'),
-		lastName: formData.get('lastname'),
-		birthDate: formatedDate,
+
+	const user: User = {
+		email: String(formData.get('email')),
+		password: String(formData.get('password')),
+		userName: String(formData.get('username')),
+		firstName: String(formData.get('firstname')),
+		lastName: String(formData.get('lastname')),
+		birthdate: new Date(formatedDate),
 	};
 
-	const apiResponse = await fetch(baseUrl + '/api/user/register', {
-		method: 'POST',
-		body: JSON.stringify(user),
-	});
-	const data = await apiResponse.json();
+	const data = await register(user);
 	if (data.succes) {
 		return {
 			message: 'User is succesvol aangemaakt!',
 		};
 	} else {
 		return {
-			apiError: data.error,
+			error: data.error,
 		};
 	}
 }
 
 export async function signin(state: LoginFormState, formData: FormData) {
-	const login = {
+	const loginData = {
 		password: formData.get('password'),
 		userName: formData.get('username'),
 	};
 
-	const apiResponse = await fetch(baseUrl + '/api/user/login', {
-		method: 'POST',
-		body: JSON.stringify(login),
-	});
-	const data = await apiResponse.json();
-	if (data.succes) {
-		await createSession(String(login.userName));
+	const loginCall = await login(
+		String(loginData.userName),
+		String(loginData.password)
+	);
+	if (loginCall.succes) {
+		await createSession(String(loginData.userName));
 		redirect('/speloverzicht');
 	} else {
 		return {
-			apiError: data.error,
+			error: loginCall.error,
 		};
 	}
 }

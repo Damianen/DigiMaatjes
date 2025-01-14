@@ -112,7 +112,7 @@ export default function Login() {
 						</div>
 					</div>
 
-					{state?.apiError && <p>{state.apiError}</p>}
+					{state?.error && <p>{state.error}</p>}
 
 					<div className="text-center mt-12">
 						<button

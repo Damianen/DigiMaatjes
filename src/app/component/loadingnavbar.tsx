@@ -41,7 +41,7 @@ export default function LoadingNavbar() {
 							<ul>
 								<li>
 									<a
-										style={{ cursor: 'not-allowed' }}
+										style={{ cursor: 'wait' }}
 										className="block px-4 py-2 text-black hover:bg-gray-200 rounded-t-lg"
 									>
 										Profiel
@@ -49,7 +49,7 @@ export default function LoadingNavbar() {
 								</li>
 								<li>
 									<a
-										style={{ cursor: 'not-allowed' }}
+										style={{ cursor: 'wait' }}
 										className="block px-4 py-2 text-black hover:bg-gray-200 rounded-b-lg"
 									>
 										Log uit

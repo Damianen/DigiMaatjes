@@ -6,7 +6,7 @@ export default function Register() {
 	const [showExplanation, setShowExplanation] = useState(false);
 
 	const [state, action, pending] = useActionState(signup, undefined);
-	console.log(pending)
+	
 	const toggleExplanation = () => {
 		setShowExplanation(!showExplanation);
 	};
@@ -164,7 +164,7 @@ export default function Register() {
 
 					<div>
 						{state?.message && <p>{state.message}</p>}
-						{state?.apiError && <p>{state.apiError}</p>}
+						{state?.error && <p>{state.error}</p>}
 					</div>
 
 					<div className="text-center">

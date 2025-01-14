@@ -8,7 +8,7 @@ export interface IUser {
 	password: string;
 	birthdate: Date;
 	profileImages?: string;
-	friendsList: Array<IUser>;
+	friendsList?: Array<IUser>;
 }
 
 export class User implements IUser {
@@ -21,7 +21,7 @@ export class User implements IUser {
 	password!: string;
 	birthdate!: Date;
 	profileImages?: string;
-	friendsList!: Array<IUser>;
+	friendsList?: Array<IUser>;
 }
 
 export interface IFriendship {
