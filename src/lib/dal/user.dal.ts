@@ -66,7 +66,7 @@ export const getUser = async (
 export const updateCurrentUser = async (
 	updateData: UpdateUser,
 	tokenFromApi?: string
-): Promise<User | undefined> => {
+): Promise<true | undefined> => {
 	const session =
 		(await verifySession(tokenFromApi)) || (await verifySession());
 	if (!session) return undefined;
@@ -83,16 +83,14 @@ export const updateCurrentUser = async (
 		if (updateData.email) {
 			//check if updated email already exists
 			const emailCheckRequest: sql.Request = database.request();
-			emailCheckRequest.input('email', sql.NVarChar, currentData!.email);
+			emailCheckRequest.input('email', sql.NVarChar, updateData.email);
 			const emailCheckRequestResults = await emailCheckRequest.query(
 				'select email from [User] WHERE email = @email'
 			);
 
-			console.dir(emailCheckRequestResults);
-
 			if (emailCheckRequestResults.recordset.length != 0) {
 				if (
-					emailCheckRequestResults.recordset[0] != currentData!.email
+					emailCheckRequestResults.recordset[0].email != currentData!.email
 				) {
 					throw 'Email is al in gebruik!';
 				}
@@ -118,11 +116,9 @@ export const updateCurrentUser = async (
 					'select userName from [User] WHERE userName = @userName'
 				);
 
-			console.dir(userNameCheckRequestResults);
-
 			if (userNameCheckRequestResults.recordset.length != 0) {
 				if (
-					userNameCheckRequestResults.recordset[0] !=
+					userNameCheckRequestResults.recordset[0].userName !=
 					currentData!.userName
 				) {
 					throw 'Username is al in gebruik!';
@@ -202,11 +198,13 @@ export const updateCurrentUser = async (
 	} catch (error) {
 		console.log('Failed to update user');
 		console.log(error);
-		return undefined;
+		throw error;
 	}
 
 	if (relogin) {
 		await deleteSession();
 		await createSession(String(updateData.userName));
 	}
+
+	return true;
 };
