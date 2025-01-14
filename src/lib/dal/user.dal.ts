@@ -2,7 +2,7 @@
 import 'server-only';
 
 import { cache } from 'react';
-import { UpdateUser, User } from '@/lib/models/user.interface';
+import { IFriendship, UpdateUser, User } from '@/lib/models/user.interface';
 import { verifySession, getToken } from './dal';
 import { database } from '../dal/dao/db-config';
 import * as sql from 'mssql';
@@ -40,7 +40,7 @@ export const getUser = async (
 		sqlRequest.input('userName', sql.NVarChar, userName);
 
 		const results = await sqlRequest.query(
-			'select * from [User] WHERE userName = @userName'
+			'SELECT * FROM [User] WHERE userName = @userName'
 		);
 
 		await database.close();
@@ -64,11 +64,9 @@ export const getUser = async (
 };
 
 export const updateCurrentUser = async (
-	updateData: UpdateUser,
-	tokenFromApi?: string
+	updateData: UpdateUser
 ): Promise<true | undefined> => {
-	const session =
-		(await verifySession(tokenFromApi)) || (await verifySession());
+	const session = (await verifySession());
 	if (!session) return undefined;
 	let relogin = false;
 	const currentData = await getCurrentUser();
@@ -85,7 +83,7 @@ export const updateCurrentUser = async (
 			const emailCheckRequest: sql.Request = database.request();
 			emailCheckRequest.input('email', sql.NVarChar, updateData.email);
 			const emailCheckRequestResults = await emailCheckRequest.query(
-				'select email from [User] WHERE email = @email'
+				'SELECT email FROM [User] WHERE email = @email'
 			);
 
 			if (emailCheckRequestResults.recordset.length != 0) {
@@ -113,7 +111,7 @@ export const updateCurrentUser = async (
 			);
 			const userNameCheckRequestResults =
 				await userNameCheckRequest.query(
-					'select userName from [User] WHERE userName = @userName'
+					'SELECT userName FROM [User] WHERE userName = @userName'
 				);
 
 			if (userNameCheckRequestResults.recordset.length != 0) {
@@ -207,4 +205,38 @@ export const updateCurrentUser = async (
 	}
 
 	return true;
+};
+
+export const getCurrentUserFriendships = async (
+): Promise<IFriendship[] | undefined> => {
+	const session = (await verifySession());
+	if (!session) return undefined;
+	const userName = await getUserName();
+	
+	try {
+		if (!database.connected) {
+			await database.connect();
+		}
+
+		const sqlRequest: sql.Request = database.request();
+
+		sqlRequest.input('userName', sql.NVarChar, userName);
+
+		const results = await sqlRequest.query(
+			'SELECT * FROM [FriendShip] WHERE FK_user1 = @userName OR FK_user2 = @userName'
+		);
+
+		await database.close();
+
+		let friendships: IFriendship[] | undefined = results.recordset
+			? results.recordset
+			: undefined;
+		
+		return friendships;
+
+	} catch (error) {
+		console.log('Failed to fetch friendships');
+		console.log(error);
+		return undefined;
+	}
 };
