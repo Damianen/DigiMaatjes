@@ -15,11 +15,11 @@ export const getCurrentUser = cache(async (): Promise<User | undefined> => {
 	return getUser(String(session.userName));
 });
 
-export const getUserName = cache(async () => {
+export const getUserName = cache(async (): Promise<string | undefined> => {
 	const session = await verifySession();
-	if (!session) return null;
+	if (!session) return undefined;
 
-	return session.userName;
+	return String(session.userName);
 });
 
 export const getUser = async (
@@ -207,7 +207,7 @@ export const updateCurrentUser = async (
 	return true;
 };
 
-export const getCurrentUserFriendships = async (
+export const getCurrentUserFriendships = cache(async (
 ): Promise<IFriendship[] | undefined> => {
 	const session = (await verifySession());
 	if (!session) return undefined;
@@ -239,4 +239,4 @@ export const getCurrentUserFriendships = async (
 		console.log(error);
 		return undefined;
 	}
-};
+});
