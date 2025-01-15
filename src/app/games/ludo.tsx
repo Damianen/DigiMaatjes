@@ -31,9 +31,9 @@ export default function Ludo({ height = 691, width = 691 }) {
 	const [gameStarted, setGameStarted] = useState<boolean>(false);
 	const squareSize: number = height / 15;
 	const [isRolling, setIsRolling] = useState(false);
+	const [announcement, setAnnouncement] = useState<string>('');
 
 	const rollDice = () => {
-		console.log('rol ', turnState);
 		if (turnState == 1) {
 			setTurnState(2);
 			setIsRolling(true);
@@ -43,11 +43,21 @@ export default function Ludo({ height = 691, width = 691 }) {
 				setDice(number);
 				socket.emit('dice', number, room);
 			}, 500);
+		} else if (turnState == 2) {
+			setAnnouncement('Je hebt al gegooit klik op een van je pionen');
+		} else {
+			setAnnouncement('Je bent nog niet aan de beurt!');
 		}
 	};
 
 	const choosePawn = (event: React.MouseEvent) => {
 		if (turnState != 2) {
+			if (turnState == 1) {
+				setAnnouncement('gooi eerst de dobbelsteen!');
+			} else {
+				setAnnouncement('Je bent niet aan de beurt!');
+			}
+
 			return;
 		}
 
@@ -72,6 +82,8 @@ export default function Ludo({ height = 691, width = 691 }) {
 			);
 
 			setTurnState(0);
+		} else {
+			setAnnouncement('Klik op een van jouw pionen');
 		}
 	};
 
@@ -220,6 +232,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 					<p>Het is de beurt van {currentColor}</p>
 				)}
 				{won != null && <p> {won} heeft het spel gewonnen!!! </p>}
+				<p>{announcement}</p>
 			</>
 		)
 	);

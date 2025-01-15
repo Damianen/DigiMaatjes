@@ -112,7 +112,10 @@ export class LudoGame implements IGame {
 				switch (pawn.color) {
 					case LudoPlayerColor.BLUE:
 						for (let i = 0; i < REVERSE_BLUE.length; i++) {
-							if (REVERSE_BLUE[i] == currentPosition) {
+							if (
+								REVERSE_BLUE[i].x == currentPosition.x &&
+								REVERSE_BLUE[i].y == currentPosition.y
+							) {
 								currentPosition = REVERSE_BLUE[i + 1];
 								break;
 							}
@@ -120,7 +123,10 @@ export class LudoGame implements IGame {
 						break;
 					case LudoPlayerColor.YELLOW:
 						for (let i = 0; i < REVERSE_YELLOW.length; i++) {
-							if (REVERSE_YELLOW[i] == currentPosition) {
+							if (
+								REVERSE_YELLOW[i].x == currentPosition.x &&
+								REVERSE_YELLOW[i].y == currentPosition.y
+							) {
 								currentPosition = REVERSE_YELLOW[i + 1];
 								break;
 							}
@@ -128,7 +134,10 @@ export class LudoGame implements IGame {
 						break;
 					case LudoPlayerColor.GREEN:
 						for (let i = 0; i < REVERSE_GREEN.length; i++) {
-							if (REVERSE_GREEN[i] == currentPosition) {
+							if (
+								REVERSE_GREEN[i].x == currentPosition.x &&
+								REVERSE_GREEN[i].y == currentPosition.y
+							) {
 								currentPosition = REVERSE_GREEN[i + 1];
 								break;
 							}
@@ -136,7 +145,10 @@ export class LudoGame implements IGame {
 						break;
 					case LudoPlayerColor.RED:
 						for (let i = 0; i < REVERSE_RED.length; i++) {
-							if (REVERSE_RED[i] == currentPosition) {
+							if (
+								REVERSE_RED[i].x == currentPosition.x &&
+								REVERSE_RED[i].y == currentPosition.y
+							) {
 								currentPosition = REVERSE_RED[i + 1];
 								break;
 							}

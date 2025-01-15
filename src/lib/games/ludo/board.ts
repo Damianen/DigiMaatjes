@@ -3,6 +3,7 @@ import { LudoBoardSquare, LudoPawn } from '@/lib/models/ludo.interface';
 import { LudoPlayerColor } from './ludo.player';
 
 export const REVERSE_GREEN: IPosition[] = [
+	{ x: 4, y: 7 },
 	{ x: 3, y: 7 },
 	{ x: 2, y: 7 },
 	{ x: 1, y: 7 },
@@ -14,6 +15,7 @@ export const REVERSE_GREEN: IPosition[] = [
 ];
 
 export const REVERSE_YELLOW: IPosition[] = [
+	{ y: 4, x: 7 },
 	{ y: 3, x: 7 },
 	{ y: 2, x: 7 },
 	{ y: 1, x: 7 },
@@ -25,6 +27,7 @@ export const REVERSE_YELLOW: IPosition[] = [
 ];
 
 export const REVERSE_BLUE: IPosition[] = [
+	{ x: 10, y: 7 },
 	{ x: 11, y: 7 },
 	{ x: 12, y: 7 },
 	{ x: 13, y: 7 },
@@ -36,6 +39,7 @@ export const REVERSE_BLUE: IPosition[] = [
 ];
 
 export const REVERSE_RED: IPosition[] = [
+	{ y: 10, x: 7 },
 	{ y: 11, x: 7 },
 	{ y: 12, x: 7 },
 	{ y: 13, x: 7 },
