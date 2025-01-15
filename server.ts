@@ -4,7 +4,10 @@ import { LudoGameFactory } from '@/lib/games/ludo/ludo.factory';
 import { LudoPlayer, LudoPlayerColor } from '@/lib/games/ludo/ludo.player';
 import { LudoClientGameData } from '@/lib/models/ludo.interface';
 import { Server, Socket } from 'socket.io';
+import { createClient } from 'redis';
+import { LudoGame } from '@/lib/games/ludo/ludo';
 
+const MAX_USERS = 4;
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = 'localhost';
 console.log(process.env.PORT);
@@ -13,14 +16,19 @@ const port: any = process.env.PORT || '3000';
 const app = next({ dev, port });
 const handler = app.getRequestHandler();
 
-app.prepare().then(() => {
-	const httpServer = createServer(handler);
+const redisClient = createClient({
+	url: 'redis://localhost:6379',
+});
 
-	let ludo = null;
+redisClient.on('error', (err) => console.log('Redis Client Error', err));
+
+app.prepare().then(async () => {
+	await redisClient.connect();
+	const httpServer = createServer(handler);
 	const io = new Server(httpServer);
-	const MAX_USERS = 4;
+
 	const shownrooms = new Map();
-	var rooms = io.sockets.adapter.rooms;
+	const rooms = io.sockets.adapter.rooms;
 	io.on('connection', (socket: Socket & { nickname?: string }) => {
 		console.log('a user connected');
 		socket.on('disconnect', () => {
@@ -96,7 +104,7 @@ app.prepare().then(() => {
 		});
 
 		socket.on('findRooms', async (spelnaam) => {
-			var shownrooms: Array<Object> = [];
+			const shownrooms: Array<object> = [];
 			console.log(rooms);
 			rooms.forEach((value, key) => {
 				const numberOfUsers = value.size;
@@ -111,13 +119,13 @@ app.prepare().then(() => {
 
 		socket.on('findUsersInRoom', async (room) => {
 			console.log('findUsersInRoom: ' + room);
-			var numberOfUsers = io.sockets.adapter.rooms.get(room)!.size;
+			const numberOfUsers = io.sockets.adapter.rooms.get(room)!.size;
 			console.log('numberOfUsers: ' + numberOfUsers);
 			socket.emit('numberOfUsers', numberOfUsers);
 		});
-		//Sockets for Ludo
 
-		socket.on('startGame', async (room) => {
+		//Sockets for Ludo
+		socket.on('startGame', async (room: string) => {
 			const sockets = await io.in(room).fetchSockets();
 			const users = sockets.map((socket) => socket.id);
 			const players: LudoPlayer[] = [];
@@ -134,9 +142,9 @@ app.prepare().then(() => {
 				}
 				i++;
 			});
-			console.log(players[0]);
-			console.log(players[1]);
-			ludo = new LudoGameFactory().createGame(players);
+			const ludo = new LudoGameFactory().createGame(players);
+			const json = JSON.stringify(ludo);
+			await redisClient.set(room, json);
 			io.to(room).emit('startGame', players, ludo.currentPlayer);
 		});
 
@@ -145,15 +153,14 @@ app.prepare().then(() => {
 			io.to(roomname).emit('dice', dice);
 		});
 
-		socket.on('takeTurn', (data, room) => {
-			console.log(data);
-			try {
-				const board: LudoClientGameData = ludo!.takeTurn(data);
-				console.log('board ' + board);
-				io.to(room).emit('board', board);
-			} catch (err: any) {
-				console.log(err.message);
-			}
+		socket.on('takeTurn', async (data, room) => {
+			let json = (await redisClient.get(room)) as string;
+			const ludo: LudoGame = new LudoGame([]);
+			Object.assign(ludo, JSON.parse(json));
+			const board = ludo.takeTurn(data);
+			json = JSON.stringify(ludo);
+			await redisClient.set(room, json);
+			io.to(room).emit('board', board);
 		});
 	});
 

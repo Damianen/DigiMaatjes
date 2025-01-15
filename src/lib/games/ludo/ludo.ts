@@ -28,17 +28,17 @@ export class LudoGame implements IGame {
 		this.players = players as LudoPlayer[];
 		this.currentPlayer = this.players[0];
 		this.board = newBoard;
-		this.dataFactory = new LudoGameDataFacotry();
 	}
 
 	players!: Array<LudoPlayer>;
 	currentPlayer!: LudoPlayer;
 	name!: string;
 	description!: string;
-	dataFactory!: LudoGameDataFacotry;
 	board!: Array<Array<LudoBoardSquare>>;
 
 	takeTurn(data: LudoServerGameData): IClientGameData {
+		const dataFactory = new LudoGameDataFacotry();
+
 		if (!data) {
 			throw new Error('Invalid data');
 		}
@@ -77,7 +77,7 @@ export class LudoGame implements IGame {
 						];
 				}
 			}
-			return this.dataFactory.createClientData({
+			return dataFactory.createClientData({
 				board: this.board,
 				player: this.currentPlayer,
 			});
@@ -249,7 +249,7 @@ export class LudoGame implements IGame {
 				break;
 			}
 			if (i == 3) {
-				return this.dataFactory.createClientData({
+				return dataFactory.createClientData({
 					board: this.board,
 					player: this.currentPlayer,
 					color: LudoPlayerColor.GREEN,
@@ -262,7 +262,7 @@ export class LudoGame implements IGame {
 				break;
 			}
 			if (i == 3) {
-				return this.dataFactory.createClientData({
+				return dataFactory.createClientData({
 					board: this.board,
 					player: this.currentPlayer,
 					color: LudoPlayerColor.YELLOW,
@@ -275,7 +275,7 @@ export class LudoGame implements IGame {
 				break;
 			}
 			if (i == 3) {
-				return this.dataFactory.createClientData({
+				return dataFactory.createClientData({
 					board: this.board,
 					player: this.currentPlayer,
 					color: LudoPlayerColor.RED,
@@ -288,7 +288,7 @@ export class LudoGame implements IGame {
 				break;
 			}
 			if (i == 3) {
-				return this.dataFactory.createClientData({
+				return dataFactory.createClientData({
 					board: this.board,
 					player: this.currentPlayer,
 					color: LudoPlayerColor.BLUE,
@@ -308,7 +308,7 @@ export class LudoGame implements IGame {
 			}
 		}
 
-		return this.dataFactory.createClientData({
+		return dataFactory.createClientData({
 			board: this.board,
 			player: this.currentPlayer,
 		});

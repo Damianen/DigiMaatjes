@@ -239,7 +239,6 @@ export default function Ludo({ height = 691, width = 691 }) {
 						{won != null && <p>{won} heeft het spel gewonnen!!!</p>}
 					</div>
 				</div>
-<<<<<<< HEAD
 				<button onClick={rollDice}>Gooi dobbelsteen</button>
 				<p> jouw kleur is: {color}</p>
 				{turnState == 1 || turnState == 2 ? (
@@ -249,8 +248,6 @@ export default function Ludo({ height = 691, width = 691 }) {
 				)}
 				{won != null && <p> {won} heeft het spel gewonnen!!! </p>}
 				<p>{announcement}</p>
-=======
->>>>>>> refs/remotes/origin/main
 			</>
 		)
 	);
