@@ -2,9 +2,10 @@
 import Image from 'next/image';
 import Navbar from '@/app/component/navbar';
 import { useState, useEffect } from 'react';
-import { getCurrentUser } from '@/lib/dal/user.dal';
+import { getCurrentUser, updateCurrentUser } from '@/lib/dal/user.dal';
 import Loading from '../component/loading';
 import { Joyride, Placement } from 'react-joyride';
+import { IUser, UpdateUser } from '@/lib/models/user.interface';
 
 export default function AccountDetails() {
 	const [formData, setFormData] = useState({
@@ -15,6 +16,8 @@ export default function AccountDetails() {
 	});
 
 	const [isTourActive, setIsTourActive] = useState(false);
+
+	const [user, setUser] = useState<IUser | undefined>(undefined);
 
 	const toggleExplanation = () => {
 		setIsTourActive(false);
@@ -54,6 +57,7 @@ export default function AccountDetails() {
 			try {
 				const user = await getCurrentUser();
 				if (user) {
+					setUser(user);
 					const birthdate = new Date(user.birthdate);
 					const formattedBirthDate = birthdate
 						.toISOString()
@@ -84,9 +88,50 @@ export default function AccountDetails() {
 
 	const handleEditToggle = () => setIsEditing((prev) => !prev);
 
-	const handleSaveChanges = () => {
+	const handleCancelChanges = () =>
+		setIsEditing((prev) => {
+			setFormData({
+				username: user!.userName,
+				firstName: user!.firstName,
+				lastName: user!.lastName,
+				birthDate: user!.birthdate.toISOString().split('T')[0],
+			});
+			return !prev;
+		});
+
+	const handleSaveChanges = async () => {
 		console.log('Updated Data:', formData);
+		const updatedData: UpdateUser = {
+			userName: formData.username,
+			firstName: formData.firstName,
+			lastName: formData.lastName,
+			birthdate: new Date(formData.birthDate),
+		};
+		updateCurrentUser(updatedData);
 		setIsEditing(false);
+		try {
+			const user = await getCurrentUser();
+			if (user) {
+				setUser(user);
+				const birthdate = new Date(user.birthdate);
+				const formattedBirthDate = birthdate
+					.toISOString()
+					.split('T')[0];
+				setFormData({
+					username: user.userName,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					birthDate: formattedBirthDate,
+				});
+				setStatus('success');
+			} else {
+				throw new Error('Username not found');
+			}
+		} catch (e) {
+			console.log(e);
+			setStatus('error');
+			setError(e as Error);
+		}
 	};
 
 	const steps = [
@@ -167,7 +212,7 @@ export default function AccountDetails() {
 										Opslaan
 									</button>
 									<button
-										onClick={handleEditToggle}
+										onClick={handleCancelChanges}
 										className="px-6 py-2 text-lg bg-gray-400 text-white rounded-lg font-semibold hover:bg-gray-500"
 									>
 										Annuleren
