@@ -238,7 +238,7 @@ export class LudoGame implements IGame {
 				return this.dataFactory.createClientData({
 					board: this.board,
 					player: this.currentPlayer,
-					color: LudoPlayerColor.BLUE,
+					won: LudoPlayerColor.BLUE,
 				});
 			}
 		}

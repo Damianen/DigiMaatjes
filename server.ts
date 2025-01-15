@@ -150,6 +150,7 @@ app.prepare().then(() => {
 			try {
 				const board: LudoClientGameData = ludo!.takeTurn(data);
 				console.log('board ' + board);
+				console.log('won' + board.won);
 				io.to(room).emit('board', board);
 			} catch (err: any) {
 				console.log(err.message);

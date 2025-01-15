@@ -48,13 +48,26 @@ export async function POST(request: Request) {
 				{ status: 400 }
 			);
 		}
-		if (!data.password) {
+		if (data.password) {
+			const regex = new RegExp(
+				'^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$'
+			);
+		if (!regex.test(data.password)) {
 			return Response.json(
-				{ error: "field 'password' cannot be empty!" },
+				{
+					error:
+						'field password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and contain a special character!',
+				},
 				{ status: 400 }
 			);
 		}
-
+	} else {
+		return Response.json(
+			{ error: "field 'password' cannot be empty!" },
+			{ status: 400 }
+		);
+	}
+		
 		const normalizedDateStr = data.birthDate.replace(/[\./]/g, '-');
 		const formatedDate = new Date(normalizedDateStr);
 
