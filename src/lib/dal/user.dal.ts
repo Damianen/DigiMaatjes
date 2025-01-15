@@ -90,6 +90,7 @@ export const updateCurrentUser = async (
 				if (
 					emailCheckRequestResults.recordset[0].email != currentData!.email
 				) {
+					await database.close();
 					throw 'Email is al in gebruik!';
 				}
 			}
@@ -119,6 +120,7 @@ export const updateCurrentUser = async (
 					userNameCheckRequestResults.recordset[0].userName !=
 					currentData!.userName
 				) {
+					await database.close();
 					throw 'Username is al in gebruik!';
 				}
 			}
