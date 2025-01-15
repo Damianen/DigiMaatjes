@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Ludo from '../../games/ludo';
 import { socket } from '../../socket';
+import Navbar from '../../component/navbar';
 
 export default function Home() {
 	const [isConnected, setIsConnected] = useState(false);
@@ -20,7 +21,6 @@ export default function Home() {
 	const spelnaam = room.split('-')[0];
 
 	useEffect(() => {
-		// Wait until nickname is loaded before joining the room
 		async function initialize() {
 			if (!nickname) {
 				const user = await getUserName();
@@ -43,7 +43,6 @@ export default function Home() {
 	useEffect(() => {
 		if (socket.connected) {
 			onConnect();
-			console.log(isConnected, transport);
 		}
 
 		function onConnect() {
@@ -81,13 +80,11 @@ export default function Home() {
 			socket.off('room message');
 			socket.off('getRoomUsers');
 			socket.off('joinRoom');
-			socket.off('startGame');
 		};
 	}, [room]);
 
 	function handleJoinRoom() {
 		if (nickname && room) {
-			console.log('Joining room:', room, 'with nickname:', nickname);
 			socket.emit('joinRoom', room, nickname);
 			getRoomIds(room);
 		}
@@ -115,55 +112,76 @@ export default function Home() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
-			<div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6">
-				<h1 className="text-2xl font-bold mb-4">
-					Welcome to room: {room}
-				</h1>
-
-				{/* Users List */}
-				<div className="mb-4">
-					<h2 className="text-xl font-semibold mb-2">
-						People in the Room:
-					</h2>
-					<ul className="list-disc list-inside">
-						{users.map((user, index) => (
-							<li key={index} className="text-gray-700">
-								{user}
-							</li>
-						))}
-					</ul>
+		<>
+			<Navbar />
+			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center">
+				<div className="text-center my-4">
+					<h1 className="text-5xl font-bold font-bambino text-white mb-4">
+						Kamer: {room}
+					</h1>
 				</div>
 
-				{/* Chat Section */}
-				<div className="mb-4">
-					<h2 className="text-xl font-semibold mb-2">Chat:</h2>
-					<div className="border rounded-lg h-60 overflow-y-scroll p-3 bg-gray-50 mb-2 odd:bg-gray-100">
-						{roomMessage.map((message, index) => (
-							<div key={index} className="mb-2">
-								{message}
-							</div>
-						))}
+				<div className="flex w-full max-w-6xl space-x-4 items-stretch">
+					{/* Ludo Game Section */}
+					<div className="flex-1 bg-white rounded-lg shadow-lg p-6 flex flex-col">
+						<Ludo />
 					</div>
-					<div className="flex gap-2">
-						<input
-							type="text"
-							className="flex-1 border rounded-lg p-2"
-							placeholder="Type your message..."
-							value={roomInput}
-							onChange={(e) => setRoomInput(e.target.value)}
-						/>
-						<button
-							className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-							onClick={handleSendRoomMessage}
-						>
-							Send
-						</button>
+
+					{/* Chat and Users Section */}
+					<div className="w-full lg:w-96 bg-white rounded-lg shadow-lg p-6 flex flex-col">
+						<h2 className="text-xl font-semibold mb-4">
+							Gebruikers in de kamer:
+						</h2>
+						<ul className="list-disc list-inside">
+							{users.length === 0 ? (
+								<p className="text-gray-400 italic">
+									Geen gebruikers in deze kamer.
+								</p>
+							) : (
+								users.map((user, index) => (
+									<li key={index} className="text-gray-700">
+										{user}
+									</li>
+								))
+							)}
+						</ul>
+
+						<h2 className="text-xl font-semibold mt-4">Chat:</h2>
+
+						<div className="flex-1 border rounded-lg overflow-y-auto p-3 bg-gray-50 mb-4 min-h-[200px]">
+							{roomMessage.length === 0 ? (
+								<p className="text-gray-400 italic">
+									Geen berichten in deze kamer, start een
+									gesprek!
+								</p>
+							) : (
+								roomMessage.map((message, index) => (
+									<div key={index} className="mb-2">
+										{message}
+									</div>
+								))
+							)}
+						</div>
+						<div className="flex gap-2 mb-6">
+							<input
+								type="text"
+								className="flex-1 border rounded-lg p-2"
+								placeholder="Type your message..."
+								value={roomInput}
+								onChange={(e) => setRoomInput(e.target.value)}
+							/>
+							<button
+								className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+								onClick={handleSendRoomMessage}
+							>
+								Send
+							</button>
+						</div>
 					</div>
 				</div>
 
-				{/* Action Buttons */}
-				<div className="flex justify-between">
+				{/* Bottom Buttons */}
+				<div className="flex justify-between mt-8 w-full max-w-6xl">
 					<button
 						className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
 						onClick={handleLeaveRoom}
@@ -178,7 +196,6 @@ export default function Home() {
 					</button>
 				</div>
 			</div>
-			<Ludo />
-		</div>
+		</>
 	);
 }
