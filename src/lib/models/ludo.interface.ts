@@ -12,7 +12,7 @@ export class LudoGameDataFacotry implements GameDataFactory {
 	}
 
 	createClientData(data: any): LudoClientGameData {
-		return new LudoClientGameData(data.board, data.player);
+		return new LudoClientGameData(data.board, data.player, data.won);
 	}
 }
 
