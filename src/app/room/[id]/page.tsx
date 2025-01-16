@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import Ludo from '../../games/ludo';
 import { socket } from '../../socket';
 import Navbar from '../../component/navbar';
+import Link from 'next/link';
+import { Joyride, Placement } from 'react-joyride';
 
 export default function Home() {
 	const [isConnected, setIsConnected] = useState(false);
@@ -19,6 +21,14 @@ export default function Home() {
 	const roomId = useParams().id?.toString();
 	const room = roomId ? roomId : '0';
 	const spelnaam = room.split('-')[0];
+
+	const [isTourActive, setIsTourActive] = useState(false);
+	const [windowWidth, setWindowWidth] = useState<number>(0);
+
+	const toggleExplanation = () => {
+		setIsTourActive(false);
+		setIsTourActive(true);
+	};
 
 	useEffect(() => {
 		async function initialize() {
@@ -86,6 +96,15 @@ export default function Home() {
 		};
 	}, [room]);
 
+	useEffect(() => {
+		const handleResize = () => setWindowWidth(window.innerWidth);
+		window.addEventListener('resize', handleResize);
+
+		handleResize();
+
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
+
 	function handleJoinRoom() {
 		if (nickname && room) {
 			socket.emit('joinRoom', room, nickname);
@@ -114,14 +133,57 @@ export default function Home() {
 		socket.emit('startGame', room);
 	};
 
+	const steps = [
+		{
+			target: '.room-name',
+			content:
+				'Hier zie je de naam van de kamer waar je in zit. Als je met vrienden wilt spelen kun je de kamer naam delen',
+			placement: 'bottom' as Placement,
+			disableBeacon: true,
+		},
+
+		{
+			target: '.chat-room-user',
+			content: 'Hier zie je de gebruikers in de kamer en ook de chatroom',
+			placement: 'left' as Placement,
+			disableBeacon: true,
+		},
+		{
+			target: '.game-start',
+			content:
+				'Als eenmaal iedereen in de kamer zit en je een spel wilt starten kunt u op de spel starten knop klikken om het spel te starten.',
+			placement: 'top' as Placement,
+			disableBeacon: true,
+			disableScrolling: true,
+		},
+		{
+			target: '.leave-room',
+			content:
+				'Als je de kamer wilt verlaten kun je op de kamer verlaten knop klikken om de kamer te verlaten.',
+			placement: 'top' as Placement,
+			disableBeacon: true,
+			disableScrolling: true,
+		},
+	];
+
 	return (
 		<>
 			<Navbar />
-			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center p-4">
-				<div className="text-center my-4">
-					<h1 className="text-5xl font-bold font-bambino text-white mb-4">
+			<div
+				className={`min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center p-4 ${
+					windowWidth < 1024 ? 'overflow-hidden' : ''
+				}`}
+			>
+				<div className="flex items-center my-4">
+					<h1 className="room-name text-5xl font-bold font-bambino text-white mr-4">
 						Kamer: {room}
 					</h1>
+					<button
+						onClick={toggleExplanation}
+						className="text-white bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center text-sm font-bold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+					>
+						?
+					</button>
 				</div>
 
 				<div className="flex flex-col lg:flex-row w-full max-w-6xl lg:space-x-4 space-y-4 lg:space-y-0 items-stretch">
@@ -131,7 +193,7 @@ export default function Home() {
 					</div>
 
 					{/* Chat and Users Section */}
-					<div className="w-full lg:w-96 bg-white rounded-lg shadow-lg p-6 flex flex-col">
+					<div className="chat-room-user w-full lg:w-96 bg-white rounded-lg shadow-lg p-6 flex flex-col">
 						<h2 className="text-xl font-semibold mb-4">
 							Gebruikers in de kamer:
 						</h2>
@@ -143,7 +205,12 @@ export default function Home() {
 							) : (
 								users.map((user, index) => (
 									<li key={index} className="text-gray-700">
-										{user}
+										<Link
+											href={`/profile/${user}`}
+											target="blank"
+										>
+											{user}
+										</Link>
 									</li>
 								))
 							)}
@@ -189,19 +256,47 @@ export default function Home() {
 				{/* Bottom Buttons */}
 				<div className="flex justify-between mt-8 w-full max-w-6xl">
 					<button
-						className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+						className="leave-room bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
 						onClick={handleLeaveRoom}
 					>
 						Kamer verlaten
 					</button>
 					<button
-						className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+						className="game-start bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
 						onClick={handleStartGame}
 					>
 						Spel starten
 					</button>
 				</div>
 			</div>
+
+			{isTourActive && (
+				<Joyride
+					styles={{
+						options: {
+							primaryColor: '#2664EB',
+						},
+					}}
+					locale={{
+						back: 'Terug',
+						close: 'Afsluiten',
+						last: 'Afsluiten',
+						next: 'Volgende',
+						skip: 'Overslaan',
+					}}
+					steps={steps}
+					continuous={true}
+					scrollToFirstStep={false}
+					showSkipButton={true}
+					run={true}
+					callback={(data) => {
+						const { status } = data;
+						if (status === 'finished' || status === 'skipped') {
+							setIsTourActive(false);
+						}
+					}}
+				/>
+			)}
 		</>
 	);
 }
