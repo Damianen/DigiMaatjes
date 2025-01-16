@@ -137,14 +137,15 @@ export default function Ludo({ height = 691, width = 691 }) {
 
 	useEffect(() => {
 		function draw(context: CanvasRenderingContext2D) {
-			if (context && !gameWon) { // Prevent drawing when the game is won
+			if (context && !gameWon) {
+				// Prevent drawing when the game is won
 				context.drawImage(img, 0, 0);
-		
+
 				// Fully cover the center of the board with the current player's color
 				if (currentColor !== LudoPlayerColor.NULL) {
 					const centerStartX = 6; // 3x3 square starts at x6
 					const centerStartY = 6; // 3x3 square starts at y6
-		
+
 					let fillColor = '';
 					switch (currentColor) {
 						case LudoPlayerColor.BLUE:
@@ -160,16 +161,16 @@ export default function Ludo({ height = 691, width = 691 }) {
 							fillColor = 'green';
 							break;
 					}
-		
-					// Clear the center area first
+
+					// Clear the entire area
 					context.clearRect(
 						centerStartX * squareSize,
 						centerStartY * squareSize,
 						3 * squareSize,
 						3 * squareSize
 					);
-		
-					// Fill the cleared area with the current color
+
+					// Fill the entire area with the current color
 					context.fillStyle = fillColor;
 					context.fillRect(
 						centerStartX * squareSize,
@@ -177,8 +178,43 @@ export default function Ludo({ height = 691, width = 691 }) {
 						3 * squareSize,
 						3 * squareSize
 					);
+
+					// Clear and fill the corners with the background color (or no fill if transparent)
+					const cornerSize = squareSize; // Assuming each corner is a square of the same size as one unit
+
+					// Clear top-left corner
+					context.clearRect(
+						centerStartX * squareSize,
+						centerStartY * squareSize,
+						cornerSize,
+						cornerSize
+					);
+
+					// Clear top-right corner
+					context.clearRect(
+						(centerStartX + 2) * squareSize,
+						centerStartY * squareSize,
+						cornerSize,
+						cornerSize
+					);
+
+					// Clear bottom-left corner
+					context.clearRect(
+						centerStartX * squareSize,
+						(centerStartY + 2) * squareSize,
+						cornerSize,
+						cornerSize
+					);
+
+					// Clear bottom-right corner
+					context.clearRect(
+						(centerStartX + 2) * squareSize,
+						(centerStartY + 2) * squareSize,
+						cornerSize,
+						cornerSize
+					);
 				}
-		
+
 				// Draw pawns on the board
 				for (let x = 0; x < board.length; x++) {
 					for (let y = 0; y < board[x].length; y++) {
@@ -201,7 +237,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 								);
 								context.stroke();
 							}
-		
+
 							switch (pawn.color) {
 								case LudoPlayerColor.BLUE:
 									context.fillStyle = 'blue';
@@ -216,7 +252,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 									context.fillStyle = 'green';
 									break;
 							}
-		
+
 							context.beginPath();
 							context.arc(
 								x * squareSize + squareSize / 2,
@@ -229,12 +265,11 @@ export default function Ludo({ height = 691, width = 691 }) {
 						}
 					}
 				}
-		
+
 				frameRef.current = requestAnimationFrame(() => draw(context));
 			}
 		}
-		
-	  
+
 		if (canvasRef.current) {
 			const context = canvasRef.current.getContext('2d');
 
