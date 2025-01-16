@@ -34,16 +34,15 @@ export default function Ludo({ height = 691, width = 691 }) {
 	const [announcement, setAnnouncement] = useState<string>('');
 
 	const rollDice = () => {
-		if (turnState == 1) {
+		if (turnState === 1) {
 			setTurnState(2);
 			setIsRolling(true);
 			setTimeout(() => {
-				const number = 6;
-				// const number = Math.floor(Math.random() * (6 - 1 + 1) + 1);
+				const number = Math.floor(Math.random() * 6) + 1;
 				setDice(number);
 				socket.emit('dice', number, room);
 			}, 500);
-		} else if (turnState == 2) {
+		} else if (turnState === 2) {
 			setAnnouncement('Je hebt al gegooit klik op een van je pionen');
 		} else {
 			setAnnouncement('Je bent nog niet aan de beurt!');
@@ -51,13 +50,12 @@ export default function Ludo({ height = 691, width = 691 }) {
 	};
 
 	const choosePawn = (event: React.MouseEvent) => {
-		if (turnState != 2) {
-			if (turnState == 1) {
-				setAnnouncement('gooi eerst de dobbelsteen!');
+		if (turnState !== 2) {
+			if (turnState === 1) {
+				setAnnouncement('Gooi eerst de dobbelsteen!');
 			} else {
 				setAnnouncement('Je bent niet aan de beurt!');
 			}
-
 			return;
 		}
 
@@ -65,11 +63,8 @@ export default function Ludo({ height = 691, width = 691 }) {
 		const x = Math.floor((event.clientX - rect.left) / squareSize);
 		const y = Math.floor((event.clientY - rect.top) / squareSize);
 
-		if (board[y][x].pawn != null && board[y][x].pawn.color == color) {
-			const pos: IPosition = {
-				x: x,
-				y: y,
-			};
+		if (board[y][x].pawn != null && board[y][x].pawn.color === color) {
+			const pos: IPosition = { x, y };
 
 			socket.emit(
 				'takeTurn',
@@ -105,15 +100,8 @@ export default function Ludo({ height = 691, width = 691 }) {
 			}
 			setCurrentColor(data.player.color);
 			if (data.player.color === color) {
-				console.log(
-					'data player color: ',
-					data.player.color,
-					'your color: ',
-					color
-				);
 				setTurnState(1);
 			}
-
 			setBoard(data.board);
 		});
 		socket.on(
@@ -121,8 +109,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 			(players: LudoPlayer[], currentPlayer: LudoPlayer) => {
 				setGameStarted(true);
 				players.forEach((player) => {
-					if (player.user == socket.id) {
-						console.log(player.color);
+					if (player.user === socket.id) {
 						setColor(player.color);
 					}
 				});
@@ -135,7 +122,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 				setBoard(newBoard);
 			}
 		);
-	});
+	}, [color]);
 
 	useEffect(() => {
 		function draw(context: CanvasRenderingContext2D) {
@@ -144,8 +131,27 @@ export default function Ludo({ height = 691, width = 691 }) {
 
 				for (let x = 0; x < board.length; x++) {
 					for (let y = 0; y < board[x].length; y++) {
-						if (board[y][x].pawn != null) {
-							switch (board[y][x].pawn?.color) {
+						const square = board[y][x];
+						if (square.pawn != null) {
+							const pawn = square.pawn;
+							if (
+								pawn.color === color &&
+								(turnState === 1 || turnState === 2)
+							) {
+								context.strokeStyle = 'gold';
+								context.lineWidth = 3;
+								context.beginPath();
+								context.arc(
+									x * squareSize + squareSize / 2,
+									y * squareSize + squareSize / 2,
+									18,
+									0,
+									2 * Math.PI
+								);
+								context.stroke();
+							}
+
+							switch (pawn.color) {
 								case LudoPlayerColor.BLUE:
 									context.fillStyle = 'blue';
 									break;
@@ -176,13 +182,12 @@ export default function Ludo({ height = 691, width = 691 }) {
 				frameRef.current = requestAnimationFrame(() => draw(context));
 			}
 		}
+
 		if (canvasRef.current) {
 			const context = canvasRef.current.getContext('2d');
-
 			if (context) {
 				context.canvas.height = height;
 				context.canvas.width = width;
-
 				frameRef.current = requestAnimationFrame(() => draw(context));
 			}
 		}
@@ -208,39 +213,41 @@ export default function Ludo({ height = 691, width = 691 }) {
 		}
 	};
 
-	return (
-		gameStarted && (
-			<>
-				<canvas ref={canvasRef} onClick={choosePawn} />
-				<div className="flex flex-col items-center mb-4">
-					<div
-						className={`die w-12 h-12 rounded-lg border border-gray-300 m-2 flex justify-center items-center text-3xl shadow-lg ${
-							isRolling ? 'animate-roll' : ''
-						}`}
-					>
-						<i
-							className={`fas ${getDieFace(dice)}`}
-							style={{ fontSize: '3.5rem' }}
-						></i>
-					</div>
-					<button
-						onClick={rollDice}
-						className="mt-4 mb-4 p-2 bg-blue-500 text-white rounded-lg"
-					>
-						Gooi dobbelsteen
-					</button>
-					<div className="text-center">
-						<p>Jouw kleur is: {color}</p>
-						{turnState == 1 || turnState == 2 ? (
-							<p>Het is nu jou beurt</p>
-						) : (
-							<p>Het is de beurt van {currentColor}</p>
-						)}
-						{won != null && <p>{won} heeft het spel gewonnen!!!</p>}
-						<p>{announcement}</p>
-					</div>
+	return gameStarted ? (
+		<>
+			<canvas ref={canvasRef} onClick={choosePawn} />
+			<div className="flex flex-col items-center mb-4">
+				<div
+					className={`die w-12 h-12 rounded-lg border border-gray-300 m-2 flex justify-center items-center text-3xl shadow-lg ${
+						isRolling ? 'animate-roll' : ''
+					}`}
+				>
+					<i
+						className={`fas ${getDieFace(dice)}`}
+						style={{ fontSize: '3.5rem' }}
+					></i>
 				</div>
-			</>
-		)
-	);
+				{turnState === 1 && (
+					<div className="ludo-roll-dice">
+						<button
+							className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+							onClick={rollDice}
+						>
+							Gooi dobbelsteen
+						</button>
+					</div>
+				)}
+
+				<div className="text-center">
+					<p>Jouw kleur is: {color}</p>
+					{turnState === 1 || turnState === 2 ? (
+						<p>Het is nu jou beurt</p>
+					) : (
+						<p>Het is de beurt van {currentColor}</p>
+					)}
+					{won != null && <p>{won} heeft het spel gewonnen!!!</p>}
+				</div>
+			</div>
+		</>
+	) : null;
 }
