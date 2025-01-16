@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { database } from '@/lib/dal/dao/db-config';
-import * as sql from 'mssql';
 import { getUser } from '@/lib/dal/user.dal';
 
 export async function GET(
 	req: NextRequest,
-	{ params }: { params: { username: string } }
+	{ params }: { params: Promise<{ username: string }> }
 ) {
 	const { username } = await params;
 

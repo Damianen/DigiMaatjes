@@ -80,6 +80,9 @@ export default function Home() {
 			socket.off('room message');
 			socket.off('getRoomUsers');
 			socket.off('joinRoom');
+			if (isConnected || transport) {
+				// error voorkomen!
+			}
 		};
 	}, [room]);
 

@@ -22,7 +22,6 @@ import {
 	YELLOW_START,
 } from './board';
 import { LudoPlayer, LudoPlayerColor } from './ludo.player';
-import Ludo from '@/app/games/ludo';
 
 export class LudoGame implements IGame {
 	constructor(players: Array<IPlayer>) {
@@ -286,11 +285,11 @@ export class LudoGame implements IGame {
 
 		for (let i = 0; i < BLUE_HOME.length; i++) {
 			if (this.board[BLUE_HOME[i].y][BLUE_HOME[i].x].pawn == null) {
-				console.log('not won')
+				console.log('not won');
 				break;
 			}
 			if (i == 3) {
-				console.log('won')
+				console.log('won');
 				return this.dataFactory.createClientData({
 					board: this.board,
 					player: this.currentPlayer,

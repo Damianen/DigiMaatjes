@@ -11,7 +11,7 @@ import { redirect } from 'next/navigation';
 import { login, register } from '@/lib/dal/auth.dal';
 import { User } from '@/lib/models/user.interface';
 
-const baseUrl = process.env.BASE_URL;
+//const baseUrl = process.env.BASE_URL;
 
 export async function signup(state: RegisterFormState, formData: FormData) {
 	// Validate form fields

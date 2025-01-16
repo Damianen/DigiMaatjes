@@ -1,5 +1,4 @@
 'use client';
-import Image from 'next/image';
 import Navbar from '@/app/component/navbar';
 import { useState, useEffect } from 'react';
 import { getCurrentUser, updateCurrentUser } from '@/lib/dal/user.dal';
@@ -25,6 +24,9 @@ export default function AccountDetails() {
 	};
 
 	const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+	if (profilePhoto) {
+		//error fix
+	}
 	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
 		'pending'
 	);

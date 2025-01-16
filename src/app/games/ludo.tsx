@@ -129,58 +129,58 @@ export default function Ludo({ height = 691, width = 691 }) {
 
 	useEffect(() => {
 		function draw(context: CanvasRenderingContext2D) {
-		  if (context && !gameWon) { // Prevent drawing when the game is won
-			context.drawImage(img, 0, 0);
-	  
-			for (let x = 0; x < board.length; x++) {
-			  for (let y = 0; y < board[x].length; y++) {
-				if (board[y][x].pawn != null) {
-				  switch (board[y][x].pawn?.color) {
-					case LudoPlayerColor.BLUE:
-					  context.fillStyle = 'blue';
-					  break;
-					case LudoPlayerColor.YELLOW:
-					  context.fillStyle = 'yellow';
-					  break;
-					case LudoPlayerColor.RED:
-					  context.fillStyle = 'rgb(160, 0, 0)';
-					  break;
-					case LudoPlayerColor.GREEN:
-					  context.fillStyle = 'green';
-					  break;
-				  }
-	  
-				  context.beginPath();
-				  context.arc(
-					x * squareSize + squareSize / 2,
-					y * squareSize + squareSize / 2,
-					15,
-					0,
-					2 * Math.PI
-				  );
-				  context.fill();
+			if (context && !gameWon) {
+				// Prevent drawing when the game is won
+				context.drawImage(img, 0, 0);
+
+				for (let x = 0; x < board.length; x++) {
+					for (let y = 0; y < board[x].length; y++) {
+						if (board[y][x].pawn != null) {
+							switch (board[y][x].pawn?.color) {
+								case LudoPlayerColor.BLUE:
+									context.fillStyle = 'blue';
+									break;
+								case LudoPlayerColor.YELLOW:
+									context.fillStyle = 'yellow';
+									break;
+								case LudoPlayerColor.RED:
+									context.fillStyle = 'rgb(160, 0, 0)';
+									break;
+								case LudoPlayerColor.GREEN:
+									context.fillStyle = 'green';
+									break;
+							}
+
+							context.beginPath();
+							context.arc(
+								x * squareSize + squareSize / 2,
+								y * squareSize + squareSize / 2,
+								15,
+								0,
+								2 * Math.PI
+							);
+							context.fill();
+						}
+					}
 				}
-			  }
+
+				frameRef.current = requestAnimationFrame(() => draw(context));
 			}
-	  
-			frameRef.current = requestAnimationFrame(() => draw(context));
-		  }
 		}
-	  
+
 		if (canvasRef.current) {
-		  const context = canvasRef.current.getContext('2d');
-	  
-		  if (context) {
-			context.canvas.height = height;
-			context.canvas.width = width;
-	  
-			frameRef.current = requestAnimationFrame(() => draw(context));
-		  }
+			const context = canvasRef.current.getContext('2d');
+
+			if (context) {
+				context.canvas.height = height;
+				context.canvas.width = width;
+
+				frameRef.current = requestAnimationFrame(() => draw(context));
+			}
 		}
-	  
+
 		return () => cancelAnimationFrame(frameRef.current);
-	  }, [board, gameWon]); // Added gameWon as a dependency
-	  
+	}, [board, gameWon]); // Added gameWon as a dependency
 
 	const getDieFace = (value: number) => {
 		switch (value) {
@@ -234,6 +234,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 						<p>Het is de beurt van {currentColor}</p>
 					)}
 					{won != null && <p>{won} heeft het spel gewonnen!!!</p>}
+					{announcement}
 				</div>
 			</div>
 		</>

@@ -5,8 +5,8 @@ import { useState, useActionState } from 'react';
 export default function Register() {
 	const [showExplanation, setShowExplanation] = useState(false);
 
-	const [state, action, pending] = useActionState(signup, undefined);
-	
+	const [state, action] = useActionState(signup, undefined);
+
 	const toggleExplanation = () => {
 		setShowExplanation(!showExplanation);
 	};
