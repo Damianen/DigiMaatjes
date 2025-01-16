@@ -237,20 +237,9 @@ export default function Ludo({ height = 691, width = 691 }) {
 							<p>Het is de beurt van {currentColor}</p>
 						)}
 						{won != null && <p>{won} heeft het spel gewonnen!!!</p>}
+						<p>{announcement}</p>
 					</div>
 				</div>
-<<<<<<< HEAD
-				<button onClick={rollDice}>Gooi dobbelsteen</button>
-				<p> jouw kleur is: {color}</p>
-				{turnState == 1 || turnState == 2 ? (
-					<p>Het is nu jou beurt</p>
-				) : (
-					<p>Het is de beurt van {currentColor}</p>
-				)}
-				{won != null && <p> {won} heeft het spel gewonnen!!! </p>}
-				<p>{announcement}</p>
-=======
->>>>>>> refs/remotes/origin/main
 			</>
 		)
 	);
