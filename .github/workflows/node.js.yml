@@ -36,18 +36,11 @@ jobs:
         #if: success()
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v3
-            - name: Set up Git
-              run: |
-                  git config --global user.name "github-actions[bot]"
-                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
-            - name: Fetch all branches
-              run: git fetch --all
-            - name: Merge main into release
-              run: |
-                  git checkout main
-                  git pull
-                  git checkout release
-                  git merge origin/main --no-edit --allow-unrelated-histories || echo "error"
-                  git push
+            - uses: actions/checkout@master
+
+            - name: Merge main -> release
+              uses: devmasx/merge-branch@master
+              with:
+                  type: now
+                  target_branch: release
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
