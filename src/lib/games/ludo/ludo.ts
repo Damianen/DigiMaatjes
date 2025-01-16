@@ -14,6 +14,10 @@ import {
 	newBoard,
 	RED_HOME,
 	RED_START,
+	REVERSE_BLUE,
+	REVERSE_GREEN,
+	REVERSE_RED,
+	REVERSE_YELLOW,
 	YELLOW_HOME,
 	YELLOW_START,
 } from './board';
@@ -80,6 +84,7 @@ export class LudoGame implements IGame {
 		}
 
 		let currentPosition: IPosition = position;
+		let reverse: boolean = false;
 
 		for (let i = 0; i < diceNum; i++) {
 			let nextPos: IPosition = this.board[currentPosition.y][
@@ -94,8 +99,63 @@ export class LudoGame implements IGame {
 				break;
 			}
 
-			if (this.board[nextPos.y][nextPos.x].nextPosition == null) {
-				break;
+			if (
+				this.board[nextPos.y][nextPos.x].nextPosition == null ||
+				reverse ||
+				(this.board[nextPos.y][nextPos.x].home == pawn.color &&
+					this.board[nextPos.y][nextPos.x].pawn != null)
+			) {
+				if (!reverse) {
+					reverse = true;
+				}
+
+				switch (pawn.color) {
+					case LudoPlayerColor.BLUE:
+						for (let i = 0; i < REVERSE_BLUE.length; i++) {
+							if (
+								REVERSE_BLUE[i].x == currentPosition.x &&
+								REVERSE_BLUE[i].y == currentPosition.y
+							) {
+								currentPosition = REVERSE_BLUE[i + 1];
+								break;
+							}
+						}
+						break;
+					case LudoPlayerColor.YELLOW:
+						for (let i = 0; i < REVERSE_YELLOW.length; i++) {
+							if (
+								REVERSE_YELLOW[i].x == currentPosition.x &&
+								REVERSE_YELLOW[i].y == currentPosition.y
+							) {
+								currentPosition = REVERSE_YELLOW[i + 1];
+								break;
+							}
+						}
+						break;
+					case LudoPlayerColor.GREEN:
+						for (let i = 0; i < REVERSE_GREEN.length; i++) {
+							if (
+								REVERSE_GREEN[i].x == currentPosition.x &&
+								REVERSE_GREEN[i].y == currentPosition.y
+							) {
+								currentPosition = REVERSE_GREEN[i + 1];
+								break;
+							}
+						}
+						break;
+					case LudoPlayerColor.RED:
+						for (let i = 0; i < REVERSE_RED.length; i++) {
+							if (
+								REVERSE_RED[i].x == currentPosition.x &&
+								REVERSE_RED[i].y == currentPosition.y
+							) {
+								currentPosition = REVERSE_RED[i + 1];
+								break;
+							}
+						}
+						break;
+				}
+				continue;
 			}
 
 			if (
@@ -117,13 +177,6 @@ export class LudoGame implements IGame {
 						nextPos = { x: 7, y: 13 };
 						break;
 				}
-			}
-
-			if (
-				this.board[nextPos.y][nextPos.x].home == pawn.color &&
-				this.board[nextPos.y][nextPos.x].pawn != null
-			) {
-				break;
 			}
 
 			currentPosition = nextPos;

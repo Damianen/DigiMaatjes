@@ -2,6 +2,54 @@ import { IPosition } from '@/lib/models/game.interface';
 import { LudoBoardSquare, LudoPawn } from '@/lib/models/ludo.interface';
 import { LudoPlayerColor } from './ludo.player';
 
+export const REVERSE_GREEN: IPosition[] = [
+	{ x: 4, y: 7 },
+	{ x: 3, y: 7 },
+	{ x: 2, y: 7 },
+	{ x: 1, y: 7 },
+	{ x: 0, y: 7 },
+	{ x: 0, y: 8 },
+	{ x: 1, y: 8 },
+	{ x: 2, y: 8 },
+	{ x: 3, y: 8 },
+];
+
+export const REVERSE_YELLOW: IPosition[] = [
+	{ y: 4, x: 7 },
+	{ y: 3, x: 7 },
+	{ y: 2, x: 7 },
+	{ y: 1, x: 7 },
+	{ y: 0, x: 7 },
+	{ y: 0, x: 8 },
+	{ y: 1, x: 8 },
+	{ y: 2, x: 8 },
+	{ y: 3, x: 8 },
+];
+
+export const REVERSE_BLUE: IPosition[] = [
+	{ x: 10, y: 7 },
+	{ x: 11, y: 7 },
+	{ x: 12, y: 7 },
+	{ x: 13, y: 7 },
+	{ x: 14, y: 7 },
+	{ x: 14, y: 6 },
+	{ x: 13, y: 6 },
+	{ x: 12, y: 6 },
+	{ x: 11, y: 6 },
+];
+
+export const REVERSE_RED: IPosition[] = [
+	{ y: 10, x: 7 },
+	{ y: 11, x: 7 },
+	{ y: 12, x: 7 },
+	{ y: 13, x: 7 },
+	{ y: 14, x: 7 },
+	{ y: 14, x: 6 },
+	{ y: 13, x: 6 },
+	{ y: 12, x: 6 },
+	{ y: 11, x: 6 },
+];
+
 export const GREEN_START: IPosition[] = [
 	{ x: 2, y: 2 },
 	{ x: 3, y: 2 },

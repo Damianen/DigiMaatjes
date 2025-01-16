@@ -31,9 +31,9 @@ export default function Ludo({ height = 691, width = 691 }) {
 	const [gameStarted, setGameStarted] = useState<boolean>(false);
 	const squareSize: number = height / 15;
 	const [isRolling, setIsRolling] = useState(false);
+	const [announcement, setAnnouncement] = useState<string>('');
 
 	const rollDice = () => {
-		console.log('rol ', turnState);
 		if (turnState == 1) {
 			setTurnState(2);
 			setIsRolling(true);
@@ -43,11 +43,21 @@ export default function Ludo({ height = 691, width = 691 }) {
 				setDice(number);
 				socket.emit('dice', number, room);
 			}, 500);
+		} else if (turnState == 2) {
+			setAnnouncement('Je hebt al gegooit klik op een van je pionen');
+		} else {
+			setAnnouncement('Je bent nog niet aan de beurt!');
 		}
 	};
 
 	const choosePawn = (event: React.MouseEvent) => {
 		if (turnState != 2) {
+			if (turnState == 1) {
+				setAnnouncement('gooi eerst de dobbelsteen!');
+			} else {
+				setAnnouncement('Je bent niet aan de beurt!');
+			}
+
 			return;
 		}
 
@@ -72,6 +82,8 @@ export default function Ludo({ height = 691, width = 691 }) {
 			);
 
 			setTurnState(0);
+		} else {
+			setAnnouncement('Klik op een van jouw pionen');
 		}
 	};
 
@@ -200,7 +212,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 		gameStarted && (
 			<>
 				<canvas ref={canvasRef} onClick={choosePawn} />
-				<div className="dice flex mb-4">
+				<div className="flex flex-col items-center mb-4">
 					<div
 						className={`die w-12 h-12 rounded-lg border border-gray-300 m-2 flex justify-center items-center text-3xl shadow-lg ${
 							isRolling ? 'animate-roll' : ''
@@ -211,7 +223,23 @@ export default function Ludo({ height = 691, width = 691 }) {
 							style={{ fontSize: '3.5rem' }}
 						></i>
 					</div>
+					<button
+						onClick={rollDice}
+						className="mt-4 mb-4 p-2 bg-blue-500 text-white rounded-lg"
+					>
+						Gooi dobbelsteen
+					</button>
+					<div className="text-center">
+						<p>Jouw kleur is: {color}</p>
+						{turnState == 1 || turnState == 2 ? (
+							<p>Het is nu jou beurt</p>
+						) : (
+							<p>Het is de beurt van {currentColor}</p>
+						)}
+						{won != null && <p>{won} heeft het spel gewonnen!!!</p>}
+					</div>
 				</div>
+<<<<<<< HEAD
 				<button onClick={rollDice}>Gooi dobbelsteen</button>
 				<p> jouw kleur is: {color}</p>
 				{turnState == 1 || turnState == 2 ? (
@@ -220,6 +248,9 @@ export default function Ludo({ height = 691, width = 691 }) {
 					<p>Het is de beurt van {currentColor}</p>
 				)}
 				{won != null && <p> {won} heeft het spel gewonnen!!! </p>}
+				<p>{announcement}</p>
+=======
+>>>>>>> refs/remotes/origin/main
 			</>
 		)
 	);
