@@ -1,5 +1,5 @@
 'use client';
-import Image from 'next/image';
+
 import Navbar from '@/app/component/navbar';
 import { useState, useEffect } from 'react';
 import { getUser } from '@/lib/dal/user.dal';
@@ -15,19 +15,15 @@ export default function AccountDetails() {
 		username: '',
 	});
 
-	const [isTourActive, setIsTourActive] = useState(false);
-
 	const [user, setUser] = useState<IUser | undefined>(undefined);
-
-	const toggleExplanation = () => {
-		setIsTourActive(false);
-		setIsTourActive(true);
-	};
 
 	const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
 		'pending'
 	);
+
+	console.log('user', user);
+	console.log(profilePhoto);
 	const [error, setError] = useState<Error | null>(null);
 
 	const friends = [
@@ -40,7 +36,7 @@ export default function AccountDetails() {
 		{ name: 'Extra maat', isOnline: true },
 		{ name: 'Extra maat', isOnline: false },
 	];
-    const userName = useParams().username as string;
+	const userName = useParams().username as string;
 
 	const [visibleFriendsCount, setVisibleFriendsCount] = useState(4);
 
@@ -81,8 +77,6 @@ export default function AccountDetails() {
 		fetchUser();
 	}, []);
 
-	
-
 	if (status === 'pending') {
 		return <Loading />;
 	}
@@ -95,34 +89,38 @@ export default function AccountDetails() {
 				<main className="w-full max-w-8xl grid grid-cols-1 lg:grid-cols-2 gap-8 px-12 mt-10">
 					<div className="details bg-white px-8 py-11 rounded-lg shadow-md h-[725px]">
 						<div className="flex justify-between items-center mb-6">
-							<h2 className="text-3xl font-semibold">Mijn gegevens</h2>
+							<h2 className="text-3xl font-semibold">
+								Mijn gegevens
+							</h2>
 						</div>
 						<div className="mb-6">
-							<div className="text-lg font-medium text-gray-700 mb-1">Voornaam</div>
+							<div className="text-lg font-medium text-gray-700 mb-1">
+								Voornaam
+							</div>
 							<div className="text-xl">{formData.firstName}</div>
 						</div>
 						<div className="mb-6">
-							<div className="text-lg font-medium text-gray-700 mb-1">Achternaam</div>
+							<div className="text-lg font-medium text-gray-700 mb-1">
+								Achternaam
+							</div>
 							<div className="text-xl">{formData.lastName}</div>
 						</div>
 						<div className="mb-6">
-							<div className="text-lg font-medium text-gray-700 mb-1">Geboortedatum</div>
+							<div className="text-lg font-medium text-gray-700 mb-1">
+								Geboortedatum
+							</div>
 							<div className="text-xl">{formData.birthDate}</div>
 						</div>
 						<div className="mb-6">
-							<div className="text-lg font-medium text-gray-700 mb-1">Gebruikersnaam</div>
+							<div className="text-lg font-medium text-gray-700 mb-1">
+								Gebruikersnaam
+							</div>
 							<div className="text-xl">{formData.username}</div>
 						</div>
 					</div>
 					<div className="friends-list bg-white p-8 rounded-lg shadow-md">
 						<div className="flex items-center justify-between mb-5">
 							<h2 className="text-3xl font-semibold">Vrienden</h2>
-							<button
-								onClick={toggleExplanation}
-								className="text-white bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center text-sm font-bold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
-							>
-								?
-							</button>
 						</div>
 
 						<div className="space-y-6">
@@ -141,7 +139,9 @@ export default function AccountDetails() {
 										</div>
 										<div
 											className={`online-status w-8 h-8 rounded-full ${
-												friend.isOnline ? 'bg-green-500' : 'bg-gray-500'
+												friend.isOnline
+													? 'bg-green-500'
+													: 'bg-gray-500'
 											}`}
 										></div>
 									</div>
@@ -153,7 +153,9 @@ export default function AccountDetails() {
 									onClick={handleShowMore}
 									className="show-more-button px-6 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
 								>
-									{visibleFriendsCount === friends.length ? 'Toon minder' : 'Toon meer'}
+									{visibleFriendsCount === friends.length
+										? 'Toon minder'
+										: 'Toon meer'}
 								</button>
 							</div>
 						)}
