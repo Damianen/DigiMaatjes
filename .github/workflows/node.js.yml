@@ -36,14 +36,24 @@ jobs:
         if: success()
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Push to release branch
+            - name: Checkout repository
+              uses: actions/checkout@v3
+            - name: Set up Git
               run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
-                  git pull
-                  git checkout release
-                  git merge main
-                  git push
+                  git config --global user.name "github-actions[bot]"
+                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            - name: Fetch all branches
+              run: git fetch --all
+            - name: Merge main into release
+              run: |
+                  CURRENT_BRANCH=$(git branch --show-current)
+                  if [ "$CURRENT_BRANCH" != "release" ]; then
+                    git checkout release
+                  fi
+                  git pull origin release
+                  if git merge --no-ff --allow-unrelated-histories origin/main -m "Merge branch 'main' into release"; then
+                    echo "Merge was successful"
+                  else
+                    echo "Merge conflict or error occurred for branch"
+                    git merge --abort
+                  fi
