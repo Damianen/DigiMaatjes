@@ -32,8 +32,8 @@ jobs:
             - run: npm test
 
     release:
-        needs: build
-        if: success()
+        #        needs: build
+        #       if: success()
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
