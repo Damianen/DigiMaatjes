@@ -393,16 +393,24 @@ export default function Ludo({ height = 691, width = 691 }) {
 						style={{ fontSize: '3.5rem' }}
 					></i>
 				</div>
-				{turnState === 1 && (
-					<div className="ludo-roll-dice">
+				<div className="ludo-roll-dice">
+					{turnState === 1 ? (
 						<button
 							className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
 							onClick={rollDice}
 						>
 							Gooi dobbelsteen
 						</button>
-					</div>
-				)}
+					) : (
+						<div
+							className="invisible px-4 py-2 rounded-lg"
+							style={{
+								height: '2.5rem',
+								width: '9rem',
+							}}
+						></div>
+					)}
+				</div>
 
 				<div className="text-center">
 					<p>Jouw kleur is: {color}</p>
@@ -422,7 +430,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 					styles={{
 						options: {
 							primaryColor: '#2664EB',
-							zIndex: 1000, // Make sure Joyride overlays properly
+							zIndex: 1000,
 						},
 					}}
 					locale={{
