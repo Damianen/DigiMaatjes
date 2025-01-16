@@ -50,4 +50,4 @@ jobs:
                   git pull
                   git checkout release || git checkout -b release
                   git merge origin/main --no-edit --allow-unrelated-histories || echo "error"
-                  git push origin release
+                  git push
