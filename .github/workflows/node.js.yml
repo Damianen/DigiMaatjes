@@ -46,13 +46,6 @@ jobs:
               run: git fetch --all
             - name: Merge main into release
               run: |
-                  CURRENT_BRANCH=$(git branch --show-current)
-                  if [ "$CURRENT_BRANCH" != "main" ]; then
-                    git checkout main
-                  fi
-                  git pull origin main
-                  if [ "$CURRENT_BRANCH" != "release" ]; then
-                    git checkout release
-                  fi
-                  git pull origin release
-                  git merge origin/main
+                  git checkout release || git checkout -b release
+                  git merge origin/main --no-edit
+                  git push origin release
