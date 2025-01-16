@@ -55,4 +55,4 @@ jobs:
                     git checkout release
                   fi
                   git pull origin release
-                  git merge --no-ff --allow-unrelated-histories origin/main
+                  git merge origin/main
