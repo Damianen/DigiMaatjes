@@ -51,9 +51,4 @@ jobs:
                     git checkout release
                   fi
                   git pull origin release
-                  if git merge --no-ff --allow-unrelated-histories origin/main -m "Merge branch 'main' into release"; then
-                    echo "Merge was successful"
-                  else
-                    echo "Merge conflict or error occurred for branch"
-                    git merge --abort
-                  fi
+                  git merge --no-ff --allow-unrelated-histories origin/main
