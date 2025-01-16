@@ -46,6 +46,6 @@ jobs:
               run: git fetch --all
             - name: Merge main into release
               run: |
-                  git checkout release || git checkout -b release
-                  git merge origin/main --no-edit
+                  git branch -D release
+                  git checkout -b release
                   git push origin release
