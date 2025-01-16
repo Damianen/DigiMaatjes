@@ -49,5 +49,5 @@ jobs:
                   git checkout main
                   git pull
                   git checkout release || git checkout -b release
-                  git merge origin/main --no-edit
+                  git merge origin/main --no-edit --allow-unrelated-histories
                   git push origin release
