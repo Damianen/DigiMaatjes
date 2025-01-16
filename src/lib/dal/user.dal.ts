@@ -179,11 +179,30 @@ export const updateCurrentUser = async (
 			updateUserRequest.input('birthdate', sql.Date, formatedDate);
 		}
 
+		if (updateData.profileImages) {
+			updateUserRequest.input(
+				'profilePicture',
+				sql.NVarChar,
+				updateData.profileImages
+			);
+			
+		} else {
+			updateUserRequest.input(
+				'profilePicture',
+				sql.NVarChar,
+				currentData!.profileImages
+			);
+		}
+
 		updateUserRequest.input(
 			'originalUserName',
 			sql.VarChar,
 			currentData!.userName
 		);
+
+		if (!database.connected) {
+			await database.connect();
+		}
 
 		await updateUserRequest.query(
 			`UPDATE [User] SET 
@@ -191,7 +210,8 @@ export const updateCurrentUser = async (
 			 	[userName] = @userName,
 				[firstName] = @firstName,
 				[lastName] = @lastName,
-				[birthdate] = @birthdate
+				[birthdate] = @birthdate,
+				[profilePicture] = @profilePicture
 			 WHERE [userName] = @originalUserName`
 		);
 
