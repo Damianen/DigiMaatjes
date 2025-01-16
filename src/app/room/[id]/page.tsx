@@ -114,14 +114,14 @@ export default function Home() {
 	return (
 		<>
 			<Navbar />
-			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center">
+			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center p-4">
 				<div className="text-center my-4">
 					<h1 className="text-5xl font-bold font-bambino text-white mb-4">
 						Kamer: {room}
 					</h1>
 				</div>
 
-				<div className="flex w-full max-w-6xl space-x-4 items-stretch">
+				<div className="flex flex-col lg:flex-row w-full max-w-6xl lg:space-x-4 space-y-4 lg:space-y-0 items-stretch">
 					{/* Ludo Game Section */}
 					<div className="flex-1 bg-white rounded-lg shadow-lg p-6 flex flex-col">
 						<Ludo />
@@ -156,13 +156,16 @@ export default function Home() {
 								</p>
 							) : (
 								roomMessage.map((message, index) => (
-									<div key={index} className="mb-2">
+									<div
+										key={index}
+										className="mb-2 break-words"
+									>
 										{message}
 									</div>
 								))
 							)}
 						</div>
-						<div className="flex gap-2 mb-6">
+						<div className="flex flex-col sm:flex-row gap-2 mb-6">
 							<input
 								type="text"
 								className="flex-1 border rounded-lg p-2"
@@ -174,7 +177,7 @@ export default function Home() {
 								className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
 								onClick={handleSendRoomMessage}
 							>
-								Send
+								Versturen
 							</button>
 						</div>
 					</div>
@@ -186,13 +189,13 @@ export default function Home() {
 						className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
 						onClick={handleLeaveRoom}
 					>
-						Leave Room
+						Kamer verlaten
 					</button>
 					<button
 						className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
 						onClick={handleStartGame}
 					>
-						Start Game
+						Spel starten
 					</button>
 				</div>
 			</div>
