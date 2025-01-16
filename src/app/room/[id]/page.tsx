@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import Ludo from '../../games/ludo';
 import { socket } from '../../socket';
 import Navbar from '../../component/navbar';
+import Link from 'next/link';
 
 export default function Home() {
 	const [isConnected, setIsConnected] = useState(false);
@@ -143,7 +144,8 @@ export default function Home() {
 							) : (
 								users.map((user, index) => (
 									<li key={index} className="text-gray-700">
-										{user}
+										<Link href={`/profile/${user}`} target='blank'>{user}
+										</Link>
 									</li>
 								))
 							)}

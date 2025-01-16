@@ -11,6 +11,7 @@ import Loading from '@/app/component/loading';
 interface Room{
     roomName: string;
     numUsers: number;
+	roomOwner: string;
 }
  
 export default function GameRoom() {
@@ -191,6 +192,11 @@ export default function GameRoom() {
 								<div className="flex-1 text-lg font-semibold font-bambino">
 									<span className="lobby-name">
 										{room.roomName}
+									</span>
+								</div>
+								<div className="flex-1 text-lg font-semibold font-bambino">
+									<span className="lobby-owner">
+										Kamer aangemaakt door: {room.roomOwner}
 									</span>
 								</div>
 								<div className="max-user text-lg flex-shrink-0 min-w-[80px] text-center mr-20">
