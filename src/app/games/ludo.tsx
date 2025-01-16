@@ -129,43 +129,103 @@ export default function Ludo({ height = 691, width = 691 }) {
 
 	useEffect(() => {
 		function draw(context: CanvasRenderingContext2D) {
-		  if (context && !gameWon) { // Prevent drawing when the game is won
-			context.drawImage(img, 0, 0);
-	  
-			for (let x = 0; x < board.length; x++) {
-			  for (let y = 0; y < board[x].length; y++) {
-				if (board[y][x].pawn != null) {
-				  switch (board[y][x].pawn?.color) {
-					case LudoPlayerColor.BLUE:
-					  context.fillStyle = 'blue';
-					  break;
-					case LudoPlayerColor.YELLOW:
-					  context.fillStyle = 'yellow';
-					  break;
-					case LudoPlayerColor.RED:
-					  context.fillStyle = 'rgb(160, 0, 0)';
-					  break;
-					case LudoPlayerColor.GREEN:
-					  context.fillStyle = 'green';
-					  break;
-				  }
-	  
-				  context.beginPath();
-				  context.arc(
-					x * squareSize + squareSize / 2,
-					y * squareSize + squareSize / 2,
-					15,
-					0,
-					2 * Math.PI
-				  );
-				  context.fill();
+			if (context && !gameWon) { // Prevent drawing when the game is won
+				context.drawImage(img, 0, 0);
+		
+				// Fully cover the center of the board with the current player's color
+				if (currentColor !== LudoPlayerColor.NULL) {
+					const centerStartX = 6; // 3x3 square starts at x6
+					const centerStartY = 6; // 3x3 square starts at y6
+		
+					let fillColor = '';
+					switch (currentColor) {
+						case LudoPlayerColor.BLUE:
+							fillColor = 'blue';
+							break;
+						case LudoPlayerColor.YELLOW:
+							fillColor = 'yellow';
+							break;
+						case LudoPlayerColor.RED:
+							fillColor = 'rgb(254, 17, 1)';
+							break;
+						case LudoPlayerColor.GREEN:
+							fillColor = 'green';
+							break;
+					}
+		
+					// Clear the center area first
+					context.clearRect(
+						centerStartX * squareSize,
+						centerStartY * squareSize,
+						3 * squareSize,
+						3 * squareSize
+					);
+		
+					// Fill the cleared area with the current color
+					context.fillStyle = fillColor;
+					context.fillRect(
+						centerStartX * squareSize,
+						centerStartY * squareSize,
+						3 * squareSize,
+						3 * squareSize
+					);
 				}
-			  }
+		
+				// Draw pawns on the board
+				for (let x = 0; x < board.length; x++) {
+					for (let y = 0; y < board[x].length; y++) {
+						const square = board[y][x];
+						if (square.pawn != null) {
+							const pawn = square.pawn;
+							if (
+								pawn.color === color &&
+								(turnState === 1 || turnState === 2)
+							) {
+								context.strokeStyle = 'gold';
+								context.lineWidth = 3;
+								context.beginPath();
+								context.arc(
+									x * squareSize + squareSize / 2,
+									y * squareSize + squareSize / 2,
+									18,
+									0,
+									2 * Math.PI
+								);
+								context.stroke();
+							}
+		
+							switch (pawn.color) {
+								case LudoPlayerColor.BLUE:
+									context.fillStyle = 'blue';
+									break;
+								case LudoPlayerColor.YELLOW:
+									context.fillStyle = 'yellow';
+									break;
+								case LudoPlayerColor.RED:
+									context.fillStyle = 'rgb(160, 0, 0)';
+									break;
+								case LudoPlayerColor.GREEN:
+									context.fillStyle = 'green';
+									break;
+							}
+		
+							context.beginPath();
+							context.arc(
+								x * squareSize + squareSize / 2,
+								y * squareSize + squareSize / 2,
+								15,
+								0,
+								2 * Math.PI
+							);
+							context.fill();
+						}
+					}
+				}
+		
+				frameRef.current = requestAnimationFrame(() => draw(context));
 			}
-	  
-			frameRef.current = requestAnimationFrame(() => draw(context));
-		  }
 		}
+		
 	  
 		if (canvasRef.current) {
 		  const context = canvasRef.current.getContext('2d');

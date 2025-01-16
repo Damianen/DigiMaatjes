@@ -13,6 +13,10 @@ const port: any = process.env.PORT || '3000';
 const app = next({ dev, port });
 const handler = app.getRequestHandler();
 
+interface customSocket extends Socket {
+	nickname?: string;
+}
+
 app.prepare().then(() => {
 	const httpServer = createServer(handler);
 
@@ -21,7 +25,7 @@ app.prepare().then(() => {
 	const MAX_USERS = 4;
 	const shownrooms = new Map();
 	var rooms = io.sockets.adapter.rooms;
-	io.on('connection', (socket: Socket & { nickname?: string }) => {
+	io.on('connection', (socket: customSocket) => {
 		console.log('a user connected');
 		socket.on('disconnect', () => {
 			console.log('user disconnected');
@@ -37,7 +41,11 @@ app.prepare().then(() => {
 			socket.to(room).emit('joinRoom', room);
 			socket.emit('joinRoom', room);
 			const numberOfUsers = io.sockets.adapter.rooms.get(room)!.size;
+			if (numberOfUsers === 1) {
+				shownrooms.set(room, { roomName: room, numUsers: numberOfUsers, roomOwner: nickname });
+			} else {
 			shownrooms.set(room, { roomName: room, numUsers: numberOfUsers });
+			}
 			console.log('shownrooms', Array.from(shownrooms.values()));
 			io.emit('updateRooms', Array.from(shownrooms.values()));
 		});
@@ -46,7 +54,7 @@ app.prepare().then(() => {
 			socket.join(room);
 			console.log('user created room ' + room + ' as ' + nickname);
 			const numberOfUsers = io.sockets.adapter.rooms.get(room)!.size;
-			shownrooms.set(room, { roomName: room, numUsers: numberOfUsers });
+			shownrooms.set(room, { roomName: room, numUsers: numberOfUsers, roomOwner: nickname });
 			console.log('shownrooms', Array.from(shownrooms.values()));
 			io.emit('updateRooms', Array.from(shownrooms.values()));
 		});
@@ -85,7 +93,7 @@ app.prepare().then(() => {
 			console.log('getRoomUsers: ' + room);
 			try {
 				const sockets = await io.in(room).fetchSockets();
-				const users = sockets.map((socket) => socket.id);
+				const users = sockets.map((socket) => (socket as unknown as customSocket).nickname);
 				console.log(users);
 				console.log('getRoomUsers is called');
 				socket.emit('getRoomUsers', users);
