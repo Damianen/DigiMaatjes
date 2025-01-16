@@ -45,5 +45,5 @@ jobs:
                   git config user.email "github-actions[bot]@users.noreply.github.com"
                   git fetch origin
                   git checkout main
-                  git pull
+                  git merge --no-edit release || true
                   git push origin main:release
