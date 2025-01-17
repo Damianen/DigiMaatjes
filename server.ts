@@ -13,6 +13,10 @@ const port: any = process.env.PORT || '3000';
 const app = next({ dev, port });
 const handler = app.getRequestHandler();
 
+interface customSocket extends Socket {
+	nickname?: string;
+}
+
 app.prepare().then(() => {
 	const httpServer = createServer(handler);
 
@@ -21,7 +25,7 @@ app.prepare().then(() => {
 	const MAX_USERS = 4;
 	const shownrooms = new Map();
 	var rooms = io.sockets.adapter.rooms;
-	io.on('connection', (socket: Socket & { nickname?: string }) => {
+	io.on('connection', (socket: customSocket) => {
 		console.log('a user connected');
 		socket.on('disconnect', () => {
 			console.log('user disconnected');
@@ -36,17 +40,32 @@ app.prepare().then(() => {
 			console.log('user joined room #' + room + ' as ' + nickname);
 			socket.to(room).emit('joinRoom', room);
 			socket.emit('joinRoom', room);
+		
 			const numberOfUsers = io.sockets.adapter.rooms.get(room)!.size;
-			shownrooms.set(room, { roomName: room, numUsers: numberOfUsers });
+		
+			// Check if the room already exists in shownrooms
+			if (shownrooms.has(room)) {
+				// Update the number of users but preserve the existing roomOwner
+				const existingRoom = shownrooms.get(room);
+				shownrooms.set(room, {
+					...existingRoom, // Keep existing data
+					numUsers: numberOfUsers, // Update the user count
+				});
+			} else {
+				// If the room is new, add it with the current nickname as the owner
+				shownrooms.set(room, { roomName: room, numUsers: numberOfUsers, roomOwner: nickname });
+			}
+		
 			console.log('shownrooms', Array.from(shownrooms.values()));
 			io.emit('updateRooms', Array.from(shownrooms.values()));
 		});
+		
 		socket.on('createRoom', (room, nickname, spelnaam) => {
 			socket.nickname = nickname;
 			socket.join(room);
 			console.log('user created room ' + room + ' as ' + nickname);
 			const numberOfUsers = io.sockets.adapter.rooms.get(room)!.size;
-			shownrooms.set(room, { roomName: room, numUsers: numberOfUsers });
+			shownrooms.set(room, { roomName: room, numUsers: numberOfUsers, roomOwner: nickname });
 			console.log('shownrooms', Array.from(shownrooms.values()));
 			io.emit('updateRooms', Array.from(shownrooms.values()));
 		});
@@ -57,7 +76,7 @@ app.prepare().then(() => {
 			// Fetch the updated list of users in the room
 			try {
 				const sockets = await io.in(room).fetchSockets();
-				const users = sockets.map((socket) => socket.id);
+				const users = sockets.map((socket) => (socket as unknown as customSocket).nickname);
 				console.log(users);
 				io.to(room).emit('getRoomUsers', users);
 			} catch (error) {
@@ -66,9 +85,10 @@ app.prepare().then(() => {
 			const numberOfUsers = io.sockets.adapter.rooms.get(room)?.size || 0;
 			if (numberOfUsers === 0) {
 				shownrooms.delete(room);
-			} else {
+			} else if (shownrooms.has(room)) {
+				const existingRoom = shownrooms.get(room);
 				shownrooms.set(room, {
-					roomName: room,
+					...existingRoom,
 					numUsers: numberOfUsers,
 				});
 			}
@@ -85,7 +105,7 @@ app.prepare().then(() => {
 			console.log('getRoomUsers: ' + room);
 			try {
 				const sockets = await io.in(room).fetchSockets();
-				const users = sockets.map((socket) => socket.id);
+				const users = sockets.map((socket) => (socket as unknown as customSocket).nickname);
 				console.log(users);
 				console.log('getRoomUsers is called');
 				socket.emit('getRoomUsers', users);
@@ -96,18 +116,34 @@ app.prepare().then(() => {
 		});
 
 		socket.on('findRooms', async (spelnaam) => {
-			var shownrooms: Array<Object> = [];
-			console.log(rooms);
+			console.log("find rooms called");
+		
+			// Loop through all the rooms
 			rooms.forEach((value, key) => {
 				const numberOfUsers = value.size;
+				// Check if the room name includes the game name and if it has space for more users
 				if (key.includes(spelnaam) && numberOfUsers < MAX_USERS) {
 					console.log(value, key);
-					shownrooms.push({ roomName: key, numUsers: numberOfUsers });
+		
+					// Fetch room data from shownrooms if available
+					const existingRoom = shownrooms.get(key);
+					let roomOwner = existingRoom ? existingRoom.roomOwner : null;
+		
+					// If the room exists in shownrooms, preserve the owner, otherwise fetch from the shownrooms map
+					if (!roomOwner) {
+						// If roomOwner is not found, it means the room is new or we didn't find it in the map
+						roomOwner = shownrooms.get(key)?.roomOwner || null;
+					}
+		
+					// Add the room data to shownrooms including roomOwner and number of users
+					shownrooms.set(key,{ roomName: key, numUsers: numberOfUsers, roomOwner: roomOwner });
 				}
 			});
-			console.log('shownrooms', shownrooms);
-			socket.emit('updateRooms', shownrooms);
+		
+			console.log('shownrooms', Array.from(shownrooms.values()));
+			socket.emit('updateRooms', Array.from(shownrooms.values()));
 		});
+		
 
 		socket.on('findUsersInRoom', async (room) => {
 			console.log('findUsersInRoom: ' + room);

@@ -4,7 +4,7 @@ export default function Home() {
 		<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center justify-center">
 			<div className="text-center">
 				<h1 className="text-5xl font-bold font-bambino text-white mb-4">
-					Welkom bij Digimaatjes
+					Welkom bij Digimaatjes!
 				</h1>
 				<p className="text-lg font-bambino text-blue-100 mb-8">
 					Speel samen met je vrienden of maak nieuwe vrienden in de

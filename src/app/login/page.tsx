@@ -2,6 +2,7 @@
 import { useState, useActionState, useEffect } from 'react';
 import { signin } from '@/app/services/auth';
 import Loading from '../component/loading';
+import Link from 'next/link';
 
 export default function Login() {
 	const [showExplanation, setShowExplanation] = useState(false);
@@ -57,8 +58,8 @@ export default function Login() {
 				</div>
 
 				{showExplanation && (
-					<div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-white text-blue-700 text-sm rounded-lg shadow-lg p-4 w-64 z-10">
-						<p>
+					<div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-white text-blue-700 text-lg rounded-lg shadow-lg p-6 w-80 z-10">
+						<p className="mb-4">
 							We vragen je om een account te maken zodat je kunt
 							chatten met je vrienden en samen een spel kunt
 							spelen. Inloggen is nodig om je voortgang op te
@@ -66,7 +67,7 @@ export default function Login() {
 						</p>
 						<button
 							onClick={toggleExplanation}
-							className="mt-2 text-blue-600 hover:text-blue-800 underline"
+							className="w-full px-6 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
 						>
 							Sluiten
 						</button>
@@ -123,6 +124,18 @@ export default function Login() {
 						</button>
 					</div>
 				</form>
+
+				<div className="text-center mt-6">
+					<label
+						htmlFor="username"
+						className="block text-xl font-semibold text-white mb-2"
+					></label>
+					<Link href="/registreer">
+						<button className="w-full px-12 py-6 text-2xl bg-blue-600 text-white rounded-lg font-semibold font-bambino hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-600">
+							Geen account?{''}
+						</button>
+					</Link>
+				</div>
 			</div>
 		</div>
 	);
