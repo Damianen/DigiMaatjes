@@ -179,18 +179,18 @@ export const updateCurrentUser = async (
 			updateUserRequest.input('birthdate', sql.Date, formatedDate);
 		}
 
-		if (updateData.profileImages) {
+		if (updateData.profilePicture) {
 			updateUserRequest.input(
 				'profilePicture',
 				sql.NVarChar,
-				updateData.profileImages
+				updateData.profilePicture
 			);
 			
 		} else {
 			updateUserRequest.input(
 				'profilePicture',
 				sql.NVarChar,
-				currentData!.profileImages
+				currentData!.profilePicture
 			);
 		}
 

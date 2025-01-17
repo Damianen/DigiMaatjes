@@ -17,23 +17,18 @@ interface BrowserFile {
     arrayBuffer: () => Promise<ArrayBuffer>;
 }
 
-/**
- * Uploads an image to a specific directory.
- * @param file - The file to upload, either a browser `File` or an object mimicking `Express.Multer.File`.
- * @returns A promise with the upload result.
- */
-export const uploadImage = async (file: BrowserFile): Promise<UploadResult> => {
-    if (!file) {
+export const uploadImage = async (img: BrowserFile): Promise<UploadResult> => {
+    if (!img) {
         return { success: false, error: 'No file provided' };
     }
 
-    if (!file.type.startsWith('image/')) {
+    if (!img.type.startsWith('image/')) {
         return { success: false, error: 'Only image files are allowed' };
     }
 
     try {
         const uploadPath = path.join(__dirname, '../../../../public/pfImages');
-        const fileName = `${Date.now()}-${file.name}`;
+        const fileName = `${Date.now()}-${img.name}`;
         const filePath = path.join(uploadPath, fileName);
 
         // Ensure the directory exists
@@ -42,7 +37,7 @@ export const uploadImage = async (file: BrowserFile): Promise<UploadResult> => {
         }
 
         // Convert the file to a Buffer
-        const buffer = Buffer.from(await file.arrayBuffer());
+        const buffer = Buffer.from(await img.arrayBuffer());
 
         // Write the file to the upload directory
         fs.writeFileSync(filePath, buffer);
@@ -53,6 +48,41 @@ export const uploadImage = async (file: BrowserFile): Promise<UploadResult> => {
             filePath
         };
     } catch (err) {
-        return { success: false, error: `File upload failed: ${(err as Error).message}` };
+        return { success: false, error: `Image upload failed: ${(err as Error).message}` };
     }
+};
+
+export const deleteImage = async (fileName: string): Promise<{ success: boolean; message: string }> => {
+    return new Promise((resolve, reject) => {
+        // Define the directory where images are stored
+        const uploadPath = path.join(__dirname, '../../../../public/pfImages');
+
+        // Construct the full file path
+        const filePath = path.join(uploadPath, fileName);
+
+        // Check if the file exists
+        fs.access(filePath, (accessErr) => {
+            if (accessErr) {
+                if (accessErr.code === 'ENOENT') {
+                    return resolve({
+                        success: false,
+                        message: `File ${fileName} not found.`,
+                    });
+                }
+                return reject(accessErr);
+            }
+
+            // If the file exists, delete it
+            fs.unlink(filePath, (unlinkErr) => {
+                if (unlinkErr) {
+                    return reject(unlinkErr);
+                }
+
+                return resolve({
+                    success: true,
+                    message: `File ${fileName} has been successfully deleted.`,
+                });
+            });
+        });
+    });
 };

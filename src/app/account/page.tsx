@@ -5,11 +5,14 @@ import { getCurrentUser, updateCurrentUser } from '@/lib/dal/user.dal';
 import Loading from '../component/loading';
 import { Joyride, Placement } from 'react-joyride';
 import { IUser, UpdateUser } from '@/lib/models/user.interface';
-import { uploadImage } from '@/app/services/imgUpload';
+import { deleteImage, uploadImage } from '@/app/services/imgUpload';
 
 export default function AccountDetails() {
 	const [img, setImg] = useState<File | undefined>();
 	const [imgUrl, setImgUrl] = useState<string | undefined>();
+	const [originalImgName, setOriginalImgName] = useState<
+		string | undefined
+	>();
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 	const handleImgUpload = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -19,7 +22,6 @@ export default function AccountDetails() {
 				alert('Selecteer een afbeelding alstublieft');
 				return;
 			}
-			console.log(e.target.files);
 			setImg(img);
 			setImgUrl(URL.createObjectURL(img));
 		}
@@ -94,7 +96,9 @@ export default function AccountDetails() {
 						lastName: user.lastName,
 						birthDate: formattedBirthDate,
 					});
-					//setImgUrl(user.profileImages);
+					if (user.profilePicture) {
+						setOriginalImgName(user.profilePicture);
+					}
 					setStatus('success');
 				} else {
 					throw new Error('Username not found');
@@ -123,6 +127,8 @@ export default function AccountDetails() {
 				lastName: user!.lastName,
 				birthDate: user!.birthdate.toISOString().split('T')[0],
 			});
+			setImg(undefined);
+			setImgUrl(undefined);
 			return !prev;
 		});
 
@@ -136,11 +142,14 @@ export default function AccountDetails() {
 		};
 
 		if (img) {
-			// Logic to save the file, e.g., uploading to the server
-			const result = await uploadImage(img);
-			updatedData.profileImages = result.fileName;
-			console.dir(result);
-			console.log('Profile photo updated:', img.name);
+			const imgUpload = await uploadImage(img);
+			if (imgUpload.success) {
+				updatedData.profilePicture = imgUpload.fileName;
+				if (originalImgName) {
+					await deleteImage(originalImgName);
+				}
+				setOriginalImgName(imgUpload.fileName);
+			}
 		}
 
 		updateCurrentUser(updatedData);
@@ -284,6 +293,16 @@ export default function AccountDetails() {
 								{imgUrl ? (
 									<img
 										src={imgUrl}
+										alt="Selected file"
+										style={{
+											width: '100%',
+											height: '100%',
+											objectFit: 'cover',
+										}}
+									/>
+								) : originalImgName ? (
+									<img
+										src={`/pfImages/${originalImgName}`}
 										alt="Selected file"
 										style={{
 											width: '100%',
