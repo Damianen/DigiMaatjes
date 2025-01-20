@@ -8,12 +8,12 @@ import Joyride, { Placement } from 'react-joyride';
 import { useState, useEffect } from 'react';
 import Loading from '@/app/component/loading';
 
-interface Room{
-    roomName: string;
-    numUsers: number;
+interface Room {
+	roomName: string;
+	numUsers: number;
 	roomOwner: string;
 }
- 
+
 export default function GameRoom() {
 	const router = useRouter();
 	const spel = useParams().spel?.toString();
@@ -143,7 +143,8 @@ export default function GameRoom() {
 			<Navbar />
 			<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center px-4">
 				<main className="main-field w-full max-w-6xl bg-white rounded-lg shadow-lg p-8 mt-10">
-					<div className="flex items-center justify-between mb-6">
+					<div className="flex flex-col lg:flex-row items-center justify-between mb-6">
+						{/* Image */}
 						<div className="w-24 h-24 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden sm:w-16 sm:h-16">
 							<Image
 								src={spelimg}
@@ -155,34 +156,37 @@ export default function GameRoom() {
 							/>
 						</div>
 
-						<div className="flex-1 mx-4 text-lg font-semibold sm:text-base">
+						{/* Text */}
+						<div className="flex-1 mx-4 text-lg font-semibold sm:text-base mt-4 sm:mt-0">
 							{gameRealName} is een spel voor 2 tot 4 spelers.
 						</div>
 
-						<button
-							onClick={() => router.push('/speloverzicht')}
-							className="px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 mr-12 sm:px-4 sm:py-2 sm:text-base sm:mr-4"
-						>
-							Naar speloverzicht
-						</button>
+						{/* Buttons */}
+						<div className="flex flex-col md:flex-row gap-6 sm:gap-4 mt-4 sm:mt-0">
+							<button
+								onClick={() => router.push('/speloverzicht')}
+								className="px-10 py-4 text-xl bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 sm:px-6 sm:py-3 sm:text-lg"
+							>
+								Naar speloverzicht
+							</button>
 
-						<div className="flex items-center gap-x-6 relative sm:gap-x-2">
 							<button
 								onClick={handleCreateGame}
-								className="create-game-button px-8 py-3 text-lg bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 sm:px-4 sm:py-2 sm:text-base"
+								className="create-game-button px-10 py-4 text-xl bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 sm:px-6 sm:py-3 sm:text-lg"
 							>
 								Creëer spel kamer
 							</button>
 
 							<button
 								onClick={toggleExplanation}
-								className="text-white bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center text-sm font-bold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 sm:w-8 sm:h-8 sm:text-xs"
+								className="px-10 py-4 text-xl bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 sm:px-6 sm:py-3 sm:text-lg"
 							>
-								?
+								Uitleg
 							</button>
 						</div>
 					</div>
 
+					{/* Rooms Grid */}
 					<div className="grid grid-cols-1 gap-6">
 						{rooms.map((room, index) => (
 							<div
@@ -226,6 +230,8 @@ export default function GameRoom() {
 					</div>
 				</main>
 			</div>
+
+			{/* Joyride Tour */}
 			{isTourActive && (
 				<Joyride
 					styles={{
