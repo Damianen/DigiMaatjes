@@ -17,6 +17,10 @@ export default function AccountDetails() {
 
 	const [user, setUser] = useState<IUser | undefined>(undefined);
 
+	const [originalImgName, setOriginalImgName] = useState<
+		string | undefined
+	>();
+
 	const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
 	const [status, setStatus] = useState<'pending' | 'success' | 'error'>(
 		'pending'
@@ -64,6 +68,9 @@ export default function AccountDetails() {
 						lastName: user.lastName,
 						birthDate: formattedBirthDate,
 					});
+					if (user.profilePicture) {
+						setOriginalImgName(user.profilePicture);
+					}
 					setStatus('success');
 				} else {
 					throw new Error('Username not found');
@@ -92,6 +99,23 @@ export default function AccountDetails() {
 							<h2 className="text-3xl font-semibold">
 								Mijn gegevens
 							</h2>
+						</div>
+						<div className="mb-6">
+							<div className="text-lg font-medium text-gray-700 mb-1">
+								Profiel foto
+							</div>
+							{originalImgName ? (
+								<img
+									src={`/pfImages/${originalImgName}`}
+									alt="Selected file"
+									style={{
+										width: '100px',
+										height: '100px',
+									}}
+								/>
+							) : (
+								<div className="text-xl">Geen profielfoto</div>
+							)}
 						</div>
 						<div className="mb-6">
 							<div className="text-lg font-medium text-gray-700 mb-1">
