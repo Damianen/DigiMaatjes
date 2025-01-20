@@ -7,7 +7,7 @@ export interface IUser {
 	userName: string;
 	password: string;
 	birthdate: Date;
-	profileImages?: string;
+	profilePicture?: string;
 	friendsList?: Array<IUser>;
 }
 
@@ -20,7 +20,7 @@ export class User implements IUser {
 	userName!: string;
 	password!: string;
 	birthdate!: Date;
-	profileImages?: string;
+	profilePicture?: string;
 	friendsList?: Array<IUser>;
 }
 

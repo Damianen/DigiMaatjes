@@ -1,12 +1,38 @@
 'use client';
 import Navbar from '@/app/component/navbar';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getCurrentUser, updateCurrentUser } from '@/lib/dal/user.dal';
 import Loading from '../component/loading';
 import { Joyride, Placement } from 'react-joyride';
 import { IUser, UpdateUser } from '@/lib/models/user.interface';
+import { deleteImage, uploadImage } from '@/app/services/imgUpload';
 
 export default function AccountDetails() {
+	const [img, setImg] = useState<File | undefined>();
+	const [imgUrl, setImgUrl] = useState<string | undefined>();
+	const [originalImgName, setOriginalImgName] = useState<
+		string | undefined
+	>();
+	const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+	const handleImgUpload = (e: React.ChangeEvent<HTMLInputElement>): void => {
+		if (e.target.files && e.target.files.length > 0) {
+			const img = e.target.files[0];
+			if (!img.type.startsWith('image/')) {
+				alert('Selecteer een afbeelding alstublieft');
+				return;
+			}
+			setImg(img);
+			setImgUrl(URL.createObjectURL(img));
+		}
+	};
+
+	const handlePlaceholderClick = (): void => {
+		if (fileInputRef.current) {
+			fileInputRef.current.click();
+		}
+	};
+
 	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
@@ -70,6 +96,9 @@ export default function AccountDetails() {
 						lastName: user.lastName,
 						birthDate: formattedBirthDate,
 					});
+					if (user.profilePicture) {
+						setOriginalImgName(user.profilePicture);
+					}
 					setStatus('success');
 				} else {
 					throw new Error('Username not found');
@@ -98,6 +127,8 @@ export default function AccountDetails() {
 				lastName: user!.lastName,
 				birthDate: user!.birthdate.toISOString().split('T')[0],
 			});
+			setImg(undefined);
+			setImgUrl(undefined);
 			return !prev;
 		});
 
@@ -109,6 +140,18 @@ export default function AccountDetails() {
 			lastName: formData.lastName,
 			birthdate: new Date(formData.birthDate),
 		};
+
+		if (img) {
+			const imgUpload = await uploadImage(img);
+			if (imgUpload.success) {
+				updatedData.profilePicture = imgUpload.fileName;
+				if (originalImgName) {
+					await deleteImage(originalImgName);
+				}
+				setOriginalImgName(imgUpload.fileName);
+			}
+		}
+
 		updateCurrentUser(updatedData);
 		setIsEditing(false);
 		try {
@@ -222,6 +265,70 @@ export default function AccountDetails() {
 								</div>
 							)}
 						</div>
+						<div>
+							<label className="block text-lg font-medium text-gray-700 mb-1">
+								Profiel foto
+							</label>
+							<div
+								onClick={
+									isEditing
+										? handlePlaceholderClick
+										: undefined
+								} // Only clickable when editing
+								style={{
+									width: '100px',
+									height: '100px',
+									border: '2px dashed #ccc',
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+									cursor: isEditing ? 'pointer' : 'default', // Change cursor based on editing mode
+									overflow: 'hidden',
+									marginBottom: '10px',
+									backgroundColor: imgUrl
+										? 'transparent'
+										: '#f9f9f9',
+								}}
+							>
+								{imgUrl ? (
+									<img
+										src={imgUrl}
+										alt="Selected file"
+										style={{
+											width: '100%',
+											height: '100%',
+											objectFit: 'cover',
+										}}
+									/>
+								) : originalImgName ? (
+									<img
+										src={`/pfImages/${originalImgName}`}
+										alt="Selected file"
+										style={{
+											width: '100%',
+											height: '100%',
+											objectFit: 'cover',
+										}}
+									/>
+								) : (
+									<span style={{ color: '#aaa' }}>
+										{isEditing
+											? 'Klik om te uploaden'
+											: 'Geen afbeelding'}
+									</span>
+								)}
+							</div>
+							{isEditing && (
+								<input
+									type="file"
+									ref={fileInputRef}
+									accept="image/*"
+									onChange={handleImgUpload}
+									style={{ display: 'none' }}
+								/>
+							)}
+						</div>
+
 						<form>
 							{[
 								'firstName',
