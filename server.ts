@@ -4,7 +4,10 @@ import { LudoGameFactory } from '@/lib/games/ludo/ludo.factory';
 import { LudoPlayer, LudoPlayerColor } from '@/lib/games/ludo/ludo.player';
 import { LudoClientGameData } from '@/lib/models/ludo.interface';
 import { Server, Socket } from 'socket.io';
+import { createClient } from 'redis';
+import { LudoGame } from '@/lib/games/ludo/ludo';
 
+const MAX_USERS = 4;
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = 'localhost';
 console.log(process.env.PORT);
@@ -17,14 +20,19 @@ interface customSocket extends Socket {
 	nickname?: string;
 }
 
-app.prepare().then(() => {
-	const httpServer = createServer(handler);
+const redisClient = createClient({
+	url: 'redis://localhost:6379',
+});
 
-	let ludo = null;
+redisClient.on('error', (err: any) => console.log('Redis Client Error', err));
+
+app.prepare().then(async () => {
+	await redisClient.connect();
+	const httpServer = createServer(handler);
 	const io = new Server(httpServer);
-	const MAX_USERS = 4;
+
 	const shownrooms = new Map();
-	var rooms = io.sockets.adapter.rooms;
+	const rooms = io.sockets.adapter.rooms;
 	io.on('connection', (socket: customSocket) => {
 		console.log('a user connected');
 		socket.on('disconnect', () => {
@@ -40,9 +48,9 @@ app.prepare().then(() => {
 			console.log('user joined room #' + room + ' as ' + nickname);
 			socket.to(room).emit('joinRoom', room);
 			socket.emit('joinRoom', room);
-		
+
 			const numberOfUsers = io.sockets.adapter.rooms.get(room)!.size;
-		
+
 			// Check if the room already exists in shownrooms
 			if (shownrooms.has(room)) {
 				// Update the number of users but preserve the existing roomOwner
@@ -53,19 +61,27 @@ app.prepare().then(() => {
 				});
 			} else {
 				// If the room is new, add it with the current nickname as the owner
-				shownrooms.set(room, { roomName: room, numUsers: numberOfUsers, roomOwner: nickname });
+				shownrooms.set(room, {
+					roomName: room,
+					numUsers: numberOfUsers,
+					roomOwner: nickname,
+				});
 			}
-		
+
 			console.log('shownrooms', Array.from(shownrooms.values()));
 			io.emit('updateRooms', Array.from(shownrooms.values()));
 		});
-		
+
 		socket.on('createRoom', (room, nickname, spelnaam) => {
 			socket.nickname = nickname;
 			socket.join(room);
 			console.log('user created room ' + room + ' as ' + nickname);
 			const numberOfUsers = io.sockets.adapter.rooms.get(room)!.size;
-			shownrooms.set(room, { roomName: room, numUsers: numberOfUsers, roomOwner: nickname });
+			shownrooms.set(room, {
+				roomName: room,
+				numUsers: numberOfUsers,
+				roomOwner: nickname,
+			});
 			console.log('shownrooms', Array.from(shownrooms.values()));
 			io.emit('updateRooms', Array.from(shownrooms.values()));
 		});
@@ -76,7 +92,9 @@ app.prepare().then(() => {
 			// Fetch the updated list of users in the room
 			try {
 				const sockets = await io.in(room).fetchSockets();
-				const users = sockets.map((socket) => (socket as unknown as customSocket).nickname);
+				const users = sockets.map(
+					(socket) => (socket as unknown as customSocket).nickname
+				);
 				console.log(users);
 				io.to(room).emit('getRoomUsers', users);
 			} catch (error) {
@@ -105,7 +123,9 @@ app.prepare().then(() => {
 			console.log('getRoomUsers: ' + room);
 			try {
 				const sockets = await io.in(room).fetchSockets();
-				const users = sockets.map((socket) => (socket as unknown as customSocket).nickname);
+				const users = sockets.map(
+					(socket) => (socket as unknown as customSocket).nickname
+				);
 				console.log(users);
 				console.log('getRoomUsers is called');
 				socket.emit('getRoomUsers', users);
@@ -116,44 +136,49 @@ app.prepare().then(() => {
 		});
 
 		socket.on('findRooms', async (spelnaam) => {
-			console.log("find rooms called");
-		
+			console.log('find rooms called');
+
 			// Loop through all the rooms
 			rooms.forEach((value, key) => {
 				const numberOfUsers = value.size;
 				// Check if the room name includes the game name and if it has space for more users
 				if (key.includes(spelnaam) && numberOfUsers < MAX_USERS) {
 					console.log(value, key);
-		
+
 					// Fetch room data from shownrooms if available
 					const existingRoom = shownrooms.get(key);
-					let roomOwner = existingRoom ? existingRoom.roomOwner : null;
-		
+					let roomOwner = existingRoom
+						? existingRoom.roomOwner
+						: null;
+
 					// If the room exists in shownrooms, preserve the owner, otherwise fetch from the shownrooms map
 					if (!roomOwner) {
 						// If roomOwner is not found, it means the room is new or we didn't find it in the map
 						roomOwner = shownrooms.get(key)?.roomOwner || null;
 					}
-		
+
 					// Add the room data to shownrooms including roomOwner and number of users
-					shownrooms.set(key,{ roomName: key, numUsers: numberOfUsers, roomOwner: roomOwner });
+					shownrooms.set(key, {
+						roomName: key,
+						numUsers: numberOfUsers,
+						roomOwner: roomOwner,
+					});
 				}
 			});
-		
+
 			console.log('shownrooms', Array.from(shownrooms.values()));
 			socket.emit('updateRooms', Array.from(shownrooms.values()));
 		});
-		
 
 		socket.on('findUsersInRoom', async (room) => {
 			console.log('findUsersInRoom: ' + room);
-			var numberOfUsers = io.sockets.adapter.rooms.get(room)!.size;
+			const numberOfUsers = io.sockets.adapter.rooms.get(room)!.size;
 			console.log('numberOfUsers: ' + numberOfUsers);
 			socket.emit('numberOfUsers', numberOfUsers);
 		});
-		//Sockets for Ludo
 
-		socket.on('startGame', async (room) => {
+		//Sockets for Ludo
+		socket.on('startGame', async (room: string) => {
 			const sockets = await io.in(room).fetchSockets();
 			const users = sockets.map((socket) => socket.id);
 			const players: LudoPlayer[] = [];
@@ -170,9 +195,9 @@ app.prepare().then(() => {
 				}
 				i++;
 			});
-			console.log(players[0]);
-			console.log(players[1]);
-			ludo = new LudoGameFactory().createGame(players);
+			const ludo = new LudoGameFactory().createGame(players);
+			const json = JSON.stringify(ludo);
+			await redisClient.set(room, json);
 			io.to(room).emit('startGame', players, ludo.currentPlayer);
 		});
 
@@ -181,16 +206,14 @@ app.prepare().then(() => {
 			io.to(roomname).emit('dice', dice);
 		});
 
-		socket.on('takeTurn', (data, room) => {
-			console.log(data);
-			try {
-				const board: LudoClientGameData = ludo!.takeTurn(data);
-				console.log('board ' + board);
-				console.log('won' + board.won);
-				io.to(room).emit('board', board);
-			} catch (err: any) {
-				console.log(err.message);
-			}
+		socket.on('takeTurn', async (data, room) => {
+			let json = (await redisClient.get(room)) as string;
+			const ludo: LudoGame = new LudoGame([]);
+			Object.assign(ludo, JSON.parse(json));
+			const board = ludo.takeTurn(data);
+			json = JSON.stringify(ludo);
+			await redisClient.set(room, json);
+			io.to(room).emit('board', board);
 		});
 	});
 
