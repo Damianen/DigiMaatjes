@@ -21,7 +21,7 @@ interface customSocket extends Socket {
 }
 
 const redisClient = createClient({
-	url: 'redis://localhost:6379',
+	url: 'redis://127.0.0.1:6379',
 });
 
 redisClient.on('error', (err: any) => console.log('Redis Client Error', err));
