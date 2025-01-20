@@ -290,7 +290,7 @@ export class LudoGame implements IGame {
 			}
 			if (i == 3) {
 				console.log('won');
-				return this.dataFactory.createClientData({
+				return dataFactory.createClientData({
 					board: this.board,
 					player: this.currentPlayer,
 					won: LudoPlayerColor.BLUE,
