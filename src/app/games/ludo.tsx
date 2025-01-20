@@ -351,6 +351,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 				' Als je een 6 gooit, mag je een pion in het spel brengen.',
 			placement: 'top' as Placement,
 			disableBeacon: true,
+			disableScrolling: true,
 		},
 		{
 			target: '.die',
@@ -358,6 +359,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 				'Hier zie je de dobbelsteen, die rolt wanneer iemand de dobbelsteen gooit.',
 			placement: 'right' as Placement,
 			disableBeacon: true,
+			disableScrolling: true,
 		},
 		{
 			target: '.turn-announcement',
@@ -365,66 +367,83 @@ export default function Ludo({ height = 691, width = 691 }) {
 				'Om te zien wie aan de beurt is en wat de huidige status van het spel is, kunt u hier kijken',
 			placement: 'top' as Placement,
 			disableBeacon: true,
+			disableScrolling: true,
 		},
 	];
 
 	return gameStarted ? (
 		<>
-			<button
-				onClick={toggleGameRules}
-				className="text-white bg-blue-600  px-6 py-2 flex items-center justify-center text-sm font-bold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-200 ease-in-out mb-4"
-			>
-				Spelregels
-			</button>
-
+			{/* Canvas for the game board */}
 			<canvas
-				className="game-board"
+				className="game-board w-full max-w-3xl mx-auto mb-4"
 				ref={canvasRef}
 				onClick={choosePawn}
+				style={{ height: '550px', maxWidth: '100%' }}
 			/>
-			<div className="flex flex-col items-center mb-4">
+
+			{/* Buttons and game status */}
+			<div className="flex flex-col items-center mb-4 space-y-4 w-full max-w-3xl mx-auto px-4">
+				{/* Button for showing rules */}
+				<button
+					onClick={toggleGameRules}
+					className="bg-yellow-500 text-white py-3 rounded-lg text-lg font-medium hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300 w-full max-w-xs"
+				>
+					Spelregels
+				</button>
+
+				{/* Dice roll container */}
 				<div
-					className={`die w-12 h-12 rounded-lg border border-gray-300 m-2 flex justify-center items-center text-3xl shadow-lg ${
-						isRolling ? 'animate-roll' : ''
-					}`}
+					className={`die w-16 h-16 rounded-lg border border-gray-300 flex justify-center items-center text-4xl shadow-lg ${isRolling ? 'animate-roll' : ''}`}
 				>
 					<i
 						className={`fas ${getDieFace(dice)}`}
 						style={{ fontSize: '3.5rem' }}
 					></i>
 				</div>
-				<div className="ludo-roll-dice">
+
+				{/* Dice roll button */}
+				<div className="ludo-roll-dice w-full flex justify-center">
 					{turnState === 1 ? (
 						<button
-							className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+							className="bg-blue-500 text-white px-3 py-3 rounded-lg text-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 w-full max-w-xs"
 							onClick={rollDice}
 						>
 							Gooi dobbelsteen
 						</button>
 					) : (
 						<div
-							className="invisible px-4 py-2 rounded-lg"
-							style={{
-								height: '2.5rem',
-								width: '9rem',
-							}}
+							className="invisible px-5 py-3 rounded-lg"
+							style={{ height: '2.5rem', width: '9rem' }}
 						></div>
 					)}
 				</div>
 
-				<div className="text-center">
-					<p>Jouw kleur is: {color}</p>
+				{/* Turn information and announcements */}
+				<div className="text-center text-lg mt-4 space-y-4 w-full">
+					<p>
+						Jouw kleur is:{' '}
+						<span className="font-bold">{color}</span>
+					</p>
 					{turnState === 1 || turnState === 2 ? (
-						<p className="turn-announcement">Het is nu jou beurt</p>
+						<p className="turn-announcement font-bold text-blue-600 mt-2">
+							Het is nu jouw beurt
+						</p>
 					) : (
-						<p className="turn-announcement">
-							Het is de beurt van {currentColor}
+						<p className="turn-announcement text-gray-700 mt-2">
+							Het is de beurt van{' '}
+							<span className="font-bold">{currentColor}</span>
 						</p>
 					)}
-					{won != null && <p>{won} heeft het spel gewonnen!!!</p>}
-					{announcement}
+					{won != null && (
+						<p className="font-bold text-green-600 mt-4">
+							{won} heeft het spel gewonnen!!!
+						</p>
+					)}
+					<p className="mt-4 text-gray-500">{announcement}</p>
 				</div>
 			</div>
+
+			{/* Joyride for rules walkthrough */}
 			{isRulesActive && (
 				<Joyride
 					styles={{
