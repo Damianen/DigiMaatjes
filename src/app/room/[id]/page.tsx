@@ -25,6 +25,8 @@ export default function Home() {
 	const [isTourActive, setIsTourActive] = useState(false);
 	const [windowWidth, setWindowWidth] = useState<number>(0);
 
+	console.log(windowWidth);
+
 	const toggleExplanation = () => {
 		setIsTourActive(false);
 		setIsTourActive(true);
