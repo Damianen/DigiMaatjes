@@ -42,11 +42,6 @@ export default function Ludo({ height = 691, width = 691 }) {
 		setIsRulesActive(true);
 	};
 
-	const [dimensions, setDimensions] = useState({
-		height: height,
-		width: width,
-	});
-
 	const rollDice = () => {
 		if (turnState === 1) {
 			setTurnState(2);
