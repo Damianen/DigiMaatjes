@@ -40,9 +40,9 @@ export default async function middleware(req: NextRequest) {
 
 		// 4. Redirect to /login if the user is not authenticated
 		if ((isProtectedRoute && !session?.userName) || (isProtectedDynamicRoutes && !session?.userName)) {
-			console.log(req.nextUrl)
-			console.log(req.nextUrl.origin);
-			return NextResponse.redirect(new URL('/login', req.nextUrl.origin));
+			console.log("req.nextUrl: " + req.nextUrl)
+			console.log("req.nextUrl.origin: " + req.nextUrl.origin);
+			return NextResponse.redirect('https://digimaatjes1.studententuin.nl/login');
 		}
 
 		// 5. Redirect to /speloverzicht if the user is authenticated
