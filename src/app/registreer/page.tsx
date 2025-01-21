@@ -27,7 +27,7 @@ export default function Register() {
 				</div>
 
 				{showExplanation && (
-					<div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-white text-blue-700 text-sm rounded-lg shadow-lg p-6 w-80 z-10">
+					<div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-white text-blue-700 text-lg rounded-lg shadow-lg p-6 w-80 z-10">
 						<p>
 							We vragen je om een account te maken zodat je kunt
 							chatten met je vrienden en samen een spel kunt
@@ -152,10 +152,12 @@ export default function Register() {
 							/>
 							{state?.errors?.password && (
 								<div>
-									<p className='text-lg'>Wachtwoord moet:</p>
+									<p className="text-lg">Wachtwoord moet:</p>
 									<ul>
 										{state.errors.password.map((error) => (
-											<li className='text-lg' key={error}>- {error}</li>
+											<li className="text-lg" key={error}>
+												- {error}
+											</li>
 										))}
 									</ul>
 								</div>
@@ -164,8 +166,30 @@ export default function Register() {
 					</div>
 
 					<div>
-						{state?.message && <div role="alert" className="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-200"><p className='Info alert! text-lg text-center'>{state.message} <a className='underline' href='../login'>Klik hier om in te loggen</a></p></div>}
-						{state?.error && <div role="alert" className='p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-100'><p className='Danger alert! text-lg text-center'><span className='font-bold'>Fout:</span> {state.error}</p></div>}
+						{state?.message && (
+							<div
+								role="alert"
+								className="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-200"
+							>
+								<p className="Info alert! text-lg text-center">
+									{state.message}{' '}
+									<a className="underline" href="../login">
+										Klik hier om in te loggen
+									</a>
+								</p>
+							</div>
+						)}
+						{state?.error && (
+							<div
+								role="alert"
+								className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-100"
+							>
+								<p className="Danger alert! text-lg text-center">
+									<span className="font-bold">Fout:</span>{' '}
+									{state.error}
+								</p>
+							</div>
+						)}
 					</div>
 
 					<div className="text-center">
