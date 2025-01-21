@@ -372,6 +372,27 @@ export default function Ludo({ height = 691, width = 691 }) {
 	];
 
 	return gameStarted ? (
+		<>
+		{won ? (
+                // Winning Screen
+                won === color ? (
+                    <div className="winning-screen flex flex-col items-center justify-center h-full bg-green-600 text-white">
+                        <h1 className="text-4xl font-bold mb-4">Gefeliciteerd!</h1>
+                        <p className="text-2xl mb-6">{won} heeft het spel gewonnen!!!</p>
+                        <button className="bg-white text-green-600 px-6 py-3 rounded-lg font-bold text-lg hover:bg-gray-100 transition duration-200">
+                            Speel opnieuw
+                        </button>
+                    </div>
+                ) : (
+                    <div className="winning-screen flex flex-col items-center justify-center h-full bg-red-600 text-white">
+                        <h1 className="text-4xl font-bold mb-4">Helaas...</h1>
+                        <p className="text-2xl mb-6">{won} heeft het spel gewonnen...</p>
+                        <button className="bg-white text-green-600 px-6 py-3 rounded-lg font-bold text-lg hover:bg-gray-100 transition duration-200">
+                            Speel opnieuw
+                        </button>
+                    </div>
+                )
+            ) : (
 		<div className="flex flex-col lg:flex-row w-full max-w-6xl mx-auto px-4 min-h-screen mt-4">
 			{/* Canvas for the game board */}
 			<div className="w-full lg:w-2/3 mb-4 lg:mb-0 flex justify-center items-center lg:flex-grow">
@@ -475,5 +496,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 				/>
 			)}
 		</div>
+		)}
+</>
 	) : null;
 }
