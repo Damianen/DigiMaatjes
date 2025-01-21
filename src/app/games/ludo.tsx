@@ -282,7 +282,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 		}
 
 		return () => cancelAnimationFrame(frameRef.current);
-	}, [board, gameWon]); // Added gameWon as a dependency
+	}, [board, gameWon]);
 
 	const getDieFace = (value: number) => {
 		switch (value) {
@@ -372,17 +372,19 @@ export default function Ludo({ height = 691, width = 691 }) {
 	];
 
 	return gameStarted ? (
-		<>
+		<div className="flex flex-col lg:flex-row w-full max-w-6xl mx-auto px-4 min-h-screen mt-4">
 			{/* Canvas for the game board */}
-			<canvas
-				className="game-board w-full max-w-3xl mx-auto mb-4"
-				ref={canvasRef}
-				onClick={choosePawn}
-				style={{ height: '550px', maxWidth: '100%' }}
-			/>
+			<div className="w-full lg:w-2/3 mb-4 lg:mb-0 flex justify-center items-center lg:flex-grow">
+				<canvas
+					className="game-board w-full max-w-3xl"
+					ref={canvasRef}
+					onClick={choosePawn}
+					style={{ height: '690px', maxWidth: '100%' }}
+				/>
+			</div>
 
-			{/* Buttons and game status */}
-			<div className="flex flex-col items-center mb-4 space-y-4 w-full max-w-3xl mx-auto px-4">
+			{/* Buttons and game status container */}
+			<div className="flex flex-col items-center justify-center w-full lg:w-1/3 space-y-4 px-4 lg:pt-0 pt-6">
 				{/* Button for showing rules */}
 				<button
 					onClick={toggleGameRules}
@@ -472,6 +474,6 @@ export default function Ludo({ height = 691, width = 691 }) {
 					}}
 				/>
 			)}
-		</>
+		</div>
 	) : null;
 }
