@@ -24,7 +24,7 @@ export default async function middleware(req: NextRequest) {
 		});
 	} else {
 		// 1. Specify protected and public routes
-		const protectedRoutes = ['/account', '/profile'];
+		const protectedRoutes = ['/speloverzicht', '/account'];
 		const protectedDynamicRoutes = ['speloverzicht', 'room', 'profile'];
 		const publicRoutes = ['/login', '/registreer', '/'];
 
@@ -40,9 +40,7 @@ export default async function middleware(req: NextRequest) {
 
 		// 4. Redirect to /login if the user is not authenticated
 		if ((isProtectedRoute && !session?.userName) || (isProtectedDynamicRoutes && !session?.userName)) {
-			console.log("req.nextUrl: " + req.nextUrl)
-			console.log("req.nextUrl.origin: " + req.nextUrl.origin);
-			return NextResponse.redirect('https://digimaatjes1.studententuin.nl/login');
+			return NextResponse.redirect(new URL('/login', req.nextUrl.origin));
 		}
 
 		// 5. Redirect to /speloverzicht if the user is authenticated
