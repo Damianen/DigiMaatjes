@@ -49,3 +49,21 @@
 nextjs-portal {
 	display: none;
 }
+
+@media (max-width: 768px) {
+	.game-board {
+		width: 90%;
+		height: auto;
+	}
+	.ludo-roll-dice button {
+		font-size: 0.9rem;
+		padding: 0.6rem 1rem;
+	}
+	.die {
+		width: 12%;
+		height: auto;
+	}
+	.turn-announcement {
+		font-size: 0.8rem;
+	}
+}

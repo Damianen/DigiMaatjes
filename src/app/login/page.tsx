@@ -113,7 +113,7 @@ export default function Login() {
 						</div>
 					</div>
 
-					{state?.error && <p>{state.error}</p>}
+						{state?.error && <div role="alert" className='p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-100'><p className='Danger alert! text-lg text-center'><span className='font-bold'>Fout:</span> {state.error}</p></div>}
 
 					<div className="text-center mt-12">
 						<button

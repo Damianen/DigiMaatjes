@@ -32,6 +32,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 	const [gameStarted, setGameStarted] = useState<boolean>(false);
 	const [gameWon, setGameWon] = useState<boolean>(false);
 	const squareSize: number = height / 15;
+
 	const [isRolling, setIsRolling] = useState(false);
 	const [announcement, setAnnouncement] = useState<string>('');
 
@@ -69,10 +70,20 @@ export default function Ludo({ height = 691, width = 691 }) {
 		}
 
 		const rect = canvasRef.current!.getBoundingClientRect();
-		const x = Math.floor((event.clientX - rect.left) / squareSize);
-		const y = Math.floor((event.clientY - rect.top) / squareSize);
 
-		if (board[y][x].pawn != null && board[y][x].pawn.color === color) {
+		const canvasWidth = canvasRef.current!.width;
+		const canvasHeight = canvasRef.current!.height;
+
+		const x = Math.floor(
+			(((event.clientX - rect.left) / rect.width) * canvasWidth) /
+				squareSize
+		);
+		const y = Math.floor(
+			(((event.clientY - rect.top) / rect.height) * canvasHeight) /
+				squareSize
+		);
+
+		if (board[y] && board[y][x]?.pawn?.color === color) {
 			const pos: IPosition = { x, y };
 
 			socket.emit(
@@ -282,7 +293,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 		}
 
 		return () => cancelAnimationFrame(frameRef.current);
-	}, [board, gameWon]); // Added gameWon as a dependency
+	}, [board, gameWon]);
 
 	const getDieFace = (value: number) => {
 		switch (value) {
@@ -373,104 +384,140 @@ export default function Ludo({ height = 691, width = 691 }) {
 
 	return gameStarted ? (
 		<>
-			{/* Canvas for the game board */}
-			<canvas
-				className="game-board w-full max-w-3xl mx-auto mb-4"
-				ref={canvasRef}
-				onClick={choosePawn}
-				style={{ height: '550px', maxWidth: '100%' }}
-			/>
-
-			{/* Buttons and game status */}
-			<div className="flex flex-col items-center mb-4 space-y-4 w-full max-w-3xl mx-auto px-4">
-				{/* Button for showing rules */}
-				<button
-					onClick={toggleGameRules}
-					className="bg-yellow-500 text-white py-3 rounded-lg text-lg font-medium hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300 w-full max-w-xs"
-				>
-					Spelregels
-				</button>
-
-				{/* Dice roll container */}
-				<div
-					className={`die w-16 h-16 rounded-lg border border-gray-300 flex justify-center items-center text-4xl shadow-lg ${isRolling ? 'animate-roll' : ''}`}
-				>
-					<i
-						className={`fas ${getDieFace(dice)}`}
-						style={{ fontSize: '3.5rem' }}
-					></i>
-				</div>
-
-				{/* Dice roll button */}
-				<div className="ludo-roll-dice w-full flex justify-center">
-					{turnState === 1 ? (
-						<button
-							className="bg-blue-500 text-white px-3 py-3 rounded-lg text-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 w-full max-w-xs"
-							onClick={rollDice}
-						>
-							Gooi dobbelsteen
-						</button>
-					) : (
-						<div
-							className="invisible px-5 py-3 rounded-lg"
-							style={{ height: '2.5rem', width: '9rem' }}
-						></div>
-					)}
-				</div>
-
-				{/* Turn information and announcements */}
-				<div className="text-center text-lg mt-4 space-y-4 w-full">
-					<p>
-						Jouw kleur is:{' '}
-						<span className="font-bold">{color}</span>
-					</p>
-					{turnState === 1 || turnState === 2 ? (
-						<p className="turn-announcement font-bold text-blue-600 mt-2">
-							Het is nu jouw beurt
-						</p>
-					) : (
-						<p className="turn-announcement text-gray-700 mt-2">
-							Het is de beurt van{' '}
-							<span className="font-bold">{currentColor}</span>
-						</p>
-					)}
-					{won != null && (
-						<p className="font-bold text-green-600 mt-4">
+			{won ? (
+				// Winning Screen
+				won === color ? (
+					<div className="winning-screen flex flex-col items-center justify-center h-full bg-green-600 text-white">
+						<h1 className="text-4xl font-bold mb-4">
+							Gefeliciteerd!
+						</h1>
+						<p className="text-2xl mb-6">
 							{won} heeft het spel gewonnen!!!
 						</p>
-					)}
-					<p className="mt-4 text-gray-500">{announcement}</p>
-				</div>
-			</div>
+						<button className="bg-white text-green-600 px-6 py-3 rounded-lg font-bold text-lg hover:bg-gray-100 transition duration-200">
+							Speel opnieuw
+						</button>
+					</div>
+				) : (
+					<div className="winning-screen flex flex-col items-center justify-center h-full bg-red-600 text-white">
+						<h1 className="text-4xl font-bold mb-4">Helaas...</h1>
+						<p className="text-2xl mb-6">
+							{won} heeft het spel gewonnen...
+						</p>
+						<button className="bg-white text-green-600 px-6 py-3 rounded-lg font-bold text-lg hover:bg-gray-100 transition duration-200">
+							Speel opnieuw
+						</button>
+					</div>
+				)
+			) : (
+				<div className="flex flex-col lg:flex-row w-full max-w-6xl mx-auto px-4 min-h-screen mt-4">
+					{/* Canvas for the game board */}
+					<div className="w-full lg:w-2/3 mb-4 lg:mb-0 flex justify-center items-center lg:flex-grow">
+						<canvas
+							className="game-board w-full max-w-3xl"
+							ref={canvasRef}
+							onClick={choosePawn}
+							style={{ height: '690px', maxWidth: '100%' }}
+						/>
+					</div>
 
-			{/* Joyride for rules walkthrough */}
-			{isRulesActive && (
-				<Joyride
-					styles={{
-						options: {
-							primaryColor: '#2664EB',
-							zIndex: 1000,
-						},
-					}}
-					locale={{
-						back: 'Terug',
-						close: 'Afsluiten',
-						last: 'Afsluiten',
-						next: 'Volgende',
-						skip: 'Overslaan',
-					}}
-					steps={steps}
-					continuous={true}
-					scrollToFirstStep={true}
-					showSkipButton={true}
-					run={true}
-					callback={(data) => {
-						const { status } = data;
-						if (status === 'finished' || status === 'skipped') {
-							setIsRulesActive(false);
-						}
-					}}
-				/>
+					{/* Buttons and game status container */}
+					<div className="flex flex-col items-center justify-center w-full lg:w-1/3 space-y-4 px-4 lg:pt-0 pt-6">
+						{/* Button for showing rules */}
+						<button
+							onClick={toggleGameRules}
+							className="bg-yellow-500 text-white py-3 rounded-lg text-lg font-medium hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300 w-full max-w-xs"
+						>
+							Spelregels
+						</button>
+
+						{/* Dice roll container */}
+						<div
+							className={`die w-16 h-16 rounded-lg border border-gray-300 flex justify-center items-center text-4xl shadow-lg ${isRolling ? 'animate-roll' : ''}`}
+						>
+							<i
+								className={`fas ${getDieFace(dice)}`}
+								style={{ fontSize: '3.5rem' }}
+							></i>
+						</div>
+
+						{/* Dice roll button */}
+						<div className="ludo-roll-dice w-full flex justify-center">
+							{turnState === 1 ? (
+								<button
+									className="bg-blue-500 text-white px-3 py-3 rounded-lg text-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 w-full max-w-xs"
+									onClick={rollDice}
+								>
+									Gooi dobbelsteen
+								</button>
+							) : (
+								<div
+									className="invisible px-5 py-3 rounded-lg"
+									style={{ height: '2.5rem', width: '9rem' }}
+								></div>
+							)}
+						</div>
+
+						{/* Turn information and announcements */}
+						<div className="text-center text-lg mt-4 space-y-4 w-full">
+							<p>
+								Jouw kleur is:{' '}
+								<span className="font-bold">{color}</span>
+							</p>
+							{turnState === 1 || turnState === 2 ? (
+								<p className="turn-announcement font-bold text-blue-600 mt-2">
+									Het is nu jouw beurt
+								</p>
+							) : (
+								<p className="turn-announcement text-gray-700 mt-2">
+									Het is de beurt van{' '}
+									<span className="font-bold">
+										{currentColor}
+									</span>
+								</p>
+							)}
+							{won != null && (
+								<p className="font-bold text-green-600 mt-4">
+									{won} heeft het spel gewonnen!!!
+								</p>
+							)}
+							<p className="mt-4 text-gray-500">{announcement}</p>
+						</div>
+					</div>
+
+					{/* Joyride for rules walkthrough */}
+					{isRulesActive && (
+						<Joyride
+							styles={{
+								options: {
+									primaryColor: '#2664EB',
+									zIndex: 1000,
+								},
+							}}
+							locale={{
+								back: 'Terug',
+								close: 'Afsluiten',
+								last: 'Afsluiten',
+								next: 'Volgende',
+								skip: 'Overslaan',
+							}}
+							steps={steps}
+							continuous={true}
+							scrollToFirstStep={true}
+							showSkipButton={true}
+							run={true}
+							callback={(data) => {
+								const { status } = data;
+								if (
+									status === 'finished' ||
+									status === 'skipped'
+								) {
+									setIsRulesActive(false);
+								}
+							}}
+						/>
+					)}
+				</div>
 			)}
 		</>
 	) : null;

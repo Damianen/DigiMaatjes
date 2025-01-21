@@ -19,6 +19,7 @@ export default function Home() {
 	const [isInitialJoinDone, setIsInitialJoinDone] = useState(false);
 	const [users, setUsers] = useState<string[]>([]);
 	const roomId = useParams().id?.toString();
+	const [isGameStarted, setIsGameStarted] = useState(false);
 	const room = roomId ? roomId : '0';
 	const spelnaam = room.split('-')[0];
 
@@ -132,6 +133,7 @@ export default function Home() {
 	};
 
 	const handleStartGame = () => {
+		setIsGameStarted(true);
 		socket.emit('startGame', room);
 	};
 
@@ -248,6 +250,7 @@ export default function Home() {
 								placeholder="Typ je bericht..."
 								value={roomInput}
 								onChange={(e) => setRoomInput(e.target.value)}
+								onSubmit={handleSendRoomMessage}
 							/>
 							<button
 								className="bg-blue-500 text-white px-5 py-3 rounded-lg text-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
@@ -267,12 +270,14 @@ export default function Home() {
 					>
 						Kamer verlaten
 					</button>
-					<button
-						className="game-start bg-green-500 text-white px-5 py-3 rounded-lg text-lg font-medium hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-300 w-full md:w-auto"
-						onClick={handleStartGame}
-					>
-						Spel starten
-					</button>
+					{!isGameStarted && (
+						<button
+							className="game-start bg-green-500 text-white px-5 py-3 rounded-lg text-lg font-medium hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-300 w-full md:w-auto"
+							onClick={handleStartGame}
+						>
+							Spel starten
+						</button>
+					)}
 				</div>
 			</div>
 
