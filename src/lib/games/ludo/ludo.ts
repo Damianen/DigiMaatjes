@@ -47,6 +47,7 @@ export class LudoGame implements IGame {
 		const position: IPosition = data.position;
 		const diceNum: number = data.dice;
 
+		// Check if all data is in the send data
 		if (
 			!pawn ||
 			!diceNum ||
@@ -61,9 +62,9 @@ export class LudoGame implements IGame {
 			throw new Error('Not Your turn!');
 		}
 
+		// Check if the pawn that was clicked is in the startSqaure and if the dice is not 6.
+		// when this is the case give the turn to the next player.
 		if (this.board[position.y][position.x].startSquare && diceNum != 6) {
-			//throw new Error('Je hebt geen 6 gegooit!');
-
 			if (diceNum != 6) {
 				if (
 					this.players.indexOf(this.currentPlayer) ==
@@ -86,11 +87,14 @@ export class LudoGame implements IGame {
 		let currentPosition: IPosition = position;
 		let reverse: boolean = false;
 
+		// for the amount that was rolled
 		for (let i = 0; i < diceNum; i++) {
 			let nextPos: IPosition = this.board[currentPosition.y][
 				currentPosition.x
 			].nextPosition as IPosition;
 
+			// if the pawn is in the start square and the roll was 6
+			// move the pawn to the next sqaure and break the loop
 			if (
 				this.board[position.y][position.x].startSquare &&
 				diceNum == 6
@@ -99,6 +103,10 @@ export class LudoGame implements IGame {
 				break;
 			}
 
+			// if the next position is the last position of the home squares
+			// or if there is a pawn in front of you in the home sqaures
+			// or if you are already reversed
+			// look through the reverse positions and find the next one and set the current position
 			if (
 				this.board[nextPos.y][nextPos.x].nextPosition == null ||
 				reverse ||
@@ -158,6 +166,8 @@ export class LudoGame implements IGame {
 				continue;
 			}
 
+			// check whether the square that is next to the home squares is the home sqaures of the pawn
+			// set the next position to be inside the home squares
 			if (
 				this.board[currentPosition.y][currentPosition.x].home ==
 					pawn.color &&
@@ -182,14 +192,17 @@ export class LudoGame implements IGame {
 			currentPosition = nextPos;
 		}
 
+		// set the start position of the pawn to null
 		this.board[position.y][position.x].pawn = null;
 
+		// check if the postion the pawn landed on has another pawn on it and set this pawn back to the home squares
 		if (this.board[currentPosition.y][currentPosition.x].pawn != null) {
 			const slainPawn: LudoPawn = this.board[currentPosition.y][
 				currentPosition.x
 			].pawn as LudoPawn;
 			switch (slainPawn.color) {
 				case LudoPlayerColor.BLUE:
+					// check each of the home squares if there is a pawn set the pawn to one that is empty
 					for (let i = 0; i < 4; i++) {
 						if (
 							this.board[BLUE_START[i].y][BLUE_START[i].x].pawn ==
@@ -242,8 +255,10 @@ export class LudoGame implements IGame {
 			}
 		}
 
+		// set the pawn to the new position
 		this.board[currentPosition.y][currentPosition.x].pawn = pawn;
 
+		// check for each color if all of the pawns are in the home squares
 		for (let i = 0; i < GREEN_HOME.length; i++) {
 			if (this.board[GREEN_HOME[i].y][GREEN_HOME[i].x].pawn == null) {
 				break;
@@ -298,6 +313,8 @@ export class LudoGame implements IGame {
 			}
 		}
 
+		// check if the dice roll is not 6 so the player can throw again
+		// if not dont change the player to the next player.
 		if (diceNum != 6) {
 			if (
 				this.players.indexOf(this.currentPlayer) ==

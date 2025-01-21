@@ -46,6 +46,10 @@
 	animation: glow 1s infinite;
 }
 
+nextjs-portal {
+	display: none;
+}
+
 @media (max-width: 768px) {
 	.game-board {
 		width: 90%;

@@ -2,6 +2,7 @@ import { IPosition } from '@/lib/models/game.interface';
 import { LudoBoardSquare, LudoPawn } from '@/lib/models/ludo.interface';
 import { LudoPlayerColor } from './ludo.player';
 
+// The positions when a pawn needs to walk backwards for each color
 export const REVERSE_GREEN: IPosition[] = [
 	{ x: 4, y: 7 },
 	{ x: 3, y: 7 },
@@ -50,6 +51,7 @@ export const REVERSE_RED: IPosition[] = [
 	{ y: 11, x: 6 },
 ];
 
+// the start positions fot all colors
 export const GREEN_START: IPosition[] = [
 	{ x: 2, y: 2 },
 	{ x: 3, y: 2 },
@@ -78,6 +80,7 @@ export const BLUE_START: IPosition[] = [
 	{ x: 12, y: 12 },
 ];
 
+// the home positions of all colors
 export const GREEN_HOME: IPosition[] = [
 	{ x: 1, y: 7 },
 	{ x: 2, y: 7 },
@@ -103,6 +106,12 @@ export const BLUE_HOME: IPosition[] = [
 	{ x: 13, y: 7 },
 ];
 
+// the start board of the ludo game whith the folling attributes:
+// Weather the sqaure is accessible
+// The next position
+// The home positions color
+// Weather the square is accesible
+// The pawn that is in that square if there is no pawn its null
 export const newBoard: LudoBoardSquare[][] = [
 	[
 		new LudoBoardSquare(false),
