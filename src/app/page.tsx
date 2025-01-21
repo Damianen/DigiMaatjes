@@ -1,4 +1,3 @@
-
 export default function Home() {
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300 flex flex-col items-center justify-center">
@@ -20,7 +19,7 @@ export default function Home() {
 					Login
 				</a>
 				<a
-					href="registeer"
+					href="registreer"
 					className="flex-1 px-12 py-6 text-2xl bg-white text-blue-600 rounded-lg font-semibold font-bambino hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-600 text-center"
 				>
 					Registreer
