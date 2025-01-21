@@ -24,12 +24,14 @@ export default async function middleware(req: NextRequest) {
 		});
 	} else {
 		// 1. Specify protected and public routes
-		const protectedRoutes = ['/speloverzicht'];
+		const protectedRoutes = ['/account', '/profile'];
+		const protectedDynamicRoutes = ['speloverzicht', 'room', 'profile'];
 		const publicRoutes = ['/login', '/registreer', '/'];
 
 		// 2. Check if the current route is protected or public
 		const path = req.nextUrl.pathname;
 		const isProtectedRoute = protectedRoutes.includes(path);
+		const isProtectedDynamicRoutes = protectedDynamicRoutes.includes(path.split('/')[1]);
 		const isPublicRoute = publicRoutes.includes(path);
 
 		// 3. Decrypt the session from the cookie
@@ -37,8 +39,10 @@ export default async function middleware(req: NextRequest) {
 		const session = await decrypt(cookie);
 
 		// 4. Redirect to /login if the user is not authenticated
-		if (isProtectedRoute && !session?.userName) {
-			return NextResponse.redirect(new URL('/login', req.nextUrl));
+		if ((isProtectedRoute && !session?.userName) || (isProtectedDynamicRoutes && !session?.userName)) {
+			console.log(req.nextUrl)
+			console.log(req.nextUrl.origin);
+			return NextResponse.redirect(new URL('/login', req.nextUrl.origin));
 		}
 
 		// 5. Redirect to /speloverzicht if the user is authenticated
