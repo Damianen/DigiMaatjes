@@ -32,7 +32,7 @@ export default function Ludo({ height = 691, width = 691 }) {
 	const [gameStarted, setGameStarted] = useState<boolean>(false);
 	const [gameWon, setGameWon] = useState<boolean>(false);
 	const squareSize: number = height / 15;
-	const [isLandscape, setIsLandscape] = useState(false);
+
 	const [isRolling, setIsRolling] = useState(false);
 	const [announcement, setAnnouncement] = useState<string>('');
 
