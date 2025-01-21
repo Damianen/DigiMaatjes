@@ -45,3 +45,7 @@
 .highlighted-pawn {
 	animation: glow 1s infinite;
 }
+
+nextjs-portal {
+	display: none;
+}
