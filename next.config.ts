@@ -1,7 +1,13 @@
-import type { NextConfig } from "next";
+// next.config.ts
+import { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['studententuin.com', '*.studententuin.nl'],
+      bodySizeLimit: '5mb'
+    },
+  },
 };
 
 export default nextConfig;
