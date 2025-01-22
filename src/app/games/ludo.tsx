@@ -1,6 +1,6 @@
 'use client';
 
-import { newBoard } from '@/lib/games/ludo/board';
+import { getHomePosition, newBoard } from '@/lib/games/ludo/board';
 import { LudoPlayer, LudoPlayerColor } from '@/lib/games/ludo/ludo.player';
 import { IPosition } from '@/lib/models/game.interface';
 import {
@@ -43,8 +43,32 @@ export default function Ludo({ height = 691, width = 691 }) {
 		setIsRulesActive(true);
 	};
 
+	function checkIfPawnsAreAtStart(): boolean {
+		const homeposition: IPosition[] = getHomePosition(color);
+		for (let i = 0; i < 4; i++) {
+			if (board[homeposition[i].y][homeposition[i].x].pawn == null) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	const rollDice = () => {
 		if (turnState === 1) {
+			if (checkIfPawnsAreAtStart()) {
+				setTurnState(0);
+				socket.emit(
+					'takeTurn',
+					new LudoGameDataFacotry().createServerData({
+						dice: dice as number,
+						pawn: board[getHomePosition(color)[0].y][
+							getHomePosition(color)[0].x
+						].pawn,
+						position: getHomePosition(color)[0],
+					}),
+					room
+				);
+			}
 			setTurnState(2);
 			setIsRolling(true);
 			setTimeout(() => {
