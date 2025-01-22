@@ -1,5 +1,6 @@
 'use client';
 import { signup } from '@/app/services/auth';
+import Link from 'next/link';
 import { useState, useActionState } from 'react';
 
 export default function Register() {
@@ -16,7 +17,7 @@ export default function Register() {
 			<div className="text-center mb-2 relative">
 				<div className="flex items-center justify-center mb-2 mt-4">
 					<h1 className="text-4xl font-bold font-bambino text-white">
-						Registeren
+						Registreren
 					</h1>
 					<button
 						onClick={toggleExplanation}
@@ -26,8 +27,12 @@ export default function Register() {
 					</button>
 				</div>
 
+				<p className="text-lg font-bold font-bambino text-white">
+					Alle velden met een * is verplicht in te vullen
+				</p>
+
 				{showExplanation && (
-					<div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-white text-blue-700 text-lg rounded-lg shadow-lg p-6 w-80 z-10">
+					<div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-white text-blue-700 text-sm rounded-lg shadow-lg p-6 w-80 z-10">
 						<p>
 							We vragen je om een account te maken zodat je kunt
 							chatten met je vrienden en samen een spel kunt
@@ -53,7 +58,7 @@ export default function Register() {
 								htmlFor="username"
 								className="block text-xl font-semibold text-white mb-2"
 							>
-								Gebruikersnaam
+								Gebruikersnaam*
 							</label>
 							<input
 								type="text"
@@ -70,7 +75,7 @@ export default function Register() {
 								htmlFor="email"
 								className="block text-xl font-semibold text-white mb-2"
 							>
-								E-mail
+								E-mail*
 							</label>
 							<input
 								type="email"
@@ -88,7 +93,7 @@ export default function Register() {
 								htmlFor="firstname"
 								className="block text-xl font-semibold text-white mb-2"
 							>
-								Voornaam
+								Voornaam*
 							</label>
 							<input
 								type="text"
@@ -105,7 +110,7 @@ export default function Register() {
 								htmlFor="lastname"
 								className="block text-xl font-semibold text-white mb-2"
 							>
-								Achternaam
+								Achternaam*
 							</label>
 							<input
 								type="text"
@@ -124,7 +129,7 @@ export default function Register() {
 								htmlFor="dob"
 								className="block text-xl font-semibold text-white mb-2"
 							>
-								Geboortedatum
+								Geboortedatum*
 							</label>
 							<input
 								type="date"
@@ -140,7 +145,7 @@ export default function Register() {
 								htmlFor="password"
 								className="block text-xl font-semibold text-white mb-2"
 							>
-								Wachtwoord
+								Wachtwoord*
 							</label>
 							<input
 								type="password"
@@ -165,18 +170,24 @@ export default function Register() {
 						</div>
 					</div>
 
-					<div>
+					<div className="text-center">
 						{state?.message && (
 							<div
 								role="alert"
 								className="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-200"
 							>
-								<p className="Info alert! text-lg text-center">
-									{state.message}{' '}
-									<a className="underline" href="../login">
-										Klik hier om in te loggen
-									</a>
+								<p className="Info alert! text-lg">
+									{state.message}
 								</p>
+							</div>
+						)}
+						{state?.message && (
+							<div className="mb-4">
+								<Link href="/login">
+									<button className="w-full px-12 py-6 text-2xl bg-blue-600 text-white rounded-lg font-semibold font-bambino hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-600">
+										Klik hier om in te loggen!{''}
+									</button>
+								</Link>
 							</div>
 						)}
 						{state?.error && (
@@ -184,7 +195,7 @@ export default function Register() {
 								role="alert"
 								className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-100"
 							>
-								<p className="Danger alert! text-lg text-center">
+								<p className="Danger alert! text-lg">
 									<span className="font-bold">Fout:</span>{' '}
 									{state.error}
 								</p>
