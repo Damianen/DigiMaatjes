@@ -106,6 +106,18 @@ export const BLUE_HOME: IPosition[] = [
 	{ x: 13, y: 7 },
 ];
 
+export function getHomePosition(color: LudoPlayerColor): IPosition[] {
+	if (LudoPlayerColor.BLUE == color) {
+		return BLUE_HOME;
+	} else if (LudoPlayerColor.RED == color) {
+		return RED_HOME;
+	} else if (LudoPlayerColor.YELLOW == color) {
+		return YELLOW_HOME;
+	} else {
+		return GREEN_HOME;
+	}
+}
+
 // the start board of the ludo game whith the folling attributes:
 // Weather the sqaure is accessible
 // The next position

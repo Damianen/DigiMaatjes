@@ -36,6 +36,16 @@ export class LudoGame implements IGame {
 	description!: string;
 	board!: Array<Array<LudoBoardSquare>>;
 
+	findIndex(player: LudoPlayer): number {
+		for (let i = 0; i < this.players.length; i++) {
+			if (this.players[i].color == player.color) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
 	takeTurn(data: LudoServerGameData): IClientGameData {
 		const dataFactory = new LudoGameDataFacotry();
 
@@ -65,19 +75,13 @@ export class LudoGame implements IGame {
 		// Check if the pawn that was clicked is in the startSqaure and if the dice is not 6.
 		// when this is the case give the turn to the next player.
 		if (this.board[position.y][position.x].startSquare && diceNum != 6) {
-			if (diceNum != 6) {
-				if (
-					this.players.indexOf(this.currentPlayer) ==
-					this.players.length - 1
-				) {
-					this.currentPlayer = this.players[0];
-				} else {
-					this.currentPlayer =
-						this.players[
-							this.players.indexOf(this.currentPlayer) + 1
-						];
-				}
+			if (this.findIndex(this.currentPlayer) == this.players.length - 1) {
+				this.currentPlayer = this.players[0];
+			} else {
+				this.currentPlayer =
+					this.players[this.findIndex(this.currentPlayer) + 1];
 			}
+
 			return dataFactory.createClientData({
 				board: this.board,
 				player: this.currentPlayer,
@@ -316,14 +320,11 @@ export class LudoGame implements IGame {
 		// check if the dice roll is not 6 so the player can throw again
 		// if not dont change the player to the next player.
 		if (diceNum != 6) {
-			if (
-				this.players.indexOf(this.currentPlayer) ==
-				this.players.length - 1
-			) {
+			if (this.findIndex(this.currentPlayer) == this.players.length - 1) {
 				this.currentPlayer = this.players[0];
 			} else {
 				this.currentPlayer =
-					this.players[this.players.indexOf(this.currentPlayer) + 1];
+					this.players[this.findIndex(this.currentPlayer) + 1];
 			}
 		}
 
