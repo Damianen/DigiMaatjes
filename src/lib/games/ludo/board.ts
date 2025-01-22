@@ -107,11 +107,11 @@ export const BLUE_HOME: IPosition[] = [
 ];
 
 export function getHomePosition(color: LudoPlayerColor): IPosition[] {
-	if (LudoPlayerColor.BLUE) {
+	if (LudoPlayerColor.BLUE == color) {
 		return BLUE_HOME;
-	} else if (LudoPlayerColor.RED) {
+	} else if (LudoPlayerColor.RED == color) {
 		return RED_HOME;
-	} else if (LudoPlayerColor.YELLOW) {
+	} else if (LudoPlayerColor.YELLOW == color) {
 		return YELLOW_HOME;
 	} else {
 		return GREEN_HOME;
