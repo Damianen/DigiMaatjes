@@ -6,10 +6,26 @@ import { useState, useActionState } from 'react';
 export default function Register() {
 	const [showExplanation, setShowExplanation] = useState(false);
 
+	// State to hold form input values
+	const [formData, setFormData] = useState({
+		username: '',
+		email: '',
+		firstname: '',
+		lastname: '',
+		dob: '',
+		password: '',
+	});
+
 	const [state, action] = useActionState(signup, undefined);
 
 	const toggleExplanation = () => {
 		setShowExplanation(!showExplanation);
+	};
+
+	// Handle input changes
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
 	return (
@@ -64,6 +80,8 @@ export default function Register() {
 								type="text"
 								id="username"
 								name="username"
+								value={formData.username}
+								onChange={handleInputChange}
 								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
 								placeholder="Voer je gebruikersnaam in"
 								required
@@ -81,6 +99,8 @@ export default function Register() {
 								type="email"
 								id="email"
 								name="email"
+								value={formData.email}
+								onChange={handleInputChange}
 								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
 								placeholder="Voer je e-mail in"
 								required
@@ -99,6 +119,8 @@ export default function Register() {
 								type="text"
 								id="firstname"
 								name="firstname"
+								value={formData.firstname}
+								onChange={handleInputChange}
 								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
 								placeholder="Voer je voornaam in"
 								required
@@ -116,6 +138,8 @@ export default function Register() {
 								type="text"
 								id="lastname"
 								name="lastname"
+								value={formData.lastname}
+								onChange={handleInputChange}
 								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
 								placeholder="Voer je achternaam in"
 								required
@@ -135,6 +159,8 @@ export default function Register() {
 								type="date"
 								id="dob"
 								name="dob"
+								value={formData.dob}
+								onChange={handleInputChange}
 								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
 								required
 							/>
@@ -151,6 +177,8 @@ export default function Register() {
 								type="password"
 								id="password"
 								name="password"
+								value={formData.password}
+								onChange={handleInputChange}
 								className="w-full px-4 py-4 text-xl border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600"
 								placeholder="Kies een wachtwoord"
 								required

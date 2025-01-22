@@ -250,7 +250,12 @@ export default function Home() {
 								placeholder="Typ je bericht..."
 								value={roomInput}
 								onChange={(e) => setRoomInput(e.target.value)}
-								onSubmit={handleSendRoomMessage}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter') {
+										handleSendRoomMessage(e);
+									}
+								}
+								}
 							/>
 							<button
 								className="bg-blue-500 text-white px-5 py-3 rounded-lg text-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
